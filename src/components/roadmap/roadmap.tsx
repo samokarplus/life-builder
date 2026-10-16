@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { toast } from "sonner";
-import { Columns3, ListTree, Plus, Redo2, Undo2 } from "lucide-react";
+import { Columns3, ListTree, Network, Plus, Redo2, Undo2 } from "lucide-react";
 import { courses } from "@/data/sample";
 import { prereqIssues, semesterLabel, sortSemesters } from "@/lib/schedule";
 import type { Semester } from "@/lib/types";
@@ -15,8 +15,10 @@ import { CourseCard } from "./course-card";
 import { SemesterColumn } from "./semester-column";
 import { institutions } from "@/data/sample";
 import { cn } from "@/lib/utils";
+import { DependencyGraph } from "./dependency-graph";
+import { RequirementsPanel } from "./requirements-panel";
 
-type Layout = "timeline" | "board";
+type Layout = "timeline" | "board" | "graph";
 type SemForm = { id?: string; term: Semester["term"]; year: number; institutionId: string };
 
 export function Roadmap() {
@@ -85,7 +87,7 @@ export function Roadmap() {
     <div>
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <div role="group" aria-label="View" className="flex rounded-full border border-border bg-surface p-0.5">
-          {([["timeline", "Timeline", ListTree], ["board", "Board", Columns3]] as const).map(([k, label, Icon]) => (
+          {([["timeline", "Timeline", ListTree], ["board", "Board", Columns3], ["graph", "Dependencies", Network]] as const).map(([k, label, Icon]) => (
             <button key={k} onClick={() => setLayout(k)} aria-pressed={layout === k}
               className={cn("flex h-8 items-center gap-1.5 rounded-full px-3 text-sm", layout === k ? "bg-primary text-primary-foreground" : "text-muted hover:text-foreground")}>
               <Icon size={14} aria-hidden /> {label}
@@ -105,6 +107,7 @@ export function Roadmap() {
         </p>
       )}
 
+      {layout === "graph" ? <DependencyGraph /> : (
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
         <div className={cn(layout === "board" ? "flex items-start gap-4 overflow-x-auto pb-4" : "mx-auto flex max-w-2xl flex-col gap-4 border-l-2 border-sage/50 pl-4")}>
           {sorted.map((s) => (
@@ -117,6 +120,9 @@ export function Roadmap() {
           {active && catalog.get(active.courseId) ? <CourseCard planned={active} course={catalog.get(active.courseId)!} onStatus={() => {}} onRemove={() => {}} /> : null}
         </DragOverlay>
       </DndContext>
+      )}
+
+      <RequirementsPanel />
 
       {sorted.length === 0 && <p className="py-16 text-center text-muted">No semesters yet. Add one to start planning.</p>}
 

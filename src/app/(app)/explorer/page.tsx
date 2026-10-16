@@ -1,5 +1,12 @@
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { HydratedGate } from "@/components/shell/hydrated-gate";
+import { Explorer } from "@/components/explorer/explorer";
 
 export default function Page() {
-  return <ComingSoon title="Course Explorer" phase="Phase 3" blurb="Search and filter the course catalog and add courses to your roadmap." />;
+  return (
+    <div>
+      <h1 className="font-serif text-4xl">Course Explorer</h1>
+      <p className="mb-8 mt-2 text-muted">Search the sample catalog and add courses to your roadmap.</p>
+      <HydratedGate><Explorer /></HydratedGate>
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import type { Course, DataSource, Institution, Career, TuitionRate, Semester } from "@/lib/types";
+import type { Course, DataSource, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
 
 /**
  * SAMPLE DATA ONLY. Course codes/titles come from the product brief as
@@ -83,4 +83,19 @@ export const sampleSemesters: Semester[] = [
   { id: "s-sp27", term: "spring", year: 2027, institutionId: "frcc", courses: [pc("GEY 1111"), pc("PHI 1014"), pc("ENP 1005"), pc("PHI 1030"), pc("AIR 2001")] },
   { id: "s-su27", term: "summer", year: 2027, institutionId: "frcc", courses: [] },
   { id: "s-f27", term: "fall", year: 2027, institutionId: "cub", courses: [] },
+];
+
+/**
+ * ILLUSTRATIVE requirement structure to exercise the engine. These are NOT the
+ * official FRCC AA requirements; replace with imported catalog data.
+ */
+export const requirements: DegreeRequirement[] = [
+  { id: "req-written", programId: "frcc-aa-sample", label: "Written communication", sourceId: "src-sample",
+    rule: { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021", minGrade: "C" }, { type: "course", courseId: "frcc:ENG-1022", minGrade: "C" }] } },
+  { id: "req-science", programId: "frcc-aa-sample", label: "Natural science (one course)", sourceId: "src-sample",
+    rule: { type: "any", rules: [{ type: "course", courseId: "frcc:GEY-1108" }, { type: "course", courseId: "frcc:GEY-1111" }] } },
+  { id: "req-humanities", programId: "frcc-aa-sample", label: "Arts & humanities (6 credits)", sourceId: "src-sample",
+    rule: { type: "credits", min: 6, from: { type: "group", courseIds: ["frcc:HIS-1120", "frcc:PHI-1014", "frcc:PHI-1030"] } } },
+  { id: "req-electives", programId: "frcc-aa-sample", label: "Electives (6 credits)", sourceId: "src-sample",
+    rule: { type: "credits", min: 6, from: { type: "group", courseIds: ["frcc:ENP-1005", "frcc:AIR-2001"] } } },
 ];
