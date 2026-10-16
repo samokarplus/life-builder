@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { Menu, PanelLeftClose, PanelLeftOpen, Search, Sun, Moon, Check, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navItems } from "./nav";
+import { AssistantPanel } from "./assistant-panel";
 
 function Nav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const path = usePathname();
@@ -93,6 +94,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div aria-label="Profile" className="grid h-8 w-8 place-items-center rounded-full bg-primary text-xs font-medium text-primary-foreground">You</div>
         </header>
         <main className="flex-1 p-6 md:p-10">{children}</main>
+        <AssistantPanel />
       </div>
     </div>
   );

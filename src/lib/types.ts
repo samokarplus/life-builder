@@ -125,6 +125,7 @@ export interface StudentProfile {
 export interface AcademicPathway {
   id: string;
   name: string;
+  major?: string;
   semesters: Semester[];
 }
 

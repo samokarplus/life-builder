@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { sampleSemesters } from "@/data/sample";
-import type { CourseStatus, Semester, StudentProfile } from "@/lib/types";
+import type { CourseStatus, PlanningScenario, Semester, StudentProfile } from "@/lib/types";
 import { sortSemesters } from "@/lib/schedule";
 
 export const defaultProfile: StudentProfile = {
@@ -18,6 +18,18 @@ export const defaultProfile: StudentProfile = {
   completed: [],
 };
 
+export interface CostInputs {
+  residency: "in-state" | "out-of-state";
+  feesPerSemester: number;
+  booksPerSemester: number;
+  housingPerSemester: number;
+  livingPerSemester: number;
+  aid: number;
+  destSemesters: number;
+  destCreditsPerSemester: number;
+}
+export const defaultCostInputs: CostInputs = { residency: "in-state", feesPerSemester: 0, booksPerSemester: 0, housingPerSemester: 0, livingPerSemester: 0, aid: 0, destSemesters: 4, destCreditsPerSemester: 15 };
+
 const HISTORY_LIMIT = 50;
 
 interface PlannerState {
@@ -26,9 +38,15 @@ interface PlannerState {
   semesters: Semester[];
   requiredCredits: number; // sample assumption until program data is imported
   tuitionPerCredit: Record<string, number | null>; // user-entered only
+  scenarios: PlanningScenario[];
+  costInputs: CostInputs;
   past: Semester[][];
   future: Semester[][];
 
+  setCostInputs: (c: Partial<CostInputs>) => void;
+  saveScenario: (name: string, semesters?: Semester[], major?: string) => void;
+  loadScenario: (id: string) => void;
+  deleteScenario: (id: string) => void;
   setProfile: (p: Partial<StudentProfile>) => void;
   completeOnboarding: (profile: StudentProfile, semesters: Semester[]) => void;
   setTuition: (institutionId: string, v: number | null) => void;
@@ -72,6 +90,15 @@ export const exportSchema = z.object({
   semesters: z.array(semesterSchema),
   requiredCredits: z.number().positive(),
   tuitionPerCredit: z.record(z.string(), z.number().nullable()),
+  scenarios: z.array(z.object({
+    id: z.string(), name: z.string(), createdAt: z.string(),
+    pathway: z.object({ id: z.string(), name: z.string(), major: z.string().optional(), semesters: z.array(semesterSchema) }),
+  })).optional(),
+  costInputs: z.object({
+    residency: z.enum(["in-state", "out-of-state"]), feesPerSemester: z.number().min(0), booksPerSemester: z.number().min(0),
+    housingPerSemester: z.number().min(0), livingPerSemester: z.number().min(0), aid: z.number().min(0),
+    destSemesters: z.number().min(0), destCreditsPerSemester: z.number().min(0),
+  }).optional(),
 });
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -90,9 +117,26 @@ export const usePlanner = create<PlannerState>()(
         semesters: sampleSemesters,
         requiredCredits: 60,
         tuitionPerCredit: { frcc: null, cub: null },
+        scenarios: [],
+        costInputs: defaultCostInputs,
         past: [],
         future: [],
 
+        setCostInputs: (c) => set((s) => ({ costInputs: { ...s.costInputs, ...c } })),
+        saveScenario: (name, semesters, major) =>
+          set((s) => ({
+            scenarios: [...s.scenarios, {
+              id: `sc-${uid()}`, name, createdAt: new Date().toISOString(),
+              pathway: { id: `pw-${uid()}`, name, semesters: structuredClone(semesters ?? s.semesters), major: major ?? s.profile.major },
+            }],
+          })),
+        loadScenario: (id) => {
+          const sc = get().scenarios.find((x) => x.id === id);
+          if (!sc) return;
+          commit(structuredClone(sc.pathway.semesters));
+          set((s) => ({ profile: { ...s.profile, major: sc.pathway.major ?? s.profile.major } }));
+        },
+        deleteScenario: (id) => set((s) => ({ scenarios: s.scenarios.filter((x) => x.id !== id) })),
         setProfile: (p) => set((s) => ({ profile: { ...s.profile, ...p } })),
         completeOnboarding: (profile, semesters) => set({ onboarded: true, profile, semesters, past: [], future: [] }),
         setTuition: (id, v) => set((s) => ({ tuitionPerCredit: { ...s.tuitionPerCredit, [id]: v } })),
@@ -139,15 +183,15 @@ export const usePlanner = create<PlannerState>()(
             return nxt ? { semesters: nxt, past: [...s.past, s.semesters], future: s.future.slice(1) } : s;
           }),
         resetToSample: () =>
-          set({ onboarded: false, profile: defaultProfile, semesters: sampleSemesters, requiredCredits: 60, tuitionPerCredit: { frcc: null, cub: null }, past: [], future: [] }),
+          set({ onboarded: false, profile: defaultProfile, semesters: sampleSemesters, requiredCredits: 60, tuitionPerCredit: { frcc: null, cub: null }, scenarios: [], costInputs: defaultCostInputs, past: [], future: [] }),
         exportJson: () => {
-          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit } = get();
-          return JSON.stringify({ app: "dream-helper", version: 1, onboarded, profile, semesters, requiredCredits, tuitionPerCredit }, null, 2);
+          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs } = get();
+          return JSON.stringify({ app: "dream-helper", version: 1, onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs }, null, 2);
         },
         importJson: (json) => {
           try {
             const d = exportSchema.parse(JSON.parse(json));
-            set({ onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, past: [], future: [] });
+            set({ onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs, past: [], future: [] });
             return { ok: true };
           } catch (e) {
             return { ok: false, error: e instanceof z.ZodError ? "This file isn't a valid Dream Helper export." : "Couldn't read that file as JSON." };
@@ -158,7 +202,7 @@ export const usePlanner = create<PlannerState>()(
     {
       name: "dream-helper:v1",
       skipHydration: true,
-      partialize: (s) => ({ onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit }),
+      partialize: (s) => ({ onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit, scenarios: s.scenarios, costInputs: s.costInputs }),
     }
   )
 );
