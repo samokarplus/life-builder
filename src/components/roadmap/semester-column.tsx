@@ -41,9 +41,10 @@ export function SemesterColumn({
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: semester.id });
   const credits = semesterCredits(semester, [...catalog.values()]);
+  const max = usePlanner(s=>s.profile.maxCreditsPerSemester);
   const inst = institutions.find((i) => i.id === semester.institutionId);
   return (
-    <section aria-label={semesterLabel(semester)} className={cn("rounded-[14px] bg-soft/60 p-3", wide ? "w-full" : "w-72 shrink-0")}>
+    <section aria-label={semesterLabel(semester)} className={cn("rounded-[14px] bg-soft/60 p-3", wide ? "w-full" : "w-full min-w-0")}>
       <header className="mb-3 flex items-start justify-between gap-2 px-1">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider">{semesterLabel(semester)}</h3>
@@ -58,7 +59,8 @@ export function SemesterColumn({
           <button onClick={onDelete} aria-label={`Delete ${semesterLabel(semester)}`} className="rounded p-1 text-muted hover:bg-surface"><Trash2 size={14} /></button>
         </div>
       </header>
-      <div ref={setNodeRef} className={cn("flex min-h-16 flex-col gap-2 rounded-xl p-1 transition", isOver && "bg-sage/30")}>
+      {credits>max&&<p role="status" className="mb-2 rounded-lg border border-amber-500/40 px-2 py-1.5 text-xs text-amber-800 dark:text-amber-300">{credits} credits · {credits-max} over your limit</p>}
+      <div ref={setNodeRef} data-testid={`drop-${semester.id}`} className={cn("flex min-h-16 flex-col gap-2 rounded-xl p-1 transition", isOver && "bg-sage/30")}>
         <SortableContext items={semester.courses.map((c) => c.id)} strategy={verticalListSortingStrategy}>
           {semester.courses.map((p) => {
             const c = catalog.get(p.courseId);

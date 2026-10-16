@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { sampleSemesters } from "@/data/sample";
@@ -30,9 +30,13 @@ export interface CostInputs {
 }
 export const defaultCostInputs: CostInputs = { residency: "in-state", feesPerSemester: 0, booksPerSemester: 0, housingPerSemester: 0, livingPerSemester: 0, aid: 0, destSemesters: 4, destCreditsPerSemester: 15 };
 
+import { plannerStorage, hydrationFailed } from "@/lib/persistence";
+
 const HISTORY_LIMIT = 50;
 
 interface PlannerState {
+  roadmapView: "board" | "timeline" | "graph";
+  setRoadmapView: (view: "board" | "timeline" | "graph") => void;
   onboarded: boolean;
   profile: StudentProfile;
   semesters: Semester[];
@@ -80,16 +84,20 @@ const profileSchema = z.object({
   major: z.string(),
   maxCreditsPerSemester: z.number().min(1).max(30),
   priorities: z.array(z.string()),
+  startingSemester: z.string().optional(), program: z.string().optional(), desiredDegree: z.string().optional(),
+  budget: z.number().nonnegative().nullable().optional(), unverifiedExternalCredits: z.number().nonnegative().optional(),
+  careerId: z.string().optional(), careerStageProgress: z.record(z.string(), z.array(z.string())).optional(),
   completed: z.array(z.object({ courseId: z.string(), grade: z.string().optional(), kind: z.enum(["regular", "transfer", "ap-ib"]), verified: z.boolean() })),
 });
 export const exportSchema = z.object({
   app: z.literal("dream-helper"),
-  version: z.literal(1),
+  version: z.union([z.literal(1), z.literal(2)]),
+  roadmapView: z.enum(["board", "timeline", "graph"]).optional(),
   onboarded: z.boolean(),
   profile: profileSchema,
   semesters: z.array(semesterSchema),
   requiredCredits: z.number().positive(),
-  tuitionPerCredit: z.record(z.string(), z.number().nullable()),
+  tuitionPerCredit: z.record(z.string(), z.number().nonnegative().nullable()),
   scenarios: z.array(z.object({
     id: z.string(), name: z.string(), createdAt: z.string(),
     pathway: z.object({ id: z.string(), name: z.string(), major: z.string().optional(), semesters: z.array(semesterSchema) }),
@@ -112,6 +120,8 @@ export const usePlanner = create<PlannerState>()(
       const map = (fn: (s: Semester) => Semester) => commit(get().semesters.map(fn));
 
       return {
+        roadmapView: "board",
+        setRoadmapView: (roadmapView) => set({ roadmapView }),
         onboarded: false,
         profile: defaultProfile,
         semesters: sampleSemesters,
@@ -146,7 +156,7 @@ export const usePlanner = create<PlannerState>()(
           const cur = get().semesters;
           const from = cur.find((s) => s.courses.some((c) => c.id === plannedId));
           const item = from?.courses.find((c) => c.id === plannedId);
-          if (!from || !item) return;
+          if (!from || !item || !cur.some(s=>s.id===toId)) return;
           const without = cur.map((s) => (s.id === from.id ? { ...s, courses: s.courses.filter((c) => c.id !== plannedId) } : s));
           const next = without.map((s) => {
             if (s.id !== toId) return s;
@@ -185,13 +195,13 @@ export const usePlanner = create<PlannerState>()(
         resetToSample: () =>
           set({ onboarded: false, profile: defaultProfile, semesters: sampleSemesters, requiredCredits: 60, tuitionPerCredit: { frcc: null, cub: null }, scenarios: [], costInputs: defaultCostInputs, past: [], future: [] }),
         exportJson: () => {
-          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs } = get();
-          return JSON.stringify({ app: "dream-helper", version: 1, onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs }, null, 2);
+          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs, roadmapView } = get();
+          return JSON.stringify({ app: "dream-helper", version: 2, onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs, roadmapView }, null, 2);
         },
         importJson: (json) => {
           try {
             const d = exportSchema.parse(JSON.parse(json));
-            set({ onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs, past: [], future: [] });
+            set({ roadmapView: d.roadmapView ?? "board", onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs, past: [], future: [] });
             return { ok: true };
           } catch (e) {
             return { ok: false, error: e instanceof z.ZodError ? "This file isn't a valid Dream Helper export." : "Couldn't read that file as JSON." };
@@ -201,19 +211,32 @@ export const usePlanner = create<PlannerState>()(
     },
     {
       name: "dream-helper:v1",
+      version: 2,
+      storage: createJSONStorage(() => plannerStorage),
+      migrate: (state) => migratePlan(state),
+      merge: (persisted, current) => ({ ...current, ...migratePlan(persisted) }),
       skipHydration: true,
-      partialize: (s) => ({ onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit, scenarios: s.scenarios, costInputs: s.costInputs }),
+      onRehydrateStorage: () => (_, error) => { if (error) hydrationFailed(); },
+      partialize: (s) => ({ roadmapView: s.roadmapView, onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit, scenarios: s.scenarios, costInputs: s.costInputs }),
     }
   )
 );
 
-/** Rehydrates from localStorage on the client; false during SSR/first paint to avoid mismatches. */
+/** Validates v1/v2 persisted state and fills only new fields, preserving all user choices. */
+export function migratePlan(state: unknown) {
+  if (state == null) return {};
+  const d = exportSchema.parse({ ...(state as object), app: "dream-helper", version: 2 });
+  return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs };
+}
+
+/** Rehydrates from IndexedDB on the client; false during SSR/first paint to avoid mismatches. */
 let hydrated = false;
+let hydration: Promise<void> | undefined;
 export function useHydrated() {
   const [ready, setReady] = useState(hydrated);
   useEffect(() => {
     if (hydrated) return;
-    Promise.resolve(usePlanner.persist.rehydrate()).then(() => {
+    (hydration ??= Promise.resolve(usePlanner.persist.rehydrate())).then(() => {
       hydrated = true;
       setReady(true);
     });

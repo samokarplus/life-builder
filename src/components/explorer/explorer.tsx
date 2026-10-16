@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { courses, institutions, requirements } from "@/data/sample";
@@ -22,6 +22,7 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
 export function Explorer() {
   const { semesters, profile, tuitionPerCredit, addCourse } = usePlanner();
   const [q, setQ] = useState("");
+  useEffect(() => { setQ(new URLSearchParams(window.location.search).get("q") ?? ""); }, []);
   const [inst, setInst] = useState("all");
   const [subj, setSubj] = useState("all");
   const [credits, setCredits] = useState("all");

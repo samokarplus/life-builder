@@ -15,14 +15,15 @@ export interface CardProps {
   onRemove: () => void;
   dragHandle?: React.HTMLAttributes<HTMLButtonElement>;
   dragging?: boolean;
+  overlay?: boolean;
 }
 
-export function CourseCard({ planned, course, missing, onStatus, onRemove, dragHandle, dragging }: CardProps) {
+export function CourseCard({ planned, course, missing, onStatus, onRemove, dragHandle, dragging, overlay }: CardProps) {
   const inst = institutions.find((i) => i.id === course.institutionId);
   return (
     <div className={cn("rounded-xl border bg-surface p-3 shadow-card transition", dragging ? "opacity-40" : "hover:border-sage", missing?.length ? "border-amber-500/60" : "border-border")}>
       <div className="flex items-start gap-2">
-        <button {...dragHandle} aria-label={`Drag ${course.code}`} className="mt-0.5 cursor-grab touch-none text-muted hover:text-foreground">
+        <button disabled={overlay} tabIndex={overlay ? -1 : undefined} {...dragHandle} aria-label={`Drag ${course.code}`} className="mt-0.5 cursor-grab touch-none text-muted hover:text-foreground">
           <GripVertical size={16} />
         </button>
         <div className="min-w-0 flex-1">
@@ -33,12 +34,13 @@ export function CourseCard({ planned, course, missing, onStatus, onRemove, dragH
           <p className={cn("text-sm", planned.status === "completed" && "text-muted line-through")}>{course.title}</p>
           <p className="mt-1 text-xs text-muted">{inst?.shortName} · {course.category}</p>
         </div>
-        <button onClick={onRemove} aria-label={`Remove ${course.code}`} className="rounded p-1 text-muted hover:bg-soft hover:text-foreground"><X size={14} /></button>
+        <button disabled={overlay} tabIndex={overlay ? -1 : undefined} onClick={onRemove} aria-label={`Remove ${course.code}`} className="rounded p-1 text-muted hover:bg-soft hover:text-foreground"><X size={14} /></button>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 pl-6">
         <label className="sr-only" htmlFor={`st-${planned.id}`}>Status for {course.code}</label>
         <select
-          id={`st-${planned.id}`}
+          disabled={overlay}
+          id={overlay ? undefined : `st-${planned.id}`}
           value={planned.status}
           onChange={(e) => onStatus(e.target.value as CourseStatus)}
           className={cn("rounded-full border border-border px-2 py-0.5 text-xs", planned.status !== "planned" && "bg-soft text-primary")}

@@ -120,6 +120,13 @@ export interface StudentProfile {
   maxCreditsPerSemester: number;
   priorities: string[];
   completed: CompletedCourse[];
+  startingSemester?: string;
+  program?: string;
+  desiredDegree?: string;
+  budget?: number | null;
+  unverifiedExternalCredits?: number;
+  careerId?: string;
+  careerStageProgress?: Record<string, string[]>; // explicitly user-reported, never inferred eligibility
 }
 
 export interface AcademicPathway {
