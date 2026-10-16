@@ -8,6 +8,7 @@ import { Menu, PanelLeftClose, PanelLeftOpen, Search, Sun, Moon, Check, Sparkles
 import { cn } from "@/lib/utils";
 import { navItems } from "./nav";
 import { AssistantPanel } from "./assistant-panel";
+import { usePlanner } from "@/store/planner";
 
 function Nav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const path = usePathname();
@@ -40,6 +41,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
+  const onboarded = usePlanner((s) => s.onboarded);
 
   return (
     <div className="flex min-h-screen">
@@ -73,7 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur">
           <button aria-label="Open menu" className="md:hidden" onClick={() => setMobileOpen(true)}><Menu size={20} /></button>
-          <span className="hidden rounded-full bg-soft px-3 py-1 text-xs font-medium text-primary sm:inline">FRCC → CU Boulder · Sample plan</span>
+          <span className="hidden rounded-full bg-soft px-3 py-1 text-xs font-medium text-primary sm:inline">FRCC → CU Boulder · {onboarded ? "Your plan" : "Sample plan"}</span>
           <label className="relative ml-auto hidden max-w-xs flex-1 sm:block">
             <Search size={15} className="absolute left-3 top-2.5 text-muted" aria-hidden />
             <input

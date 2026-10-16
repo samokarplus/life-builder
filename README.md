@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dream Helper
 
-## Getting Started
+Your future, mapped out — a local-first college & career pathway planner (initial pathway: FRCC → CU Boulder).
 
-First, run the development server:
+Full product brief: [SPEC.md](./SPEC.md).
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm test        # vitest: credits, prerequisites, requirements, scenarios, costs, persistence
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What's here
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Onboarding** → generates an initial roadmap from the sample catalog
+- **Overview** dashboard, **Roadmap** (timeline / board / dependency graph, drag-and-drop, undo/redo)
+- **Course Explorer**, **Compare Paths**, **Costs & Savings**, **Career Explorer**, **Assistant** (deterministic, provider interface ready for an AI API)
+- Data persists in `localStorage`; JSON export/import in Settings
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Data honesty
 
-## Learn More
+`src/data/sample.ts` is **illustrative sample data**: course codes come from the brief, credits are assumed, requirements are not the official FRCC/CU rules, and no tuition figures are included (users enter their own). Every record carries provenance (`DataSource`) so official catalog importers can replace it.
 
-To learn more about Next.js, take a look at the following resources:
+## Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/lib/types.ts` domain model · `schedule.ts` prerequisites/progress/plan generation · `requirements.ts` AND/OR/threshold/grade engine with double-count rules · `compare.ts` scenarios · `costs.ts` · `assistant/` provider interface
+- `src/store/planner.ts` Zustand store (persisted, undo/redo, Zod-validated import)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Not yet built
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+IndexedDB storage, official data importers, real transfer equivalencies, CU Boulder major requirements, course-offering availability.
