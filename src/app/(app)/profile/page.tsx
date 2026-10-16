@@ -1,5 +1,11 @@
-import { ComingSoon } from "@/components/ui/coming-soon";
+import { HydratedGate } from "@/components/shell/hydrated-gate";
+import { ProfileForm } from "@/components/profile/profile-form";
 
 export default function Page() {
-  return <ComingSoon title="My Profile" phase="Phase 2" blurb="Your dream, starting point, destination and priorities." />;
+  return (
+    <div>
+      <h1 className="font-serif text-4xl">My Profile</h1>
+      <div className="mt-8"><HydratedGate><ProfileForm /></HydratedGate></div>
+    </div>
+  );
 }

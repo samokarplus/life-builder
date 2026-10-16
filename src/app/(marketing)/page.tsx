@@ -25,7 +25,7 @@ export default function Landing() {
           From your first college class to your dream career. Build a smarter, more affordable path to where you want to go.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <ButtonLink href="/overview">Build My Roadmap</ButtonLink>
+          <ButtonLink href="/onboarding">Build My Roadmap</ButtonLink>
           <ButtonLink href="/roadmap" variant="secondary">Explore a Demo</ButtonLink>
         </div>
       </section>
