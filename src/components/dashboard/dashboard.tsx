@@ -6,6 +6,7 @@ import { courses, institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { prereqIssues, progress, semesterLabel, sortSemesters } from "@/lib/schedule";
 import { semesterCredits } from "@/lib/credits";
+import { RequirementsPanel } from "@/components/roadmap/requirements-panel";
 import { cn } from "@/lib/utils";
 
 function Card({ title, icon: Icon, children, className }: { title: string; icon: React.ElementType; children: React.ReactNode; className?: string }) {
@@ -141,6 +142,7 @@ export function Dashboard() {
           </ul>
         </Card>
       </div>
+      <RequirementsPanel />
     </div>
   );
 }

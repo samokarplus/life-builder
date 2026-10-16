@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { courses, institutions, requirements } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { semesterLabel, sortSemesters } from "@/lib/schedule";
-import type { Course, RequirementRule } from "@/lib/types";
+import type { Course } from "@/lib/types";
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/utils";
 
 const subject = (c: Course) => c.code.split(" ")[0];
 const subjects = [...new Set(courses.map(subject))].sort();
-const idsOf = (r: RequirementRule): string[] =>
-  r.type === "course" ? [r.courseId] : r.type === "group" ? r.courseIds : r.type === "credits" ? idsOf(r.from) : r.rules.flatMap(idsOf);
+import { ruleCourseIds as idsOf } from "@/lib/requirements";
 
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return <button aria-pressed={active} onClick={onClick} className={cn("rounded-full border px-3 py-1 text-xs", active ? "border-primary bg-soft text-primary" : "border-border bg-surface text-muted hover:text-foreground")}>{children}</button>;
@@ -21,8 +21,9 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
 
 export function Explorer() {
   const { semesters, profile, tuitionPerCredit, addCourse } = usePlanner();
-  const [q, setQ] = useState("");
-  useEffect(() => { setQ(new URLSearchParams(window.location.search).get("q") ?? ""); }, []);
+  const params = useSearchParams();
+  const [q, setQ] = useState<string | null>(null);
+  const search = q ?? params.get("q") ?? "";
   const [inst, setInst] = useState("all");
   const [subj, setSubj] = useState("all");
   const [credits, setCredits] = useState("all");
@@ -36,7 +37,7 @@ export function Explorer() {
   const planned = new Map(semesters.flatMap((s) => s.courses.map((p) => [p.courseId, p.status] as const)));
   const done = new Set(profile.completed.map((c) => c.courseId));
   const stateOf = (c: Course) => (done.has(c.id) ? "completed" : planned.get(c.id) ?? "not-planned");
-  const query = q.trim().toLowerCase();
+  const query = search.trim().toLowerCase();
   const results = courses.filter((c) =>
     (!query || c.code.toLowerCase().includes(query) || c.title.toLowerCase().includes(query)) &&
     (inst === "all" || c.institutionId === inst) &&
@@ -69,7 +70,7 @@ export function Explorer() {
       <label className="relative block max-w-md">
         <span className="sr-only">Search courses</span>
         <Search size={16} className="absolute left-3 top-3 text-muted" aria-hidden />
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by code or title" className="h-11 w-full rounded-full border border-border bg-surface pl-10 pr-4 text-sm" />
+        <input value={search} onChange={(e) => setQ(e.target.value)} placeholder="Search by code or title" className="h-11 w-full rounded-full border border-border bg-surface pl-10 pr-4 text-sm" />
       </label>
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filters">
         <select aria-label="Institution" className={sel} value={inst} onChange={(e) => setInst(e.target.value)}><option value="all">All institutions</option>{institutions.map((i) => <option key={i.id} value={i.id}>{i.shortName}</option>)}</select>

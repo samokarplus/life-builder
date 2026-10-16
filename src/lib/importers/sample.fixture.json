@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "sources": [{"id":"src-sample","url":null,"institutionId":null,"catalogYear":null,"lastVerified":null,"status":"illustrative","note":"Existing sample from SPEC.md; not official catalog data. Credits are assumed."}],
+  "courses": [{"id":"frcc:HIS-1120","institutionId":"frcc","code":"HIS 1120","title":"World History 1500–Present","credits":3,"level":1000,"prerequisiteIds":[],"category":"Arts & Humanities (sample)","sourceId":"src-sample"}],
+  "requirements": [],
+  "tuition": []
+}

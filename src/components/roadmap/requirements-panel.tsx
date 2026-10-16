@@ -29,7 +29,9 @@ export function RequirementsPanel() {
             <li key={r.requirementId} className="flex flex-wrap items-start gap-3 py-3 text-sm">
               <m.icon size={16} className={`mt-0.5 ${m.cls}`} aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="font-medium">{r.label}</p>
+                <details><summary className="font-medium marker:text-muted">{r.label}</summary>
+                  <dl className="mt-3 grid gap-2 rounded-xl bg-background p-3 text-xs"><div><dt className="font-medium">Completed coursework</dt><dd className="text-muted">{r.completedCourseIds.map(code).join(", ") || "None counted"}</dd></div><div><dt className="font-medium">Projected coursework</dt><dd className="text-muted">{r.projectedCourseIds.map(code).join(", ") || "None planned"}</dd></div><div><dt className="font-medium">Missing courses</dt><dd className="text-muted">{r.missingCourseIds.map(code).join(", ") || (r.status==="unsatisfied"?"More eligible credits needed; review the notes below.":"None identified in this sample rule")}</dd></div><div><dt className="font-medium">Needs verification</dt><dd className="text-muted">{r.uncertainCourseIds.map(code).join(", ") || "All sample rules still need official catalog verification."}</dd></div><div><dt className="font-medium">Credits counted</dt><dd>{r.creditsCounted} illustrative credits; each course counted once within this requirement.</dd></div></dl>
+                </details>
                 <p className="text-xs text-muted">{r.notes.join(" · ") || (r.usedCourseIds.length ? r.usedCourseIds.map(code).join(", ") : "")}</p>
               </div>
               <span className={`text-xs font-medium ${m.cls}`}>{m.label}</span>

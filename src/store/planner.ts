@@ -87,7 +87,7 @@ const profileSchema = z.object({
   startingSemester: z.string().optional(), program: z.string().optional(), desiredDegree: z.string().optional(),
   budget: z.number().nonnegative().nullable().optional(), unverifiedExternalCredits: z.number().nonnegative().optional(),
   careerId: z.string().optional(), careerStageProgress: z.record(z.string(), z.array(z.string())).optional(),
-  completed: z.array(z.object({ courseId: z.string(), grade: z.string().optional(), kind: z.enum(["regular", "transfer", "ap-ib"]), verified: z.boolean() })),
+  completed: z.array(z.object({ courseId: z.string(), grade: z.string().optional(), kind: z.enum(["regular", "transfer", "ap-ib"]), verified: z.boolean(), earnedInstitutionId: z.string().optional() })),
 });
 export const exportSchema = z.object({
   app: z.literal("dream-helper"),
@@ -223,7 +223,7 @@ export const usePlanner = create<PlannerState>()(
 );
 
 /** Validates v1/v2 persisted state and fills only new fields, preserving all user choices. */
-export function migratePlan(state: unknown) {
+export function migratePlan(state: unknown): Partial<z.infer<typeof exportSchema>> {
   if (state == null) return {};
   const d = exportSchema.parse({ ...(state as object), app: "dream-helper", version: 2 });
   return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs };

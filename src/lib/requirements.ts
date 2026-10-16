@@ -1,108 +1,120 @@
-import type { Course, DegreeRequirement, RequirementRule, CompletedCourse } from "./types";
-
-/** completed = earned; projected = planned or in progress. Never mixed. */
+import type { Course, DegreeRequirement, RequirementRule, CompletedCourse, InstitutionRequirementPolicy } from "./types";
 export type ReqStatus = "satisfied" | "projected" | "uncertain" | "unsatisfied";
-
 export interface ReqResult {
-  requirementId: string;
-  label: string;
-  status: ReqStatus;
-  creditsCounted: number;
-  usedCourseIds: string[];
-  notes: string[];
+  requirementId: string; label: string; status: ReqStatus; creditsCounted: number;
+  usedCourseIds: string[]; completedCourseIds: string[]; projectedCourseIds: string[]; uncertainCourseIds: string[]; missingCourseIds: string[]; notes: string[];
 }
-
 export interface EvalContext {
   courses: Course[];
-  completed: Pick<CompletedCourse, "courseId" | "grade" | "verified">[];
-  projected: string[]; // course ids planned / in progress
-  /** Institution rule: if false, one course can satisfy only one requirement. */
+  completed: (Pick<CompletedCourse, "courseId" | "grade" | "verified"> & Partial<Pick<CompletedCourse,"kind" | "earnedInstitutionId">>)[];
+  projected: string[];
   allowDoubleCount?: boolean;
+  institutionPolicies?: InstitutionRequirementPolicy[];
+  programInstitutions?: Record<string,string>;
 }
-
-const GRADES = ["A", "B", "C", "D", "F"];
-const meets = (grade: string | undefined, min: string) => {
-  if (!grade) return null; // unknown
-  const g = GRADES.indexOf(grade.toUpperCase()[0]);
-  return g === -1 ? null : g <= GRADES.indexOf(min);
-};
-
-interface Eval { status: ReqStatus; credits: number; used: string[]; notes: string[] }
-
-function evalRule(rule: RequirementRule, ctx: EvalContext, taken: Set<string>): Eval {
-  const byId = new Map(ctx.courses.map((c) => [c.id, c]));
-  const comp = new Map(ctx.completed.map((c) => [c.courseId, c]));
-  const proj = new Set(ctx.projected);
-
-  switch (rule.type) {
+const GRADE = ["F","D-","D","D+","C-","C","C+","B-","B","B+","A-","A","A+"];
+/** Missing grades, pass/fail and unknown minimums require an official interpretation. */
+export function meetsGrade(grade: string | undefined, minimum: string): boolean | null {
+  const g = GRADE.indexOf(grade?.trim().toUpperCase() ?? "");
+  const min = GRADE.indexOf(minimum.trim().toUpperCase());
+  return g<0 || min<0 ? null : g>=min;
+}
+interface Eval {status:ReqStatus;used:string[];notes:string[];missing:string[]}
+const rank: ReqStatus[] = ["satisfied","projected","uncertain","unsatisfied"];
+const unique = (ids: string[]) => [...new Set(ids)];
+const empty = (notes: string[] = [], missing: string[] = []): Eval => ({status:"unsatisfied",used:[],notes,missing});
+export function ruleCourseIds(rule: RequirementRule): string[] {
+  if(rule.type==="course") return [rule.courseId];
+  if(rule.type==="group") return unique(rule.courseIds);
+  if(rule.type==="credits"||rule.type==="transfer") return ruleCourseIds(rule.from);
+  if(rule.type==="residency") return [];
+  return unique(rule.rules.flatMap(ruleCourseIds));
+}
+function credits(ids:string[],ctx:EvalContext) {return unique(ids).reduce((n,id)=>n+(ctx.courses.find(c=>c.id===id)?.credits??0),0);}
+function combine(parts:Eval[]): Eval {
+  const has=(s:ReqStatus)=>parts.some(p=>p.status===s);
+  return {status:has("unsatisfied")?"unsatisfied":has("uncertain")?"uncertain":has("projected")?"projected":"satisfied",used:unique(parts.flatMap(p=>p.used)),missing:unique(parts.flatMap(p=>p.missing)),notes:unique(parts.flatMap(p=>p.notes))};
+}
+function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval[] {
+  const catalog=new Map(ctx.courses.map(c=>[c.id,c]));
+  const completed=new Map(ctx.completed.map(c=>[c.courseId,c]));
+  switch(rule.type) {
     case "course": {
-      const code = byId.get(rule.courseId)?.code ?? rule.courseId;
-      const cr = byId.get(rule.courseId)?.credits ?? 0;
-      if (taken.has(rule.courseId)) return { status: "unsatisfied", credits: 0, used: [], notes: [`${code} already counts toward another requirement`] };
-      const c = comp.get(rule.courseId);
-      if (c) {
-        if (rule.minGrade) {
-          const ok = meets(c.grade, rule.minGrade);
-          if (ok === null) return { status: "uncertain", credits: cr, used: [rule.courseId], notes: [`${code} needs a ${rule.minGrade} or better; no grade entered`] };
-          if (!ok) return { status: "unsatisfied", credits: 0, used: [], notes: [`${code} grade is below ${rule.minGrade}`] };
+      const course=catalog.get(rule.courseId);const code=course?.code??rule.courseId;
+      if(!course) return [empty([`${code}: course data unknown; check official sources`],[rule.courseId])];
+      if(taken.has(rule.courseId)) return [empty([`${code} already counts toward another requirement`],[rule.courseId])];
+      const c=completed.get(rule.courseId);
+      if(c) {
+        if(rule.minGrade) {
+          const ok=meetsGrade(c.grade,rule.minGrade);
+          if(ok===false) return [empty([`${code} grade is below ${rule.minGrade}`],[rule.courseId])];
+          if(ok===null) return [{status:"uncertain",used:[rule.courseId],missing:[],notes:[`${code} needs ${rule.minGrade} or better; grade interpretation unknown`]}];
         }
-        if (!c.verified) return { status: "uncertain", credits: cr, used: [rule.courseId], notes: [`${code} credit is not yet verified`] };
-        return { status: "satisfied", credits: cr, used: [rule.courseId], notes: [] };
+        return [{status:c.verified?"satisfied":"uncertain",used:[rule.courseId],missing:[],notes:c.verified?[]:[`${code}: ${c.kind==="ap-ib"?"AP/IB":c.kind==="transfer"?"transfer":"reported"} credit needs institutional verification`]}];
       }
-      if (proj.has(rule.courseId)) return { status: "projected", credits: cr, used: [rule.courseId], notes: [`${code} is planned, not yet complete`] };
-      return { status: "unsatisfied", credits: 0, used: [], notes: [`${code} not in your plan`] };
+      if(ctx.projected.includes(rule.courseId)) return [{status:"projected",used:[rule.courseId],missing:[],notes:[`${code} is planned, not yet complete${rule.minGrade?`; needs ${rule.minGrade} or better`:""}`]}];
+      return [empty([`${code} not in your plan`],[rule.courseId])];
     }
     case "all": {
-      const parts: Eval[] = [];
-      const local = new Set(taken);
-      for (const r of rule.rules) { const e = evalRule(r, ctx, local); e.used.forEach((u) => local.add(u)); parts.push(e); }
-      return combine(parts);
+      // A course may support multiple clauses within one requirement, but earns credits once.
+      let combos:Eval[]=[{status:"satisfied",used:[],notes:[],missing:[]}];
+      for(const child of rule.rules) combos=combos.flatMap(a=>candidates(child,ctx,taken).map(b=>combine([a,b]))).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)).slice(0,256);
+      return combos;
     }
-    case "any": {
-      const parts = rule.rules.map((r) => evalRule(r, ctx, new Set(taken)));
-      const rank: ReqStatus[] = ["satisfied", "uncertain", "projected", "unsatisfied"];
-      const best = parts.reduce((a, b) => (rank.indexOf(b.status) < rank.indexOf(a.status) ? b : a), parts[0]);
-      return best ?? { status: "unsatisfied", credits: 0, used: [], notes: [] };
-    }
-    case "group":
-      // A bare group has no threshold; it only has meaning inside a "credits" rule.
-      return { status: "unsatisfied", credits: 0, used: [], notes: ["Course group needs a credit threshold"] };
+    case "any": return rule.rules.length?rule.rules.flatMap(r=>candidates(r,ctx,taken)):[empty(["No alternatives loaded; check official sources"])];
+    case "group": return [empty(["Course group needs a credit threshold"])];
     case "credits": {
-      const list = rule.from.type === "group" ? rule.from.courseIds : [];
-      const items = list.filter((id) => !taken.has(id));
-      let done = 0, proj_ = 0, unverified = 0;
-      const used: string[] = [];
-      for (const id of items) {
-        const cr = byId.get(id)?.credits ?? 0;
-        const c = comp.get(id);
-        if (c) { done += cr; if (!c.verified) unverified += cr; used.push(id); }
-        else if (proj.has(id)) { proj_ += cr; used.push(id); }
+      if(rule.min<=0) return [{status:"satisfied",used:[],notes:[],missing:[]}];
+      // Enumerate group subsets with a bounded dynamic frontier. Nested AND/OR uses its actual branches.
+      const options:Eval[]=[];
+      if(rule.from.type==="group") {
+        let subsets:Eval[]=[{status:"satisfied",used:[],notes:[],missing:[]}];
+        for(const id of unique(rule.from.courseIds)) {
+          const item=candidates({type:"course",courseId:id,minGrade:rule.from.minGrade},ctx,taken)[0];
+          if(item.status==="unsatisfied") continue;
+          const additions=subsets.filter(s=>credits(s.used,ctx)<rule.min).map(s=>combine([s,item]));
+          subsets=[...subsets,...additions].sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx)).slice(0,1024);
+        }
+        options.push(...subsets.filter(s=>credits(s.used,ctx)>=rule.min));
+        if(!options.length) {
+          const all=unique(rule.from.courseIds).map(id=>candidates({type:"course",courseId:id,minGrade:rule.from.type==="group"?rule.from.minGrade:undefined},ctx,taken)[0]);
+          const result=combine(all.filter(e=>e.used.length));
+          options.push({...result,status:"unsatisfied",missing:unique(all.flatMap(e=>e.missing)),notes:[...result.notes,`${credits(result.used,ctx)} of ${rule.min} credits covered`]});
+        }
+      } else {
+        options.push(...candidates(rule.from,ctx,taken).map(e=>credits(e.used,ctx)>=rule.min?e:{...e,status:"unsatisfied" as const,notes:[...e.notes,`${credits(e.used,ctx)} of ${rule.min} credits covered`]}));
       }
-      const notes = [`${done} completed + ${proj_} planned of ${rule.min} credits`];
-      if (done >= rule.min) return unverified && done - unverified < rule.min
-        ? { status: "uncertain", credits: done, used, notes: [...notes, "some credits unverified"] }
-        : { status: "satisfied", credits: done, used, notes };
-      if (done + proj_ >= rule.min) return { status: "projected", credits: done + proj_, used, notes };
-      return { status: "unsatisfied", credits: done + proj_, used, notes };
+      return options.sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
     }
+    case "residency": {
+      const eligible=ctx.courses.filter(c=>c.institutionId===rule.institutionId).map(c=>c.id);
+      const filtered: EvalContext={...ctx,completed:ctx.completed.filter(c=>{
+        const origin=c.earnedInstitutionId??(c.kind==="transfer"||c.kind==="ap-ib"?undefined:catalog.get(c.courseId)?.institutionId);
+        return origin===rule.institutionId;
+      })};
+      return candidates({type:"credits",min:rule.minCredits,from:{type:"group",courseIds:unique([...eligible,...filtered.completed.map(c=>c.courseId)])}},filtered,taken).map(e=>({...e,notes:[...e.notes,`Residency at ${rule.institutionId}: transfer/AP/IB credit is excluded unless its earned institution is known.`]}));
+    }
+    case "transfer": return candidates(rule.from,ctx,taken).map(e=>{
+      const transfer=e.used.filter(id=>{const c=completed.get(id);return c?.kind==="transfer"||c?.kind==="ap-ib";});
+      return credits(transfer,ctx)>rule.maxCredits?{...e,status:"unsatisfied" as const,notes:[...e.notes,`Selected transfer/AP/IB credit exceeds the ${rule.maxCredits}-credit limit`]}:e;
+    });
   }
 }
-
-function combine(parts: Eval[]): Eval {
-  const used = parts.flatMap((p) => p.used);
-  const credits = parts.reduce((n, p) => n + p.credits, 0);
-  const notes = parts.flatMap((p) => p.notes);
-  const has = (s: ReqStatus) => parts.some((p) => p.status === s);
-  const status: ReqStatus = has("unsatisfied") ? "unsatisfied" : has("uncertain") ? "uncertain" : has("projected") ? "projected" : "satisfied";
-  return { status, credits, used, notes };
-}
-
-export function evaluateRequirements(reqs: DegreeRequirement[], ctx: EvalContext): ReqResult[] {
-  const taken = new Set<string>();
-  return reqs.map((r) => {
-    const e = evalRule(r.rule, ctx, ctx.allowDoubleCount ? new Set() : taken);
-    // Only completed or projected usage reserves a course for this requirement.
-    if (!ctx.allowDoubleCount && e.status !== "unsatisfied") e.used.forEach((u) => taken.add(u));
-    return { requirementId: r.id, label: r.label, status: e.status, creditsCounted: e.credits, usedCourseIds: e.used, notes: e.notes };
-  });
+/** Allocate scarce courses to narrow requirements first, then use alternative branches. */
+export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):ReqResult[] {
+  const allocated=new Map<string,string[]>();
+  const results=new Map<string,ReqResult>();
+  const ordered=[...reqs].sort((a,b)=>(ruleCourseIds(a.rule).length||Infinity)-(ruleCourseIds(b.rule).length||Infinity));
+  for(const r of ordered) {
+    const institution=r.institutionId??ctx.programInstitutions?.[r.programId];
+    const policy=ctx.institutionPolicies?.find(p=>p.institutionId===institution);
+    const canShare=(previous:string)=>ctx.allowDoubleCount??(policy?.allowDoubleCount===true||policy?.sharedRequirementPairs?.some(pair=>pair.includes(previous)&&pair.includes(r.id))===true);
+    const taken=new Set([...allocated].filter(([,owners])=>owners.some(owner=>!canShare(owner))).map(([id])=>id));
+    const options=candidates(r.rule,ctx,taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
+    const e=options[0]??empty();
+    if(e.status!=="unsatisfied") e.used.forEach(id=>allocated.set(id,[...(allocated.get(id)??[]),r.id]));
+    const done=e.used.filter(id=>ctx.completed.some(c=>c.courseId===id));
+    results.set(r.id,{requirementId:r.id,label:r.label,status:e.status,creditsCounted:credits(e.used,ctx),usedCourseIds:e.used,completedCourseIds:done,projectedCourseIds:e.used.filter(id=>!done.includes(id)),uncertainCourseIds:done.filter(id=>!ctx.completed.find(c=>c.courseId===id)?.verified),missingCourseIds:e.missing,notes:e.notes});
+  }
+  return reqs.map(r=>results.get(r.id)!);
 }
