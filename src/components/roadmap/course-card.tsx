@@ -37,7 +37,7 @@ export function CourseCard({ planned, course, missing, onStatus, onRemove, dragH
         <button disabled={overlay} tabIndex={overlay ? -1 : undefined} onClick={onRemove} aria-label={`Remove ${course.code}`} className="rounded p-1 text-muted hover:bg-soft hover:text-foreground"><X size={14} /></button>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2 pl-6">
-        <label className="sr-only" htmlFor={`st-${planned.id}`}>Status for {course.code}</label>
+        <label className="sr-only" htmlFor={overlay ? `overlay-${planned.id}` : `st-${planned.id}`}>Status for {course.code}</label>
         <select
           disabled={overlay}
           id={overlay ? undefined : `st-${planned.id}`}

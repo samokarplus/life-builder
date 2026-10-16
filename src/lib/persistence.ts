@@ -1,7 +1,7 @@
 import { createStore, get, set, del } from "idb-keyval";
 import { useSyncExternalStore } from "react";
 import type { StateStorage } from "zustand/middleware";
-export interface SaveState { phase: "loading" | "saving" | "saved" | "error"; lastSaved: number | null; error?: string }
+export interface SaveState { phase: "loading" | "saving" | "saved" | "error"; lastSaved: number | null; error?: string; loadFailed?: boolean }
 let snapshot: SaveState = { phase: "loading", lastSaved: null };
 const serverSnapshot = snapshot;
 const listeners = new Set<() => void>();
@@ -15,17 +15,19 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
   let blocked = false;
   return {
     async getItem(key) {
-      report({phase:"loading",error:undefined});
+      report({phase:"loading",error:undefined,loadFailed:false});
       try {
         const current = await db.get(key);
         const previous = current == null ? legacy()?.getItem("dream-helper:v1") : null;
         // Keep the original localStorage entry as a backup. Zustand validates/migrates before writing v2.
         blocked = false;
-        report({phase:"saved"});
+        let lastSaved: number | null = null;
+        try { const time = JSON.parse(current ?? "null")?.savedAt; if (typeof time === "number" && Number.isFinite(time)) lastSaved = time; } catch { /* validation is handled by persist */ }
+        report({phase:"saved",lastSaved});
         return current ?? previous ?? null;
       } catch {
         blocked = true;
-        report({phase:"error",error:"Browser storage could not be read. Your existing data has not been overwritten."});
+        report({phase:"error",loadFailed:true,error:"Browser storage could not be read. Your existing data has not been overwritten."});
         throw new Error("Unable to load saved plan");
       }
     },
@@ -36,7 +38,13 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
       if (typeof indexedDB === "undefined" && typeof window === "undefined") return;
       report({phase:"saving",error:undefined});
       queue = queue.then(async()=>{
-        try { await db.set(key,value); if(ticket===revision) report({phase:"saved",lastSaved:Date.now(),error:undefined}); }
+        try {
+          const writtenAt=Date.now();
+          let record=value;
+          try { const envelope=JSON.parse(value); if(envelope && typeof envelope==="object" && !Array.isArray(envelope)) record=JSON.stringify({...envelope,savedAt:writtenAt}); } catch { /* StateStorage also accepts opaque strings. */ }
+          await db.set(key,record);
+          if(ticket===revision) report({phase:"saved",lastSaved:writtenAt,error:undefined});
+        }
         catch { if(ticket===revision) report({phase:"error",error:"Your latest changes could not be saved. Export a backup or retry saving."}); }
       });
       await queue;
@@ -47,4 +55,4 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
 let store: ReturnType<typeof createStore> | undefined;
 const database = () => store ??= createStore("dream-helper", "plans");
 export const plannerStorage = createPlannerStorage({ get:key=>get<string>(key,database()), set:(key,value)=>set(key,value,database()), del:key=>del(key,database()) }, ()=>typeof localStorage === "undefined" ? undefined : localStorage);
-export function hydrationFailed() { report({phase:"error",error:"The saved plan could not be validated or loaded. It has not been replaced. Export the original backup before resetting storage."}); }
+export function hydrationFailed() { report({phase:"error",loadFailed:true,error:"The saved plan could not be validated or loaded. It has not been replaced. Export the original backup before resetting storage."}); }

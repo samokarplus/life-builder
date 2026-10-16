@@ -100,21 +100,39 @@ function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval
     });
   }
 }
-/** Allocate scarce courses to narrow requirements first, then use alternative branches. */
+/** Search alternatives together so a flexible rule cannot starve another requirement. */
 export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):ReqResult[] {
-  const allocated=new Map<string,string[]>();
-  const results=new Map<string,ReqResult>();
   const ordered=[...reqs].sort((a,b)=>(ruleCourseIds(a.rule).length||Infinity)-(ruleCourseIds(b.rule).length||Infinity));
-  for(const r of ordered) {
+  const weights:Record<ReqStatus,number>={satisfied:100,projected:10,uncertain:1,unsatisfied:0};
+  let bestScore=-1, visits=0, limited=false;
+  let best=new Map<string,Eval>();
+  function search(index:number,allocated:Map<string,string[]>,chosen:Map<string,Eval>,score:number) {
+    if(++visits>50000){limited=true;return;}
+    if(index===ordered.length){if(score>bestScore){bestScore=score;best=new Map(chosen);}return;}
+    if(score+(ordered.length-index)*100<bestScore)return;
+    const r=ordered[index];
     const institution=r.institutionId??ctx.programInstitutions?.[r.programId];
     const policy=ctx.institutionPolicies?.find(p=>p.institutionId===institution);
-    const canShare=(previous:string)=>ctx.allowDoubleCount??(policy?.allowDoubleCount===true||policy?.sharedRequirementPairs?.some(pair=>pair.includes(previous)&&pair.includes(r.id))===true);
+    const canShare=(previous:string)=>{
+      const prior=reqs.find(r=>r.id===previous);
+      const priorInstitution=prior?.institutionId??ctx.programInstitutions?.[prior?.programId??""];
+      if(institution&&priorInstitution&&institution!==priorInstitution)return true;
+      return ctx.allowDoubleCount??(policy?.allowDoubleCount===true||policy?.sharedRequirementPairs?.some(pair=>pair.includes(previous)&&pair.includes(r.id))===true);
+    };
     const taken=new Set([...allocated].filter(([,owners])=>owners.some(owner=>!canShare(owner))).map(([id])=>id));
     const options=candidates(r.rule,ctx,taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
-    const e=options[0]??empty();
-    if(e.status!=="unsatisfied") e.used.forEach(id=>allocated.set(id,[...(allocated.get(id)??[]),r.id]));
-    const done=e.used.filter(id=>ctx.completed.some(c=>c.courseId===id));
-    results.set(r.id,{requirementId:r.id,label:r.label,status:e.status,creditsCounted:credits(e.used,ctx),usedCourseIds:e.used,completedCourseIds:done,projectedCourseIds:e.used.filter(id=>!done.includes(id)),uncertainCourseIds:done.filter(id=>!ctx.completed.find(c=>c.courseId===id)?.verified),missingCourseIds:e.missing,notes:e.notes});
+    const seen=new Set<string>();
+    for(const e of options){
+      const key=e.status+e.used.slice().sort().join("|");if(seen.has(key))continue;seen.add(key);
+      const next=new Map(allocated);
+      if(e.status!=="unsatisfied")e.used.forEach(id=>next.set(id,[...(next.get(id)??[]),r.id]));
+      chosen.set(r.id,e);search(index+1,next,chosen,score+weights[e.status]);
+    }
   }
-  return reqs.map(r=>results.get(r.id)!);
+  search(0,new Map(),new Map(),0);
+  return reqs.map(r=>{
+    const e=best.get(r.id)??empty(["Allocation could not be evaluated; check official sources"]);
+    const done=e.used.filter(id=>ctx.completed.some(c=>c.courseId===id));
+    return {requirementId:r.id,label:r.label,status:limited&&e.status==="unsatisfied"?"uncertain":e.status,creditsCounted:credits(e.used,ctx),usedCourseIds:e.used,completedCourseIds:done,projectedCourseIds:e.used.filter(id=>!done.includes(id)),uncertainCourseIds:done.filter(id=>!ctx.completed.find(c=>c.courseId===id)?.verified),missingCourseIds:e.missing,notes:limited?[...e.notes,"Allocation search limit reached; review uncertain results with an adviser."]:e.notes};
+  });
 }

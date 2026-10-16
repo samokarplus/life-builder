@@ -12,7 +12,7 @@ export function ConfirmationProvider({ children }: { children: React.ReactNode }
   return <Context.Provider value={(r) => { resolve.current?.(false); setRequest(r); return new Promise<boolean>((done) => { resolve.current = done; }); }}>
     {children}<Modal open={!!request} title={request?.title ?? "Confirm change"} onClose={() => finish(false)}>
       <p className="text-sm leading-relaxed text-muted">{request?.description}</p>
-      <div className="mt-6 flex flex-wrap justify-end gap-2"><button autoFocus type="button" onClick={() => finish(false)} className="rounded-full border border-border px-5 py-2.5 text-sm">Cancel</button><button type="button" onClick={() => finish(true)} className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground">{request?.action ?? "Confirm"}</button></div>
+      <div className="mt-6 flex flex-wrap justify-end gap-2"><button data-autofocus type="button" onClick={() => finish(false)} className="rounded-full border border-border px-5 py-2.5 text-sm">Cancel</button><button type="button" onClick={() => finish(true)} className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground">{request?.action ?? "Confirm"}</button></div>
     </Modal>
   </Context.Provider>;
 }

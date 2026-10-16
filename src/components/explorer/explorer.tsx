@@ -20,10 +20,14 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 export function Explorer() {
-  const { semesters, profile, tuitionPerCredit, addCourse } = usePlanner();
   const params = useSearchParams();
-  const [q, setQ] = useState<string | null>(null);
-  const search = q ?? params.get("q") ?? "";
+  const initialQuery = params.get("q") ?? "";
+  return <CourseExplorer key={initialQuery} initialQuery={initialQuery} />;
+}
+function CourseExplorer({ initialQuery }: { initialQuery: string }) {
+  const { semesters, profile, tuitionPerCredit, addCourse } = usePlanner();
+  const [q, setQ] = useState(initialQuery);
+  const search = q;
   const [inst, setInst] = useState("all");
   const [subj, setSubj] = useState("all");
   const [credits, setCredits] = useState("all");

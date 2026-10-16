@@ -2,7 +2,7 @@
 import { useConfirm } from "@/components/ui/confirmation";
 
 import { useMemo, useState } from "react";
-import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors, type DragEndEvent, type DragStartEvent, type KeyboardCoordinateGetter } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { toast } from "sonner";
 import { Columns3, ListTree, Network, Plus, Redo2, Undo2, Sun, Flag } from "lucide-react";
@@ -42,9 +42,21 @@ export function Roadmap() {
     const pc = sem?.courses.find(p=>p.id===id);
     return pc ? `${catalog.get(pc.courseId)?.code ?? pc.courseId}, ${semesterLabel(sem!)}` : sem ? semesterLabel(sem) : "outside a semester";
   };
+  const keyboardCoordinates: KeyboardCoordinateGetter = (event, args) => {
+    if (event.code !== "ArrowRight" && event.code !== "ArrowLeft") return sortableKeyboardCoordinates(event, args);
+    event.preventDefault();
+    const { active, over, droppableRects } = args.context;
+    if (!active) return;
+    const currentId = over?.id ?? active.id;
+    const current = sorted.findIndex(s=>s.id===currentId || s.courses.some(p=>p.id===currentId));
+    const next = sorted[current + (event.code === "ArrowRight" ? 1 : -1)];
+    if (!next) return;
+    const rect = droppableRects.get(next.courses[0]?.id ?? next.id);
+    return rect ? { x: rect.left, y: rect.top } : undefined;
+  };
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: keyboardCoordinates })
   );
 
   const active = activeId ? semesters.flatMap((s) => s.courses).find((c) => c.id === activeId) : null;
@@ -118,7 +130,7 @@ export function Roadmap() {
       </section>}
 
       {layout === "graph" ? <DependencyGraph /> : (
-      <DndContext accessibility={{screenReaderInstructions:{draggable:"To pick up a course, press Space. Use the arrow keys to move between courses and semesters. Press Space to drop, or Escape to cancel."},announcements:{onDragStart:({active})=>`Picked up ${describeDrag(active.id)}.`,onDragOver:({active,over})=>over?`${describeDrag(active.id)} is over ${describeDrag(over.id)}.`:"Outside a semester.",onDragEnd:({active,over})=>over?`Dropped ${describeDrag(active.id)} at ${describeDrag(over.id)}. Review the plan conflicts for prerequisite or credit warnings.`:"Move cancelled.",onDragCancel:()=>"Move cancelled. Course remains in its original semester."}}} sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
+      <DndContext accessibility={{screenReaderInstructions:{draggable:"To pick up a course, press Space. Use Left and Right for earlier and later semesters, and Up and Down to reorder courses. Press Space to drop, or Escape to cancel."},announcements:{onDragStart:({active})=>`Picked up ${describeDrag(active.id)}.`,onDragOver:({active,over})=>over?`${describeDrag(active.id)} is over ${describeDrag(over.id)}.`:"Outside a semester.",onDragEnd:({active,over})=>over?`Dropped ${describeDrag(active.id)} at ${describeDrag(over.id)}. Review the plan conflicts for prerequisite or credit warnings.`:"Move cancelled.",onDragCancel:()=>"Move cancelled. Course remains in its original semester."}}} sensors={sensors} collisionDetection={closestCorners} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragCancel={() => setActiveId(null)}>
         <div className={cn(layout === "board" ? "grid min-w-0 items-start gap-4 pb-4 sm:grid-cols-2 xl:grid-cols-3" : "mx-auto flex max-w-3xl flex-col gap-6 border-l-2 border-sage/50 pl-4 sm:pl-8")}>
           {sorted.map((s) => (
             <div key={s.id} className="relative min-w-0">

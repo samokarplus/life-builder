@@ -1,14 +1,15 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 export function Reveal({ children }: { children: React.ReactNode }) {
+  const reducedMotion = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ y: reducedMotion ? 0 : 12 }}
+      whileInView={{ y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: reducedMotion ? 0 : 0.5, ease: "easeOut" }}
       className="h-full"
     >
       {children}

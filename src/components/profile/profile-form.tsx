@@ -6,13 +6,13 @@ import { usePlanner, profileSchema } from "@/store/planner";
 import { PRIORITIES } from "@/lib/profile";
 export function ProfileForm() {
   const { profile, setProfile } = usePlanner();
-  const [draft,setDraft]=useState(profile);
+  const [draft,setDraft]=useState({...profile,startingSemester:profile.startingSemester??"fall-2026"});
   const [error,setError]=useState("");
   const input="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm";
   const patch=(p:Partial<typeof draft>)=>setDraft({...draft,...p});
   const save=(e:React.FormEvent)=>{
     e.preventDefault();const result=profileSchema.safeParse(draft);
-    if(!result.success||!draft.major.trim())return setError("Enter a major and valid credit limit (3–24), semester, and nonnegative budget.");
+    if(!result.success||!draft.major.trim())return setError("Enter a major and valid credit limit (1–30), semester, and nonnegative budget.");
     setProfile({...result.data,dream:draft.dream.trim(),major:draft.major.trim()});setError("");toast.success("Profile saved",{description:"Your existing course choices are preserved. Review the roadmap for new conflicts."});
   };
   return <form onSubmit={save} className="mx-auto max-w-2xl space-y-6 rounded-2xl border border-border bg-surface p-5 shadow-card sm:p-7">
@@ -25,7 +25,7 @@ export function ProfileForm() {
       <label className="space-y-1 text-sm">Starting semester<input className={input} value={draft.startingSemester??"fall-2026"} placeholder="fall-2026" onChange={e=>patch({startingSemester:e.target.value})}/></label>
       <label className="space-y-1 text-sm">Degree program<input className={input} value={draft.program??""} placeholder="Your program (user-entered)" onChange={e=>patch({program:e.target.value})}/></label>
       <label className="space-y-1 text-sm">Desired degree<input className={input} value={draft.desiredDegree??""} onChange={e=>patch({desiredDegree:e.target.value})}/></label>
-      <label className="space-y-1 text-sm">Max credits per semester<input required min={3} max={24} step={1} type="number" className={input} value={draft.maxCreditsPerSemester} onChange={e=>patch({maxCreditsPerSemester:Number(e.target.value)})}/></label>
+      <label className="space-y-1 text-sm">Max credits per semester<input required min={1} max={30} step={1} type="number" className={input} value={draft.maxCreditsPerSemester} onChange={e=>patch({maxCreditsPerSemester:Number(e.target.value)})}/></label>
       <label className="space-y-1 text-sm">Total budget ($, user-entered)<input min={0} type="number" className={input} value={draft.budget??""} placeholder="Not set" onChange={e=>patch({budget:e.target.value===""?null:Number(e.target.value)})}/></label>
     </div>
     <fieldset><legend className="mb-3 text-sm font-medium">What matters most?</legend><p className="mb-3 text-xs text-muted">The first selected priority leads comparison messages.</p><div className="flex flex-wrap gap-2">{PRIORITIES.map(p=><button key={p} type="button" aria-pressed={draft.priorities.includes(p)} onClick={()=>patch({priorities:draft.priorities.includes(p)?draft.priorities.filter(x=>x!==p):[...draft.priorities,p]})} className={`rounded-full border px-3 py-2 text-sm ${draft.priorities.includes(p)?"border-primary bg-soft text-primary":"border-border hover:bg-soft"}`}>{p}</button>)}</div></fieldset>

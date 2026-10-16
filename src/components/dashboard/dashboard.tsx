@@ -5,6 +5,7 @@ import { AlertCircle, ArrowRight, CalendarDays, CircleDollarSign, Flag, Graduati
 import { courses, institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { prereqIssues, progress, semesterLabel, sortSemesters } from "@/lib/schedule";
+import { pathMetrics } from "@/lib/compare";
 import { semesterCredits } from "@/lib/credits";
 import { RequirementsPanel } from "@/components/roadmap/requirements-panel";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,10 @@ export function Dashboard() {
   const upcoming = sorted.find((s) => s.courses.some((c) => c.status === "planned")) ?? sorted[0];
   const lastTransferSem = [...sorted].reverse().find((s) => s.institutionId === profile.currentInstitutionId && s.courses.length);
   const firstDest = sorted.find((s) => s.institutionId === profile.destinationInstitutionId);
-  const cur = institutions.find((i) => i.id === profile.currentInstitutionId)!;
-  const dest = institutions.find((i) => i.id === profile.destinationInstitutionId)!;
+  const cur = institutions.find((i) => i.id === profile.currentInstitutionId) ?? { shortName: "Current institution" };
+  const dest = institutions.find((i) => i.id === profile.destinationInstitutionId) ?? { shortName: "Destination institution" };
 
-  const rate = tuitionPerCredit[profile.currentInstitutionId];
+  const tuition = pathMetrics(semesters,courses,profile.completed,tuitionPerCredit).tuition;
   const remainingCr = prog.inProgress + prog.planned;
   const unverified = semesters.flatMap((s) => s.courses).length;
 
@@ -58,7 +59,7 @@ export function Dashboard() {
 
       <ol className="mt-8 flex flex-wrap items-center gap-2" aria-label="Pathway">
         {milestones.map((m, i) => (
-          <li key={m.label} className="flex items-center gap-2">
+          <li key={`${i}-${m.label}`} className="flex items-center gap-2">
             <Link href={m.href} className="block rounded-xl border border-border bg-surface px-4 py-2 shadow-card transition hover:border-sage">
               <span className="block text-sm font-medium">{m.label}</span>
               <span className="block text-xs text-muted">{m.sub}</span>
@@ -72,18 +73,18 @@ export function Dashboard() {
         <Card title="Degree progress" icon={GraduationCap}>
           <div className="flex items-end justify-between">
             <p className="tabular font-serif text-5xl">{prog.percent}<span className="text-2xl text-muted">%</span></p>
-            <p className="tabular text-right text-sm text-muted">{prog.completed} of {requiredCredits} credits complete</p>
+            <p className="tabular text-right text-sm text-muted">{prog.completed} of {requiredCredits} credits reported complete</p>
           </div>
           <div className="mt-4 flex h-2.5 overflow-hidden rounded-full bg-warm" role="img" aria-label={`${prog.completed} completed, ${prog.inProgress} in progress of ${requiredCredits} credits`}>
             <div className="bg-primary" style={{ width: `${(prog.completed / requiredCredits) * 100}%` }} />
             <div className="bg-sage" style={{ width: `${(prog.inProgress / requiredCredits) * 100}%` }} />
           </div>
           <dl className="tabular mt-4 grid grid-cols-3 text-sm">
-            <div><dt className="text-xs text-muted">Completed</dt><dd>{prog.completed}</dd></div>
+            <div><dt className="text-xs text-muted">Reported complete</dt><dd>{prog.completed}</dd></div>
             <div><dt className="text-xs text-muted">In progress</dt><dd>{prog.inProgress}</dd></div>
             <div><dt className="text-xs text-muted">Remaining</dt><dd>{prog.remaining}</dd></div>
           </dl>
-          <p className="mt-3 text-xs text-muted">Total of {requiredCredits} credits is a sample assumption (edit in Settings). Credit totals alone don&apos;t confirm degree completion.</p>
+          <p className="mt-3 text-xs text-muted">{prog.verifiedCompleted} credits marked verified; {prog.unverifiedCompleted} reported-completed credits need verification. Total of {requiredCredits} credits is a sample assumption (edit in Settings). Credit totals alone don&apos;t confirm degree completion.</p>
         </Card>
 
         <Card title="Next milestone" icon={Flag}>
@@ -94,10 +95,10 @@ export function Dashboard() {
         </Card>
 
         <Card title="Estimated cost" icon={CircleDollarSign}>
-          {rate != null ? (
+          {tuition != null ? (
             <>
-              <p className="tabular font-serif text-4xl">~${(remainingCr * rate).toLocaleString()}</p>
-              <p className="mt-2 text-sm text-muted">{remainingCr} credits × ${rate}/credit at {cur.shortName}. Tuition only.</p>
+              <p className="tabular font-serif text-4xl">~${tuition.toLocaleString()}</p>
+              <p className="mt-2 text-sm text-muted">Remaining coursework priced by its planned institution, using your entered rates. Tuition only.</p>
               <p className="mt-2 text-xs text-muted">User-entered rate. Not verified; excludes fees, books and aid.</p>
             </>
           ) : (

@@ -11,7 +11,7 @@ export const profileSchema = z.object({
   currentInstitutionId: z.string(),
   destinationInstitutionId: z.string(),
   major: z.string(),
-  maxCreditsPerSemester: z.number().int().min(3).max(24),
+  maxCreditsPerSemester: z.number().int().min(1).max(30),
   priorities: z.array(z.string()),
   startingSemester: z.string().regex(/^(fall|spring|summer)-20\d{2}$/).optional(), program: z.string().optional(), desiredDegree: z.string().optional(),
   budget: z.number().nonnegative().nullable().optional(), unverifiedExternalCredits: z.number().nonnegative().optional(),

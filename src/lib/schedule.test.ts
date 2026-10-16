@@ -43,3 +43,8 @@ describe("generatePlan", () => {
     expect(sortSemesters(plan).at(-1)!.institutionId).toBe("cub");
   });
 });
+it("keeps reported completion distinct and avoids duplicate planned credit",()=>{
+ const ss=[{...sampleSemesters[0],courses:[{id:"one",courseId:"frcc:HIS-1120",status:"planned" as const},{id:"two",courseId:"frcc:HIS-1120",status:"completed" as const}]}];
+ const p=progress(ss,courses,[],60);expect(p.completed).toBe(3);expect(p.unverifiedCompleted).toBe(3);expect(p.verifiedCompleted).toBe(0);expect(p.planned).toBe(0);
+ const verified=progress(ss,courses,[{courseId:"frcc:HIS-1120",kind:"regular",verified:true},{courseId:"frcc:HIS-1120",kind:"regular",verified:true}],60);expect(verified.completed).toBe(3);expect(verified.verifiedCompleted).toBe(3);
+});

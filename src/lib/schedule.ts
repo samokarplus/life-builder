@@ -33,6 +33,8 @@ export function prereqIssues(semesters: Semester[], courses: Course[], completed
 
 export interface Progress {
   completed: number;
+  verifiedCompleted: number;
+  unverifiedCompleted: number;
   inProgress: number;
   planned: number;
   remaining: number;
@@ -42,18 +44,22 @@ export interface Progress {
 /** Completed = profile-completed courses + planned entries marked completed (no double counting). */
 export function progress(semesters: Semester[], courses: Course[], completed: CompletedCourse[], required: number): Progress {
   const byId = new Map(courses.map((c) => [c.id, c.credits]));
-  const counted = new Set<string>();
-  let done = 0, inProg = 0, planned = 0;
-  for (const c of completed) { counted.add(c.courseId); done += byId.get(c.courseId) ?? 0; }
-  for (const s of semesters) for (const p of s.courses) {
-    if (counted.has(p.courseId)) continue;
-    const cr = byId.get(p.courseId) ?? 0;
-    if (p.status === "completed") { done += cr; counted.add(p.courseId); }
-    else if (p.status === "in-progress") inProg += cr;
-    else planned += cr;
+  const statusRank = { planned: 0, "in-progress": 1, completed: 2 };
+  const entries = new Map<string, { status: "planned" | "in-progress" | "completed"; verified: boolean }>();
+  for (const c of completed) entries.set(c.courseId, { status: "completed", verified: c.verified || entries.get(c.courseId)?.verified === true });
+  for (const sem of semesters) for (const p of sem.courses) {
+    const previous=entries.get(p.courseId);
+    if (!previous || statusRank[p.status] > statusRank[previous.status]) entries.set(p.courseId,{status:p.status,verified:false});
+  }
+  let done=0,inProg=0,planned=0,verifiedCompleted=0;
+  for (const [id,entry] of entries) {
+    const cr=byId.get(id)??0;
+    if(entry.status==="completed"){done+=cr;if(entry.verified)verifiedCompleted+=cr;}
+    else if(entry.status==="in-progress")inProg+=cr;
+    else planned+=cr;
   }
   const remaining = Math.max(0, required - done - inProg);
-  return { completed: done, inProgress: inProg, planned, remaining, percent: required ? Math.min(100, Math.round((done / required) * 100)) : 0 };
+  return { completed: done, verifiedCompleted, unverifiedCompleted: done - verifiedCompleted, inProgress: inProg, planned, remaining, percent: required ? Math.min(100, Math.round((done / required) * 100)) : 0 };
 }
 
 /**

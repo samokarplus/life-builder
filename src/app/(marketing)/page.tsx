@@ -40,14 +40,14 @@ export default function Landing() {
         <h2 id="how" className="font-serif text-3xl md:text-4xl">Five steps from dream to diploma</h2>
         <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {steps.map(({ icon: Icon, title, body }, i) => (
-            <Reveal key={title}>
-              <li className="h-full rounded-[14px] border border-border bg-surface p-6 shadow-card">
+            <li key={title}><Reveal>
+              <article className="h-full rounded-[14px] border border-border bg-surface p-6 shadow-card">
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-soft text-primary"><Icon size={18} aria-hidden /></span>
                 <p className="tabular mt-4 text-xs text-muted">0{i + 1}</p>
                 <h3 className="mt-1 font-medium">{title}</h3>
                 <p className="mt-2 text-sm text-muted">{body}</p>
-              </li>
-            </Reveal>
+              </article>
+            </Reveal></li>
           ))}
         </ol>
       </section>

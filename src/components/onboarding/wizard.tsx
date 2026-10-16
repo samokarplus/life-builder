@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { courses, institutions } from "@/data/sample";
@@ -20,6 +20,7 @@ const titles = ["What would you love to do someday?", "Where are you starting?",
 const field = "h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm";
 
 export function Wizard() {
+  const reducedMotion = useReducedMotion();
   const router = useRouter();
   const finish = usePlanner((s) => s.completeOnboarding);
   const [step, setStep] = useState(0);
@@ -69,7 +70,7 @@ export function Wizard() {
       </div>
 
       <AnimatePresence mode="wait">
-        <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }} className="flex-1">
+        <motion.div key={step} initial={{ x: reducedMotion ? 0 : 24 }} animate={{ x: 0 }} exit={{ x: reducedMotion ? 0 : -24 }} transition={{ duration: reducedMotion ? 0 : 0.25 }} className="flex-1">
           <h1 className="font-serif text-4xl">{titles[step]}</h1>
 
           {step === 0 && (
@@ -140,7 +141,7 @@ export function Wizard() {
                 <input type="number" min={0} className={cn(field, "mt-1")} value={otherCredits} onChange={(e) => setOtherCredits(Number(e.target.value))} />
                 <span className="mt-1 block text-xs text-muted">Saved separately as unverified. Not applied to requirements until specific course credit is reviewed.</span>
               </label>
-              <p className="tabular rounded-xl bg-soft px-4 py-3 text-sm" role="status">{doneCredits} credits counted so far{otherCredits > 0 ? ` (${otherCredits} unverified)` : ""}</p>
+              <p className="tabular rounded-xl bg-soft px-4 py-3 text-sm" role="status">{doneCredits} credits reported so far{otherCredits > 0 ? ` (${otherCredits} unverified)` : ""}</p>
             </div>
           )}
 

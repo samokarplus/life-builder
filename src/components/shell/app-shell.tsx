@@ -10,6 +10,7 @@ import { navItems } from "./nav";
 import { AssistantPanel } from "./assistant-panel";
 import { Modal } from "@/components/ui/modal";
 import { SaveStatus } from "./save-status";
+import { institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 
 function Nav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
@@ -46,10 +47,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const onboarded = usePlanner((s) => s.onboarded);
+  const profile = usePlanner((s)=>s.profile);
+  const institutionName = (id:string) => institutions.find(i=>i.id===id)?.shortName ?? "Unknown institution";
 
   return (
     <div className="flex min-h-screen"><a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-surface focus:p-3">Skip to content</a>
-      <aside className={cn("hidden shrink-0 flex-col gap-4 border-r border-border bg-surface py-4 transition-all md:flex", collapsed ? "w-16" : "w-60")}>
+      <aside className={cn("hidden shrink-0 flex-col gap-4 border-r border-border bg-surface py-4 transition-all lg:flex", collapsed ? "w-16" : "w-60")}>
         <Link href="/" className="flex items-center gap-2 px-5 font-serif text-lg text-primary">
           <Sparkles size={18} aria-hidden />
           {!collapsed && "Dream Helper"}
@@ -69,8 +72,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur">
-          <button aria-label="Open menu" className="md:hidden" onClick={() => setMobileOpen(true)}><Menu size={20} /></button>
-          <span className="hidden rounded-full bg-soft px-3 py-1 text-xs font-medium text-primary sm:inline">FRCC → CU Boulder · {onboarded ? "Your plan" : "Sample plan"}</span>
+          <button aria-label="Open menu" className="lg:hidden" onClick={() => setMobileOpen(true)}><Menu size={20} /></button>
+          <span className="hidden rounded-full bg-soft px-3 py-1 text-xs font-medium text-primary sm:inline">{institutionName(profile.currentInstitutionId)} → {institutionName(profile.destinationInstitutionId)} · {onboarded ? "Your plan" : "Sample plan"}</span>
           <form onSubmit={(e)=>{e.preventDefault();router.push(`/explorer?q=${encodeURIComponent(search)}`);}} className="relative ml-auto hidden max-w-xs flex-1 sm:block">
             <Search size={15} className="absolute left-3 top-2.5 text-muted" aria-hidden />
             <input

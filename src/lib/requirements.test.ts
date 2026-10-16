@@ -65,3 +65,8 @@ describe("institution policies and nested requirements",()=>{
  it("never satisfies a missing course record",()=>{expect(evaluateRequirements([req("missing",{type:"course",courseId:"unknown"})],{...base,completed:[earned("unknown")]})[0].status).toBe("unsatisfied");});
  it("handles empty alternatives and a zero-credit threshold",()=>{expect(evaluateRequirements([req("any",{type:"any",rules:[]}),req("zero",{type:"credits",min:0,from:{type:"group",courseIds:[]}})],{...base,completed:[]}).map(x=>x.status)).toEqual(["unsatisfied","satisfied"]);});
 });
+it("backtracks across flexible rules instead of greedily exhausting shared courses",()=>{
+ const [a,b,c]=courses.slice(0,3).map(c=>c.id);const either=(id:string,ids:string[])=>({id,label:id,sourceId:"src-sample",programId:"test",rule:{type:"any" as const,rules:ids.map(courseId=>({type:"course" as const,courseId}))}});
+ const result=evaluateRequirements([either("first",[a,b]),either("second",[a,c]),either("third",[a,c])],{courses,projected:[],completed:[a,b,c].map(courseId=>({courseId,verified:true}))});
+ expect(result.map(r=>r.status)).toEqual(["satisfied","satisfied","satisfied"]);expect(result[0].usedCourseIds).toEqual([b]);
+});

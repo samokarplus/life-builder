@@ -17,3 +17,4 @@ describe("versioned IndexedDB adapter",()=>{
  it("does not overwrite data after a failed read",async()=>{let writes=0;const adapter=createPlannerStorage({get:async()=>{throw Error("unavailable");},set:async()=>{writes++;},del:async()=>{}},()=>undefined);await expect(adapter.getItem("p")).rejects.toThrow();await adapter.setItem("p","replacement");expect(writes).toBe(0);});
  it("rejects malformed legacy state instead of silently replacing it",()=>{expect(()=>migratePlan({profile:{major:"only field"}})).toThrow();});
 });
+it("retains an actual write timestamp in the persisted envelope",async()=>{const {db,m}=memory();const adapter=createPlannerStorage(db,()=>undefined);await adapter.setItem("p",JSON.stringify({state:{value:1},version:2}));const envelope=JSON.parse(m.get("p")!);expect(envelope.savedAt).toBeTypeOf("number");expect(envelope.state).toEqual({value:1});expect(JSON.parse(await adapter.getItem("p") as string).savedAt).toBe(envelope.savedAt);});

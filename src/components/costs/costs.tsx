@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { courses } from "@/data/sample";
 import { usePlanner, type CostInputs } from "@/store/planner";
@@ -12,10 +13,15 @@ function NumField({ label, value, onChange, max = 1_000_000, hint }: { label: st
   const bad = !Number.isFinite(value) || value < 0 || value > max;
   return (
     <label className="flex flex-col gap-1 text-sm">{label}
-      <input type="number" min={0} value={value} onChange={(e) => { const n = Number(e.target.value); if (Number.isFinite(n) && n >= 0 && n <= max) onChange(n); }} aria-invalid={bad} className="h-10 rounded-xl border border-border bg-background px-3" />
+      <input aria-label={label} type="number" min={0} value={value} onChange={(e) => { const n = Number(e.target.value); if (Number.isFinite(n) && n >= 0 && n <= max) onChange(n); }} aria-invalid={bad} className="h-10 rounded-xl border border-border bg-background px-3" />
       {hint && <span className="text-xs text-muted">{hint}</span>}
     </label>
   );
+}
+
+function TuitionField({ label, value, onChange }: { label: string; value: number | null; onChange: (value: number | null) => void }) {
+ const [error,setError]=useState("");
+ return <label className="flex flex-col gap-1 text-sm">{label}<input aria-label={label} type="number" min={0} max={5000} placeholder="Not set" value={value??""} aria-invalid={!!error} onChange={e=>{const raw=e.target.value;const n=raw===""?null:Number(raw);if(n!==null&&(!Number.isFinite(n)||n<0||n>5000)){setError("Enter a per-credit rate from 0 to 5000. Your previous rate is kept.");return;}setError("");onChange(n);}} className="h-10 rounded-xl border border-border bg-background px-3"/>{error&&<span role="alert" className="text-xs text-amber-800 dark:text-amber-300">{error}</span>}<span className="text-xs text-muted">{value===null?"Unknown — no rate entered":"User-entered rate"}</span></label>;
 }
 
 export function Costs() {
@@ -23,8 +29,8 @@ export function Costs() {
   const r = costBreakdown(semesters, courses, tuitionPerCredit, { current: profile.currentInstitutionId, dest: profile.destinationInstitutionId }, x);
   const set = (k: keyof CostInputs) => (n: number) => setCostInputs({ [k]: n });
   const chart = [
-    { name: "FRCC", Tuition: r.frcc.tuition ?? 0, Fees: r.frcc.fees, Books: r.frcc.books },
-    { name: "CU Boulder", Tuition: r.dest.tuition ?? 0, Fees: r.dest.fees, Books: r.dest.books },
+    { name: "FRCC", Tuition: r.frcc.tuition, Fees: r.frcc.fees, Books: r.frcc.books },
+    { name: "CU Boulder", Tuition: r.dest.tuition, Fees: r.dest.fees, Books: r.dest.books },
   ];
   const missing = r.frcc.tuition == null || r.dest.tuition == null;
   const card = "rounded-[14px] border border-border bg-surface p-5 shadow-card";
@@ -33,10 +39,10 @@ export function Costs() {
     <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
       <section className={card}>
         <h2 className="font-medium">Your assumptions</h2>
-        <p className="mb-4 mt-1 text-xs text-muted">Every figure below is <strong>user-entered</strong>. No verified tuition data is loaded, so nothing is pre-filled.</p>
+        <p className="mb-4 mt-1 text-xs text-muted">Rates and expenses are <strong>user-entered</strong>. The destination load starts with illustrative defaults (4 semesters × 15 credits), editable below. No tuition rates are pre-filled.</p>
         <div className="grid gap-4 sm:grid-cols-2">
-          <NumField label="FRCC tuition per credit ($)" value={tuitionPerCredit.frcc ?? 0} onChange={(n) => setTuition("frcc", n || null)} max={5000} hint={tuitionPerCredit.frcc == null ? "Not set" : undefined} />
-          <NumField label="CU Boulder tuition per credit ($)" value={tuitionPerCredit.cub ?? 0} onChange={(n) => setTuition("cub", n || null)} max={5000} hint={tuitionPerCredit.cub == null ? "Not set" : undefined} />
+          <TuitionField label="FRCC tuition per credit ($)" value={tuitionPerCredit.frcc ?? null} onChange={(n) => setTuition("frcc", n)} />
+          <TuitionField label="CU Boulder tuition per credit ($)" value={tuitionPerCredit.cub ?? null} onChange={(n) => setTuition("cub", n)} />
           <label className="flex flex-col gap-1 text-sm">Residency
             <select value={x.residency} onChange={(e) => setCostInputs({ residency: e.target.value as CostInputs["residency"] })} className="h-10 rounded-xl border border-border bg-background px-3"><option value="in-state">In-state</option><option value="out-of-state">Out-of-state</option></select>
             <span className="text-xs text-muted">A label only; enter the matching rates above.</span>
@@ -79,6 +85,7 @@ export function Costs() {
         </section>
 
         <section className={card}>
+          <p className="mb-3 text-xs text-muted">Missing tuition rates are omitted from the chart. Amounts shown use your assumptions, not verified rates.</p>
           <div className="h-56" role="img" aria-label="Stacked bar chart of tuition, fees and books at FRCC and CU Boulder">
             <ResponsiveContainer>
               <BarChart data={chart}>
