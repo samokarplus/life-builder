@@ -25,3 +25,10 @@
 - Baseline: 29 unit tests and production build passed before edits.
 - Final checks passed: 65 unit tests, `npx eslint src`, and `npx next build`. All 15 Playwright tests passed against the production build, including 84 screenshots across 10 pages, 3 widths and 2 themes plus alternate roadmap views/drawers/dialogs. Axe reported zero WCAG 2 A/AA and 2.1 AA violations in the tested states; page-width checks found no overflow at 375px. Screenshots were visually reviewed.
 - Dependency audit: zero production advisories (`npm audit --omit=dev`). Five pre-existing high-severity development-tool advisories remain in the ESLint configuration/glob dependency chain; npm proposes an incompatible major configuration change, so no forced downgrade was applied.
+
+## UI and strength pass (claude/ui-and-strength-pass)
+
+- Landing: sticky navigation with anchors, hero glow, promise cards (private, sourced, never guesses), closing call to action, hover-lift cards.
+- Dashboard: "you are here" journey cards, progress ring, credits-per-semester chart (amber above your limit), and a Plan health checklist (prerequisites, credit limit, empty terms, unverified completed credit). Checks run on the plan only and are labeled as not a degree audit.
+- Roadmap: Ctrl/Cmd+Z undo and Shift+Ctrl/Cmd+Z / Ctrl+Y redo, ignored while typing.
+- Added `planHealth` with tests (67 unit tests); all 15 Playwright tests, including axe, contrast and 375px overflow checks, still pass.
