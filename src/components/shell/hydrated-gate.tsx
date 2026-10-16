@@ -1,16 +1,9 @@
 "use client";
-
+import { usePathname } from "next/navigation";
 import { useHydrated } from "@/store/planner";
-
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 export function HydratedGate({ children }: { children: React.ReactNode }) {
   const ready = useHydrated();
-  if (!ready) {
-    return (
-      <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading your plan">
-        <div className="h-10 w-64 rounded-xl bg-warm" />
-        <div className="h-64 rounded-[14px] bg-warm" />
-      </div>
-    );
-  }
-  return <>{children}</>;
+  const path = usePathname();
+  return ready ? <>{children}</> : <PageSkeleton page={path.split("/")[1]} />;
 }

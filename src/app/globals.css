@@ -62,3 +62,23 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Calm surfaces, readable secondary text, and tactile controls. */
+:root { --muted: #60695f; }
+.dark { --muted: #b0b9b1; }
+body { line-height: 1.55; }
+h1, h2, h3 { text-wrap: balance; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled), summary, select { cursor: pointer; }
+button, a { transition: background-color 160ms, color 160ms, border-color 160ms, box-shadow 160ms, transform 160ms; }
+button:disabled { cursor: not-allowed; }
+input, select, textarea { min-width: 0; max-width: 100%; }
+select { background-color: var(--surface); }
+button:active:not(:disabled) { transform: translateY(1px); }
+dialog { overflow-y: auto; overscroll-behavior: contain; }
+dialog[open] { animation: arrive 180ms ease-out; }
+dialog.drawer[open] { animation: slide-in 220ms ease-out; }
+.page-enter { animation: arrive 240ms ease-out; }
+@keyframes arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-in { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }

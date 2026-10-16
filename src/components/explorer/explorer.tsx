@@ -101,10 +101,10 @@ export function Explorer() {
         </div>
       )}
 
-      <Modal open={!!open} onClose={() => setOpen(null)} title={open ? `${open.code} — ${open.title}` : ""}>
+      <Modal drawer open={!!open} onClose={() => setOpen(null)} title={open ? `${open.code} — ${open.title}` : ""}>
         {open && (
           <div className="space-y-4 text-sm">
-            <dl className="grid grid-cols-[8rem_1fr] gap-y-2">
+            <dl className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-y-2">
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
               <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} <span className="text-xs text-muted">(assumed in sample)</span></dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>

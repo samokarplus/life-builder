@@ -1,4 +1,5 @@
 "use client";
+import { useConfirm } from "@/components/ui/confirmation";
 
 import { useMemo, useState } from "react";
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
@@ -22,6 +23,7 @@ type Layout = "timeline" | "board" | "graph";
 type SemForm = { id?: string; term: Semester["term"]; year: number; institutionId: string };
 
 export function Roadmap() {
+  const confirm = useConfirm();
   const store = usePlanner();
   const { semesters, profile, tuitionPerCredit } = store;
   const [layout, setLayout] = useState<Layout>("board");
@@ -76,9 +78,9 @@ export function Roadmap() {
     toast.success(form.id ? "Semester updated" : `${semesterLabel(form)} added`);
     setForm(null);
   };
-  const deleteSemester = (s: Semester) => {
+  const deleteSemester = async (s: Semester) => {
     const n = s.courses.length;
-    if (n && !window.confirm(`Delete ${semesterLabel(s)} and remove its ${n} course${n > 1 ? "s" : ""} from your plan? You can undo this.`)) return;
+    if (n && !await confirm({ title: `Delete ${semesterLabel(s)}?`, description: `This removes its ${n} courses from your plan. You can undo this on the roadmap.`, action: "Delete semester" })) return;
     store.removeSemester(s.id);
     toast(`${semesterLabel(s)} deleted`, { action: { label: "Undo", onClick: () => usePlanner.getState().undo() } });
   };

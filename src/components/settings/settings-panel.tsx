@@ -1,4 +1,5 @@
 "use client";
+import { useConfirm } from "@/components/ui/confirmation";
 
 import { useRef, useState } from "react";
 import { Download, RotateCcw, Upload } from "lucide-react";
@@ -8,6 +9,7 @@ import { institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 
 export function SettingsPanel() {
+  const confirm = useConfirm();
   const s = usePlanner();
   const { theme, setTheme } = useTheme();
   const file = useRef<HTMLInputElement>(null);
@@ -29,6 +31,7 @@ export function SettingsPanel() {
     toast.success("Plan exported");
   };
   const importFile = async (f: File) => {
+    if (!await confirm({ title: "Import this plan?", description: "Import replaces your saved profile, roadmap, scenarios and cost inputs. Export a backup first.", action: "Import plan" })) return;
     const r = s.importJson(await f.text());
     if (r.ok) toast.success("Plan imported"); else toast.error(r.error);
   };
@@ -67,7 +70,7 @@ export function SettingsPanel() {
           <button onClick={() => file.current?.click()} className="flex h-9 items-center gap-2 rounded-full border border-border px-4 text-sm hover:bg-soft"><Upload size={15} /> Import</button>
           <input ref={file} type="file" accept="application/json" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) importFile(f); e.target.value = ""; }} />
           <button
-            onClick={() => { if (window.confirm("Reset everything back to the sample plan? Export first if you want a backup.")) { s.resetToSample(); toast("Reset to sample plan"); } }}
+            onClick={async () => { if (await confirm({ title: "Reset your plan?", description: "This replaces your profile, courses and scenarios with the illustrative sample. Export first if you want a backup.", action: "Reset to sample" })) { s.resetToSample(); toast("Reset to sample plan"); } }}
             className="flex h-9 items-center gap-2 rounded-full border border-border px-4 text-sm text-amber-700 hover:bg-soft dark:text-amber-400"
           ><RotateCcw size={15} /> Reset</button>
         </div>
