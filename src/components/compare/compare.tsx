@@ -9,6 +9,7 @@ import { courses } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { pathMetrics, whatChanged, type PathMetrics } from "@/lib/compare";
 import { generatePlan, sortSemesters } from "@/lib/schedule";
+import { priorityMessage } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 
 const PRESETS = [
@@ -76,6 +77,7 @@ export function Compare() {
 
   return (
     <div className="space-y-8">
+      <p role="status" className="rounded-2xl border border-border bg-soft p-4 text-sm">{priorityMessage(profile.priorities[0],shown)}</p>
       <section className="rounded-[14px] border border-border bg-surface p-5 shadow-card">
         <h2 className="font-medium">Create a scenario</h2>
         <div className="mt-3 flex flex-wrap gap-2">

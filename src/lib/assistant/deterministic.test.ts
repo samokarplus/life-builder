@@ -22,3 +22,4 @@ describe("deterministic assistant", () => {
     expect(await deterministicProvider.answer("What if I switch to psychology?", ctx)).toMatch(/isn't loaded/);
   });
 });
+it("covers stored priorities, workloads and unknown transfer credit",async()=>{expect(await deterministicProvider.answer("What are my priorities?",ctx)).toContain("15 credits");expect(await deterministicProvider.answer("Is my load too high?",{...ctx,profile:{...ctx.profile,maxCreditsPerSemester:12}})).toContain("3 over");expect(await deterministicProvider.answer("Will AP credit transfer?",ctx)).toContain("unknown, check official sources");});

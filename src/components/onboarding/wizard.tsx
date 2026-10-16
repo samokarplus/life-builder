@@ -50,7 +50,7 @@ export function Wizard() {
 
   const generate = () => {
     const [term, y] = semester.split("-");
-    const profile = { ...defaultProfile, dream: unsure ? "Still exploring" : dream.trim(), major, priorities, maxCreditsPerSemester: maxCredits, completed };
+    const profile = { ...defaultProfile, dream: unsure ? "Still exploring" : dream.trim(), major, priorities, maxCreditsPerSemester: maxCredits, completed, startingSemester: semester, program, desiredDegree: degree, budget: budget ? Number(budget) : null, unverifiedExternalCredits: otherCredits };
     const semesters = generatePlan(profile, courses, { term: term as "fall" | "spring", year: Number(y) });
     finish(profile, semesters);
     toast.success("Your roadmap is ready", { description: "Generated from sample catalog data. Assumptions are listed on your dashboard." });
@@ -138,7 +138,7 @@ export function Wizard() {
               )}
               <label className="block text-sm">Other transfer / AP / IB credits
                 <input type="number" min={0} className={cn(field, "mt-1")} value={otherCredits} onChange={(e) => setOtherCredits(Number(e.target.value))} />
-                <span className="mt-1 block text-xs text-muted">Counted as unverified until your institution reviews them.</span>
+                <span className="mt-1 block text-xs text-muted">Saved separately as unverified. Not applied to requirements until specific course credit is reviewed.</span>
               </label>
               <p className="tabular rounded-xl bg-soft px-4 py-3 text-sm" role="status">{doneCredits} credits counted so far{otherCredits > 0 ? ` (${otherCredits} unverified)` : ""}</p>
             </div>

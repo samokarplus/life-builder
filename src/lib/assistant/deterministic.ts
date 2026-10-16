@@ -1,3 +1,5 @@
+import { progress, semesterLabel } from "../schedule";
+import { creditWarnings } from "../roadmap";
 import type { AssistantProvider, AssistantContext } from "./provider";
 
 const OFFICIAL = "I don't have verified data for that. Please check with your institution's advising office or official catalog.";
@@ -17,6 +19,11 @@ export const deterministicProvider: AssistantProvider = {
   name: "Built-in (no AI key configured)",
   async answer(question, c) {
     const q = question.toLowerCase();
+    if (/priority|priorities|prefer/.test(q)) return `Your selected priorities: ${c.profile.priorities.join(", ") || "none selected"}. Your maximum is ${c.profile.maxCreditsPerSemester} credits per semester. Update these in Profile; existing course choices will be preserved.`;
+    if (/overload|too many|load|maximum|lighter/.test(q)) { const warnings=creditWarnings(c.semesters,c.courses,c.profile.maxCreditsPerSemester);return warnings.length ? warnings.map(w=>`${semesterLabel(c.semesters.find(s=>s.id===w.semesterId)!)} has ${w.credits} credits, ${w.excess} over your ${w.maximum}-credit limit.`).join(" ")+" Move courses on the roadmap or change your limit in Profile." : `Every planned semester is within your ${c.profile.maxCreditsPerSemester}-credit limit. Course availability is unknown, check official sources.`; }
+    if (/transfer|equivalen|ap.?ib|ap credit|ib credit/.test(q)) return "Transfer equivalencies and AP/IB acceptance are unknown, check official sources. Unverified credit remains uncertain and never confirms eligibility. Your reported external credit is kept separately from specific approved coursework.";
+    if (/completed|earned|already done/.test(q)) {const p=progress(c.semesters,c.courses,c.profile.completed,Number.MAX_SAFE_INTEGER);return `${p.completed} illustrative credits are reported completed, ${p.inProgress} in progress, and ${p.planned} planned. Reported completion is distinct from official verification; check requirement drill-downs for grade and credit uncertainty.`;}
+    if (/next|upcoming/.test(q)) { const s=c.semesters.find(s=>s.courses.some(p=>p.status==="planned")); return s ? `Your next planned courses in ${semesterLabel(s)}: ${s.courses.filter(p=>p.status==="planned").map(p=>c.courses.find(course=>course.id===p.courseId)?.code??p.courseId).join(", ")}. Availability is unknown, check official sources.`:"No upcoming courses are planned. Add courses to a semester on the roadmap."; }
     if (/graduat|finish|done by|summer 20|fall 20|spring 20/.test(q)) return graduate(question, c);
     if (/requirement|haven.t|not complete|missing|left/.test(q)) {
       const open = c.requirements.filter((r) => r.status === "unsatisfied" || r.status === "uncertain");
@@ -27,7 +34,7 @@ export const deterministicProvider: AssistantProvider = {
     if (/sav|cheap|cost|tuition|money/.test(q)) {
       const f = c.tuitionPerCredit.frcc, d = c.tuitionPerCredit.cub;
       if (f == null || d == null) return "I don't include verified tuition figures. Enter your own per-credit rates in Settings and I can compare FRCC vs CU Boulder for the credits in your plan.";
-      return `With your entered rates ($${f}/credit at FRCC vs $${d}/credit at CU Boulder), each credit taken at FRCC costs $${d - f} ${d >= f ? "less" : "more"}. That only counts if the course transfers, and I have no verified transfer equivalencies.`;
+      return `With your entered rates ($${f}/credit at FRCC vs $${d}/credit at CU Boulder), each credit taken at FRCC costs $${Math.abs(d - f)} ${d >= f ? "less" : "more"}. That only counts if the course transfers, and I have no verified transfer equivalencies.`;
     }
     if (/psych|sociolog|switch|major|philosoph/.test(q)) return "Major requirement data for CU Boulder isn't loaded, so I can't tell you what switching majors changes. You can duplicate your plan under Compare Paths with a different major label, but the numbers will only change if the courses change.";
     if (/prereq/.test(q)) return c.prereqIssueCount ? `${c.prereqIssueCount} planned course${c.prereqIssueCount > 1 ? "s have" : " has"} a prerequisite that isn't finished earlier. They're highlighted on your roadmap.` : "No prerequisite conflicts found among the courses in your plan, based on the sample prerequisite data.";
