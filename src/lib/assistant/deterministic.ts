@@ -20,6 +20,8 @@ export const deterministicProvider: AssistantProvider = {
   name: "Built-in (no AI key configured)",
   async answer(question, c) {
     const q = question.toLowerCase();
+    if (/fafsa|financial aid|scholarship|pay for|afford|funding/.test(q)) return "Start with the FAFSA (free, only at studentaid.gov). The 2027-28 form covers aid from July 1, 2027 to June 30, 2028, and the federal deadline is June 30, 2028, but CU Boulder recommends March 1 so you're considered for scholarships. Its scholarship application opens Dec. 1 and is due March 15 (June 15 for transfers). The First Generation Scholarship is $4,000 a year for Colorado residents. Colorado Space Grant and graduate fellowships like NSF GRFP and NASA NSTGRO are worth a look for the astronaut route; their amounts aren't loaded, so check each sponsor. See Funding & FAFSA.";
+    if (/professor|faculty|advisor|who (works|teaches)|lab\b/.test(q)) return "CU Boulder's Bioastronautics faculty page lists Torin Clark, Allie Hayman, James Nabity, Katya Arquilla and others, with official profiles linked on Colorado Dreams. Their work spans astronaut biomedical issues, spacesuits and vision changes, life support and habitat design, and human-system interaction. Listings aren't a promise that someone is taking students; contact the groups through their official pages.";
     if (/deadline|when (do|should|can) i apply|application date|apply (by|to)/.test(q)) {
       const year = nextFallEntry(new Date());
       const list = cuTransferDeadlines("fall", year).map((d) => `${d.label}: ${d.date}`).join("; ");

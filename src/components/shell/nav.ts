@@ -1,4 +1,4 @@
-import { LayoutDashboard, Map, BookOpen, GitCompare, Compass, Rocket, PiggyBank, User, Settings } from "lucide-react";
+import { LayoutDashboard, Map, BookOpen, GitCompare, Compass, Rocket, HandCoins, PiggyBank, User, Settings } from "lucide-react";
 
 export const navItems = [
   { href: "/overview", label: "Overview", icon: LayoutDashboard },
@@ -7,6 +7,7 @@ export const navItems = [
   { href: "/compare", label: "Compare Paths", icon: GitCompare },
   { href: "/paths", label: "Colorado Dreams", icon: Rocket },
   { href: "/careers", label: "Career Explorer", icon: Compass },
+  { href: "/funding", label: "Funding & FAFSA", icon: HandCoins },
   { href: "/costs", label: "Costs & Savings", icon: PiggyBank },
   { href: "/profile", label: "My Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
