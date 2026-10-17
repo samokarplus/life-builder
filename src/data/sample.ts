@@ -1,3 +1,4 @@
+import { boulderCourses } from "./boulder";
 import { sourceById } from "./sources";
 import { approvedElectiveBasis } from "./frcc-electives";
 import { parseGt } from "./frcc-gtpathways";
@@ -55,7 +56,7 @@ export const courses: Course[] = (() => {
     if (i >= 0) out[i] = { ...out[i], ...official };
     else out.push({ id, institutionId: "frcc", code: g.code, level: Number(g.code.split(" ")[1]) >= 2000 ? 2000 : 1000, prerequisiteIds: [], planDefault: false, ...official });
   }
-  return out;
+  return [...out,...boulderCourses];
 })();
 
 

@@ -15,3 +15,13 @@ it('retains restrictions and provenance on imported course records',()=>{
  const course={...fixture.courses[0],gtPathways:['GT-SC1'],notOffered:true,eligibilityNote:'Restricted to a reviewed agreement',prerequisiteSourceId:'src-sample'};
  expect(catalogSchema.parse({...fixture,courses:[course]}).courses[0]).toMatchObject(course);
 });
+
+it("round-trips explicit unmapped conditions and scoped residency with graduate levels",async()=>{
+ const data=structuredClone(fixture);
+ const raw=JSON.parse(JSON.stringify(data));
+ raw.courses[0].level=5000;
+ raw.requirements=[{id:'residency',programId:'p',label:'Scoped residency',sourceId:'src-sample',rule:{type:'residency',institutionId:'frcc',minCredits:3,sourceId:'src-sample',from:{type:'group',courseIds:[raw.courses[0].id]}}},{id:'manual',programId:'p',label:'Manual',sourceId:'src-sample',rule:{type:'unmapped',credits:0,note:'GPA needs the full official transcript'}}];
+ expect((await jsonCatalogImporter.parse(JSON.stringify(raw))).requirements).toHaveLength(2);
+ raw.requirements[0].rule.from.courseIds=['unknown'];
+ expect(()=>catalogSchema.parse(raw)).toThrow();
+});

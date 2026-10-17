@@ -50,7 +50,7 @@ registry.push(
     catalogYear: null,
     lastVerified: null,
     status: "unverified",
-    note: "Search results for CU Boulder per-credit tuition disagreed with each other, so no figure is loaded. Confirm with the CU Boulder Bursar.",
+    note: "No universal CU Boulder per-credit rate is loaded: cohort, program, credit bands and COF change the price. A scoped official Group V semester example is available under src-cub-group-v; confirm a personal quote with the Bursar.",
   },
 );
 
@@ -157,6 +157,17 @@ v("src-uccs-first", "https://www.uccs.edu/admissions-aid/details/first-year", "F
 v("src-uccs-transfer", "https://transfer.uccs.edu/contact/faq", "Transfer rolling-admission FAQ; review requires official transcripts. Not a review or acceptance timing guarantee.", "uccs");
 v("src-uccs-tuition", "https://bursar.uccs.edu/sites/default/files/2026-08/UCCS_TuitionFees_Fall_2026_0.pdf", "Fall2026 PDF page12 rendered: new undergraduate/continuing junior-senior resident traditional LAS/PublicService base498, COF116. Rounded figures, fees and other programs separate.", "uccs");
 v("src-cccs-campus-agreements", "https://cccs.edu/academic-student-affairs/academic-affairs/curriculum-management/transfer-and-articulation/transfer-agreements-with-other-colleges/", "Linked by FRCC transfer guides. CSU, Mines and UCCS engineering agreements; not blanket all-major articulation.", null);
+
+
+// CU Boulder degree evidence: terms and scope in review/boulder-program-sources.md.
+v("src-cub-phil-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/arts-sciences/programs-study/philosophy/philosophy-bachelor-arts-ba/", "2026–27 general-track BA required areas and alternatives; credit, grade, residency, GPA, independent-study/internship and distinct-area conditions.", "cub");
+v("src-cub-psyc-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/arts-sciences/programs-study/psychology-neuroscience/psychology-bachelor-arts-ba/", "2026–27 Psychology BA core, four-of-five, methods, ancillary alternatives and major conditions. College graduation rules are separate.", "cub");
+v("src-cub-aes-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/engineering-applied-science/programs-study/aerospace-engineering-sciences/aerospace-engineering-science-bachelor-science-bsae/", "2026–27 BSAE four-page catalog PDF read: required course alternatives, focus pairs,128-credit minimum, elective totals and grade distinctions. PDF title uses BSAE, not a generic BS route.", "cub");
+v("src-cub-phil-courses", "https://catalog.colorado.edu/courses-a-z/phil/", "Individual fixed-credit PHIL titles and credits,2026–27. No prerequisite or term-offering equivalencies imported.", "cub");
+v("src-cub-psyc-courses", "https://catalog.colorado.edu/courses-a-z/psyc/", "Individual fixed-credit PSYC titles and credits,2026–27. No prerequisite or term-offering equivalencies imported.", "cub");
+v("src-cub-asen-courses", "https://catalog.colorado.edu/courses-a-z/asen/", "Individual fixed-credit ASEN graduate titles and credits,2026–27. Special topics not automatically mapped; prerequisite/corequisite and enrollment restrictions need official review.", "cub");
+v("src-cub-bio-handbook", "https://www.colorado.edu/aerospace/media/9332", "Graduate Handbook AY2026–27: pp.11–12 MS-wide requirements; pp.33–34 traditional MS BIA core/elective/non-BIA/math, permitted math overlap. Pages rendered and visually checked. Not Professional MS or PhD.", "cub");
+v("src-cub-group-v", "https://www.colorado.edu/bursar/media/1130", "Official Group V Fall2026/Spring2027 in-state rate sheet, rendered page1. Loaded only12-credit base and engineering examples for the stated entering cohort. COF assumption footnoted tentative; no universal per-credit rate.", "cub");
 
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));

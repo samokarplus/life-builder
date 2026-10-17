@@ -4,13 +4,14 @@ export const dataSourceSchema = z.object({
   id:z.string().min(1),url:z.url().refine(url => ["https:", "http:"].includes(new URL(url).protocol), "Use an HTTP(S) source URL.").nullable(),institutionId:z.string().nullable(),catalogYear:z.string().nullable(),lastVerified:z.iso.date().nullable(),
   status:z.enum(["verified","unverified","illustrative","user-entered"]),note:z.string().optional(),
 }).superRefine((s,ctx)=>{if(s.status==="verified"&&(!s.url||!s.lastVerified||!s.catalogYear))ctx.addIssue({code:"custom",message:"Verified records require an official source URL, catalog year and verification date."});});
-export const courseSchema = z.object({id:z.string().min(1),institutionId:z.string().min(1),code:z.string().min(1),title:z.string().min(1),credits:z.number().nonnegative().max(30),level:z.union([z.literal(1000),z.literal(2000),z.literal(3000),z.literal(4000)]),prerequisiteIds:z.array(z.string()),category:z.string(),description:z.string().optional(),gtPathways:z.array(z.string()).optional(),notOffered:z.boolean().optional(),planDefault:z.boolean().optional(),eligibilityNote:z.string().optional(),prerequisiteSourceId:z.string().optional(),sourceId:z.string()});
+export const courseSchema = z.object({id:z.string().min(1),institutionId:z.string().min(1),code:z.string().min(1),title:z.string().min(1),credits:z.number().nonnegative().max(30),level:z.union([z.literal(1000),z.literal(2000),z.literal(3000),z.literal(4000),z.literal(5000),z.literal(6000),z.literal(7000),z.literal(8000),z.literal(9000)]),prerequisiteIds:z.array(z.string()),category:z.string(),description:z.string().optional(),gtPathways:z.array(z.string()).optional(),notOffered:z.boolean().optional(),planDefault:z.boolean().optional(),eligibilityNote:z.string().optional(),prerequisiteSourceId:z.string().optional(),sourceId:z.string()});
 const ruleSchema:z.ZodType<RequirementRule>=z.lazy(()=>z.discriminatedUnion("type",[
+  z.object({type:z.literal("unmapped"),credits:z.number().nonnegative(),note:z.string().min(1)}),
   z.object({type:z.literal("course"),courseId:z.string(),minGrade:z.string().optional()}),
   z.object({type:z.literal("group"),courseIds:z.array(z.string()),minGrade:z.string().optional()}),
   z.object({type:z.literal("all"),rules:z.array(ruleSchema),distinctCourses:z.boolean().optional()}),z.object({type:z.literal("any"),rules:z.array(ruleSchema)}),
   z.object({type:z.literal("credits"),min:z.number().nonnegative(),from:ruleSchema}),
-  z.object({type:z.literal("residency"),institutionId:z.string(),minCredits:z.number().nonnegative(),sourceId:z.string()}),
+  z.object({type:z.literal("residency"),institutionId:z.string(),minCredits:z.number().nonnegative(),sourceId:z.string(),from:ruleSchema.optional()}),
   z.object({type:z.literal("transfer"),from:ruleSchema,maxCredits:z.number().nonnegative(),sourceId:z.string()}),
 ]));
 export const catalogSchema=z.object({
@@ -26,6 +27,7 @@ export const catalogSchema=z.object({
     if(rule.type==="course"&&!courseIds.has(rule.courseId))ctx.addIssue({code:"custom",path,message:"Unknown requirement course ID."});
     if(rule.type==="group"&&rule.courseIds.some(id=>!courseIds.has(id)))ctx.addIssue({code:"custom",path,message:"Unknown group course ID."});
     if(rule.type==="all"||rule.type==="any")rule.rules.forEach((r,i)=>checkRule(r,[...path,"rules",i]));
+    if(rule.type==="residency"&&rule.from)checkRule(rule.from,[...path,"from"]);
     if(rule.type==="credits"||rule.type==="transfer")checkRule(rule.from,[...path,"from"]);
   }
   data.requirements.forEach((r,i)=>checkRule(r.rule,["requirements",i,"rule"]));

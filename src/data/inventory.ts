@@ -7,12 +7,14 @@ import { careerMeta } from "./career-meta";
 import { fundingDates, fundingItems } from "./funding";
 import { coloradoCounselingPrograms, cuAesGrad, cuDenverCmhc } from "./programs";
 import { bioastronauticsCourses, bioastronauticsFacilities, bioastronauticsFaculty } from "./people";
+import { boulderPrograms,boulderRequirements,boulderTuitionExample } from "./boulder";
 import { coloradoCampuses } from "./campuses";
 import { glossary } from "./glossary";
 
-export const inventoryModules = ["campuses", "access", "career-meta", "frcc-electives", "frcc-gtpathways", "frcc-gtpathways-raw", "funding", "glossary", "inventory", "pathways", "people", "programs", "sample", "sources"];
+export const inventoryModules = ["boulder", "campuses", "access", "career-meta", "frcc-electives", "frcc-gtpathways", "frcc-gtpathways-raw", "funding", "glossary", "inventory", "pathways", "people", "programs", "sample", "sources"];
 const collection = (name: string, records: readonly unknown[]) => records.map((record, i) => ({ location:`${name}[${i}]`,record }));
 export const sourceRecords = [
+ ...collection('boulderPrograms',boulderPrograms),...collection('boulderRequirements',boulderRequirements),...collection('boulderTuition',[boulderTuitionExample]),
  ...collection('campuses',coloradoCampuses),...collection('campusAdmissions',coloradoCampuses.flatMap(c=>c.admissions)),...collection('campusDeadlines',coloradoCampuses.flatMap(c=>c.deadlines)),...collection('campusTuition',coloradoCampuses.map(c=>c.tuition)),...collection('campusTransfer',coloradoCampuses.map(c=>c.transfer)),
  ...collection('courses',courses),...collection('careers',careers),...collection('requirements',requirements),...collection('illustrativeRequirements',illustrativeRequirements),...collection('tuitionRates',tuitionRates),
  ...collection('pathways.steps',pathways.flatMap(p=>p.steps)),...collection('accessOptions',accessOptions),

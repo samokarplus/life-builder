@@ -39,7 +39,7 @@ export interface Course extends Provenance {
   code: string;
   title: string;
   credits: number;
-  level: 1000 | 2000 | 3000 | 4000;
+  level: 1000 | 2000 | 3000 | 4000 | 5000 | 6000 | 7000 | 8000 | 9000;
   prerequisiteIds: string[];
   category: string; // requirement category label
   description?: string;
@@ -67,7 +67,7 @@ export type RequirementRule =
   | { type: "group"; courseIds: string[]; minGrade?: string }
   /** A real requirement whose course mapping (e.g. gtPathways attributes) is not loaded yet. Always "uncertain". */
   | { type: "unmapped"; credits: number; note: string }
-  | { type: "residency"; institutionId: string; minCredits: number; sourceId: string }
+  | { type: "residency"; institutionId: string; minCredits: number; sourceId: string; from?: RequirementRule }
   | { type: "transfer"; from: RequirementRule; maxCredits: number; sourceId: string };
 
 export interface DegreeRequirement extends Provenance {
