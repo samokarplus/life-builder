@@ -11,3 +11,7 @@ it('rejects duplicate sources, unsafe links and dangling nested policies',()=>{
  expect(()=>catalogSchema.parse({...fixture,requirements:[{id:'r',programId:'p',label:'r',sourceId:'src-sample',rule:{type:'all',rules:[{type:'residency',institutionId:'frcc',minCredits:3,sourceId:'missing'}]}}]})).toThrow();
  expect(()=>catalogSchema.parse({...fixture,courses:[{...fixture.courses[0],prerequisiteIds:['missing']}]})).toThrow();
 });
+it('retains restrictions and provenance on imported course records',()=>{
+ const course={...fixture.courses[0],gtPathways:['GT-SC1'],notOffered:true,eligibilityNote:'Restricted to a reviewed agreement',prerequisiteSourceId:'src-sample'};
+ expect(catalogSchema.parse({...fixture,courses:[course]}).courses[0]).toMatchObject(course);
+});

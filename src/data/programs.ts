@@ -44,8 +44,8 @@ export const specialties = [...new Set(coloradoCounselingPrograms.map((p) => p.s
 /** CU Boulder Aerospace Engineering Sciences row, from the Graduate School deadlines table. */
 export const cuAesGrad = {
   degrees: "MS, PhD, Professional MS",
-  gre: "GRE not required",
+  gre: "GRE optional for PhD; not accepted for MS or Professional MS",
   deadlines: [{ term: "Spring", date: "Oct. 1" }, { term: "Fall", date: "Dec. 1" }],
-  contact: "aerograd@colorado.edu",
-  sourceId: "src-cub-grad-deadlines",
+  sourceId: "src-cub-aes-apply",
+  deadlineSourceId: "src-cub-aes-deadlines",
 };

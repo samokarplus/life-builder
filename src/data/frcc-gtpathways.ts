@@ -11,7 +11,11 @@ export function parseGt(raw: Record<string, string> = GT_RAW): GtEntry[] {
       if (!m) throw new Error(`Unparseable gtPathways line in ${category}: "${line}"`);
       const code = `${m[1]} ${m[2]}`;
       const prev = byCode.get(code);
-      if (prev) prev.categories.push(category);
+      if (prev) {
+        if (prev.title !== m[4].trim() || prev.credits !== Number(m[5]) || prev.notOffered !== (m[3] === "*")) throw new Error(`Conflicting gtPathways details for ${code}`);
+        if (prev.categories.includes(category)) throw new Error(`Duplicate gtPathways row for ${code} in ${category}`);
+        prev.categories.push(category);
+      }
       else byCode.set(code, { code, title: m[4].trim(), credits: Number(m[5]), notOffered: m[3] === "*", categories: [category] });
     }
   }

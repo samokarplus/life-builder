@@ -52,3 +52,8 @@ it('skips non-leap years and rejects impossible recurring dates',()=>{
  expect(()=>nextOccurrence(2,30,new Date())).toThrow(RangeError);
  expect(()=>nextOccurrence(13,1,new Date())).toThrow(RangeError);
 });
+it('preserves material funding eligibility qualifications',()=>{
+ const first=fundingItems.find(f=>f.id==='cub-first-gen')!;
+ expect(first.eligibility?.join(' ')).toContain('Nonresidents');expect(first.eligibility?.join(' ')).toContain('summer');
+ expect(fundingItems.find(f=>f.id==='fafsa')?.eligibility?.join(' ')).toContain('spouse');
+});

@@ -96,3 +96,16 @@ describe('AA audit regressions from the official degree page', () => {
   expect(result?.status).toBe('uncertain');expect(result?.notes.join(' ')).toContain('Teacher Education');
  });
 });
+
+import { parseGt } from './frcc-gtpathways';
+it('rejects contradictory or duplicated transcription rows instead of silently merging them',()=>{
+ expect(()=>parseGt({'GT-AH1':'ART 1110 | Art | 3','GT-AH2':'ART 1110 | Art | 4'})).toThrow(/Conflicting/);
+ expect(()=>parseGt({'GT-AH1':'ART 1110 | Art | 3\nART 1110 | Art | 3'})).toThrow(/Duplicate/);
+ expect(parseGt({'GT-AH1':'ART 1110 | Art | 3','GT-AH2':'ART 1110 | Art | 3'})[0].categories).toEqual(['GT-AH1','GT-AH2']);
+});
+import { requirementsForProfile } from './sample';
+it('does not apply AA rules to a different institution or selected program',()=>{
+ expect(requirementsForProfile({currentInstitutionId:'frcc',program:'Associate of Science'})).toEqual([]);
+ expect(requirementsForProfile({currentInstitutionId:'cub'})).toEqual([]);
+ expect(requirementsForProfile({currentInstitutionId:'frcc'})).toBe(requirements);
+});

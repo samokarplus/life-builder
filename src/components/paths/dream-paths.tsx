@@ -173,7 +173,7 @@ export function DreamPaths() {
                   <span className={cn("tabular grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-semibold", isDone ? "bg-primary text-primary-foreground" : "bg-soft text-primary")}>{i + 1}</span>
                   {i < path.steps.length - 1 && <span className="w-px flex-1 bg-sage" aria-hidden />}
                 </div>
-                <article className={cn("mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card", stageOrder.indexOf(s.stage) < stageIdx && !isDone && "opacity-70")}>
+                <article className={cn("mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card")}>
                   <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} /></div>
                   <h3 className={cn("mt-2 font-medium", isDone && "text-muted line-through")}>{s.title}</h3>
                   <p className="mt-1 text-sm text-muted">{s.detail}</p>

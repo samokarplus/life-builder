@@ -32,7 +32,7 @@ export const bioastronauticsFaculty: Faculty[] = [
   { id: "voss", name: "James Voss", title: "Scholar in Residence (retired)", status: "scholar-in-residence", url: "https://www.nasa.gov/wp-content/uploads/2016/01/voss_james_0.pdf", sourceId: "src-cub-bio-faculty", interests: ["The department links his NASA biography."] },
   { id: "hieb", name: "Rick Hieb", title: "Scholar in Residence (retired)", status: "scholar-in-residence", url: "https://www.nasa.gov/wp-content/uploads/2016/01/hieb.pdf", sourceId: "src-cub-bio-faculty", interests: ["The department links his NASA biography."] },
   { id: "tanner", name: "Joe Tanner", title: "Senior Instructor (retired)", status: "scholar-in-residence", url: "https://www.nasa.gov/wp-content/uploads/2016/05/tanner_joseph.pdf", sourceId: "src-cub-bio-faculty", interests: ["The department links his NASA biography."] },
-  { id: "klaus", name: "David Klaus", title: "Professor Emeritus (retired)", status: "emeritus", url: "https://www.colorado.edu/aerospace/david-klaus", sourceId: "src-cub-bio-faculty", interests: ["Space habitat design and human performance analysis (per his emeritus profile)"] },
+  { id: "klaus", name: "David Klaus", title: "Professor Emeritus (retired)", status: "emeritus", url: "https://www.colorado.edu/aerospace/david-klaus", sourceId: "src-cub-profile-klaus", interests: ["Spacecraft habitat design, life support technology and spaceflight risk analysis (per his emeritus profile)"] },
   { id: "stodieck", name: "Louis Stodieck", title: "Research Professor Emeritus (retired)", status: "emeritus", url: "https://www.colorado.edu/aerospace/louis-stodieck", sourceId: "src-cub-bio-faculty", interests: ["Emeritus; see his profile."] },
 ];
 

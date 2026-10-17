@@ -1,11 +1,11 @@
 import { parseGt } from "./frcc-gtpathways";
 import { GT_SOURCE_ID } from "./frcc-gtpathways-raw";
-import type { Course, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
+import type { Course, DegreeRequirement, Institution, Career, TuitionRate, Semester, StudentProfile } from "@/lib/types";
 
 /**
- * SAMPLE DATA ONLY. Course codes/titles come from the product brief as
- * illustrations. Credits are assumed (3) and nothing here is verified against
- * an official catalog. Replace via future importers.
+ * Mixed catalog: official FRCC entries override the illustrative base below.
+ * Each record identifies its source; a verified catalog record does not verify
+ * offering, prerequisite, transfer or student-completion claims.
  */
 export { sources, sourceById, VERIFIED_ON } from "./sources";
 
@@ -113,9 +113,8 @@ export const illustrativeRequirements: DegreeRequirement[] = [
 
 /**
  * FRCC Associate of Arts, 2026-2027 catalog (60 credits). Written and oral
- * communication are mapped to specific courses from the page. The remaining
- * areas depend on each course's gtPathways designation, which is not loaded yet,
- * so they are reported as "needs a check" instead of guessed.
+ * communication and general education areas use the reviewed gtPathways list.
+ * Approved electives remain unmapped; GPA and residency need an official audit.
  */
 const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
 const gtIds = (...cats: string[]) => courses.filter((c) => c.gtPathways?.some((g) => cats.includes(g))).map((c) => c.id);
@@ -139,3 +138,8 @@ export const requirements: DegreeRequirement[] = [
 
 /** Total credits for the FRCC AA degree per the 2026-2027 catalog. */
 export const FRCC_AA_CREDITS = 60;
+
+/** Loaded AA rules must never be presented as the rules for another selected program. */
+export function requirementsForProfile(profile: Pick<StudentProfile, "currentInstitutionId" | "program">): DegreeRequirement[] {
+  return profile.currentInstitutionId === "frcc" && (!profile.program || profile.program === "Associate of Arts") ? requirements : [];
+}

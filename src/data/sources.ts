@@ -58,12 +58,12 @@ registry.push({
 
 registry.push(
   { id: "src-cacrep-co", url: "https://www.cacrep.org/directory/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CACREP directory, state = CO, statuses Accredited / 2 Year / 8 Year (22 program rows read on the verification date). Statuses and cycle end dates change, so re-check the directory." },
-  { id: "src-cub-grad-deadlines", url: "https://www.colorado.edu/graduateschool/admissions/where-begin/program-information-deadlines", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Graduate School Program Information & Deadlines table." },
+  { id: "src-cub-grad-deadlines", url: "https://www.colorado.edu/graduateschool/admissions/where-begin/program-information-deadlines", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "unverified", note: "Previously transcribed Graduate School table; it did not load in this review. Current Aerospace claims use the department’s own application and deadline pages instead." },
 );
 
 registry.push(
   { id: "src-cub-transfer-timeline", url: "https://www.colorado.edu/admissions/process/transfer/timeline", institutionId: "cub", catalogYear: "2027 transfer cycle", lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Transfer Timeline page: month/day deadlines; no year printed per date." },
-  { id: "src-cub-aes-grad", url: "https://www.colorado.edu/academics/grad-aerospace-engineering-sciences", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Aerospace Engineering Sciences graduate degrees page. It does not list application deadlines or GRE policy; use the Graduate School deadlines page." },
+  { id: "src-cub-aes-grad", url: "https://www.colorado.edu/academics/grad-aerospace-engineering-sciences", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Aerospace Engineering Sciences graduate degrees page. It does not list application deadlines or GRE policy; use the department’s application and deadline pages." },
   { id: "src-nasa-astronaut", url: "https://www.nasa.gov/humans-in-space/astronauts/become-an-astronaut/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "NASA 'Become an Astronaut' page (page dated Mar 27, 2026; some wording refers to the 2025 cycle). Applications are accepted as needed." },
   { id: "src-co-lpc-rules", url: "https://www.sos.state.co.us/CCR/DisplayRule.do?action=ruleinfo&ruleId=2318&deptID=18&agencyID=61&deptName=Department%20of%20Regulatory%20Agencies&agencyName=Division%20of%20Professions%20and%20Occupations%20-%20Board%20of%20Licensed%20Professional%20Counselor%20Examiners&seriesNum=4%20CCR%20737-1", institutionId: null, catalogYear: "4 CCR 737-1, effective 2025-09-14", lastVerified: VERIFIED_ON, status: "verified", note: "Colorado Code of Regulations, State Board of Licensed Professional Counselor Examiners, current version effective 09/14/2025 (read from the official PDF)." },
   { id: "src-dora-lpc-apps", url: "https://dpo.colorado.gov/ProfessionalCounselor/Applications", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "Colorado DORA Division of Professions and Occupations, Professional Counselor Applications and Forms page." },
@@ -88,10 +88,13 @@ v("src-cosgc", "https://www.colorado.edu/center/spacegrant/student-involvement-o
 v("src-cub-bio-awards", "https://www.colorado.edu/bioastronautics/student-awards", "CU Boulder Bioastronautics: Student Awards page (2025 and 2026 entries).", "cub");
 
 
-for (const [id, path] of [["clark", "torin-clark"], ["hayman", "allie-hayman"], ["nabity", "james-nabity"], ["arquilla", "katya-arquilla"]]) {
+for (const [id, path] of [["clark", "torin-clark"], ["hayman", "allie-hayman"], ["nabity", "james-nabity"], ["arquilla", "katya-arquilla"], ["klaus", "david-klaus"]]) {
   v(`src-cub-profile-${id}`, `https://www.colorado.edu/aerospace/${path}`, "Official faculty profile: title, education, selected awards and research interests.", "cub");
 }
 v("src-cub-bio-equipment", "https://www.colorado.edu/bioastronautics/laboratory-equipment", "Bioastronautics laboratory equipment names; access and availability are not confirmed.", "cub");
+
+v("src-cub-aes-apply", "https://www.colorado.edu/aerospace/admissions/graduates/how-apply", "Aerospace department application requirements, including degree-specific GRE policy.", "cub");
+v("src-cub-aes-deadlines", "https://www.colorado.edu/aerospace/admissions/graduates/deadlines-fees", "Aerospace department spring and fall application deadlines.", "cub");
 
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));
