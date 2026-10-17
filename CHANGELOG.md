@@ -1,3 +1,9 @@
+## Colorado campuses (2026-10-16)
+
+- Added six sourced destination planners to Colorado Dreams and Funding: CU Denver, CSU, Mines, Colorado Mesa, UNC and UCCS. Applicant type, term and year controls distinguish published cycles from annual planning patterns; missing dates remain explicit.
+- Added scoped resident one-credit tuition examples, COF eligibility and fees/band caveats, excluded from automatic cost estimates. Recorded UNC arithmetic inconsistencies and broken campus transfer-guide links instead of silently repairing facts.
+- Added a local JSON campus importer contract/fixture, citation validation, cycle/date regressions and responsive campus smoke/axe coverage. Evidence and terms: `review/colorado-campus-sources.md`.
+
 ## 2026-10-16 — Independent Colorado route review
 
 - Re-read official route/access/story pages and checked site notices; claim-by-claim evidence and unresolved discrepancies in `review/colorado-route-claims.md` and `REVIEW.md`.

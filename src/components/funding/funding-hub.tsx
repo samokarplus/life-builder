@@ -1,4 +1,5 @@
 "use client";
+import { CampusPlanner } from "@/components/paths/campus-planner";
 
 import { useMemo, useState } from "react";
 import { CalendarClock, ExternalLink, HandCoins, Landmark, Rocket, Sparkles, Stethoscope } from "lucide-react";
@@ -55,6 +56,8 @@ export function FundingHub() {
         </ol>
         <p className="mt-3 text-xs text-muted">CU Boulder dates are its annual pattern from the 2026-27 page, shown for the next time they come around. Confirm each cycle on the official pages.</p>
       </section>
+
+      <CampusPlanner calendar />
 
       <section aria-labelledby="items-h">
         <h2 id="items-h" className="mb-3 flex items-center gap-2 font-medium"><Landmark size={16} className="text-primary" aria-hidden /> Aid, scholarships and programs <span className="text-sm font-normal text-muted">({items.length})</span></h2>

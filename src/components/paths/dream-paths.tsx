@@ -1,4 +1,5 @@
 "use client";
+import { CampusPlanner } from "./campus-planner";
 
 import { useMemo, useState } from "react";
 import { CalendarClock, ExternalLink, GraduationCap, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
@@ -262,6 +263,7 @@ export function DreamPaths() {
         <summary className="cursor-pointer font-medium">What do these abbreviations mean?</summary>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2">{glossary.map(item => <div key={item.term}><dt className="font-medium">{item.term}</dt><dd className="mt-1 text-sm text-muted">{item.meaning} <Confidence sourceId={item.sourceId} /></dd></div>)}</dl>
       </details>
+      <CampusPlanner />
       <WaysIn />
     </div>
   );

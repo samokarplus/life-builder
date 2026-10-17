@@ -177,3 +177,19 @@ The [screenshot manifest](review/screenshot-manifest.json) lists the page captur
 The offline source checker inventories56 sources and436 cited factual records. It flags >90 days, invalid/future dates and missing/dangling citations; it never downloads pages or changes verification dates. A deterministic Jan15,2027 check correctly flags53 stale sources and exits1 with `--strict`. The CI-ready command checks provenance independently of age. A GitHub workflow wrapper was omitted because the connected token cannot create workflows; no permission expansion was requested. The inventory also refuses unregistered new data modules, so future campus/career work cannot silently bypass the check. Official durations, nested requirement policies and secondary citations are checked. Individual Bioastronautics summaries now have sourceIds.
 
 Settings and shared source badges expose last checks and stale warnings. A stale date does not turn an estimate into a verified claim or alter any student preference. Automated freshness is a reminder to manually re-read the authority, not evidence a fact is still current.
+
+
+## Campus expansion A (2026-10-16)
+
+Evidence: [campus sources and terms](review/colorado-campus-sources.md). Six destination planners added to Colorado Dreams and Funding. New data is registered in the provenance inventory (506 records; 77 sources).
+
+| Priority | Reproduction / risk | Disposition |
+| --- | --- | --- |
+| P1 | Use one campus per-credit number for every program or multiply it into a full-time quote. Mines/UNC use bands, UCCS uses cohort/program tables, CU Denver assesses by course. | Loaded scoped one-credit examples with period, resident eligibility, COF and fees caveats. No automatic semester cost conversion. |
+| P2 | Read UNC resident table at8 or19 credits: source totals are internally inconsistent. | Quarantined multi-credit totals; only independently checked one-credit row loaded, discrepancy disclosed. |
+| P2 | Follow UNC Current Transfer Guides: redirects to Aims2UNC; older UCCS Colorado community-college URL and CU Denver www1 hostname fail. | Current CU Denver maps used. UNC/UCCS gaps stated; FRCC/CCCS engineering agreements remain explicitly scoped, no blanket equivalencies. |
+| P2 | Ask for a2028 admission date from a source that only publishes2027. | Fixed-cycle records do not recur. Annual patterns explicitly label selected year as assumption; unknown selection asks for official confirmation. Civil-day tests cover passed/on-day/DST/prior-year dates. |
+
+Remaining A gaps: UCCS precise current-cycle first-year/transfer deadline not verified; no FRCC-specific every-major maps verified for CSU/UNC/UCCS. Some summer first-year dates are unloaded. Official advisers and current campus pages remain the authority. Importer parses reviewed local JSON only and does not fetch or activate data. No judgment call is required to preserve these unknowns.
+
+Validation for A: 170 Vitest tests, ESLint, production build, provenance check and all28 Playwright tests passed. The six campus states were exercised at1440/768/375 in both themes with axe and overflow checks; all six captured campus layouts were visually inspected. Full-site screenshot matrix also passed. Port3000 untouched.
