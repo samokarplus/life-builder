@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { RequirementRule } from "../types";
 export const dataSourceSchema = z.object({
-  id:z.string().min(1),url:z.url().nullable(),institutionId:z.string().nullable(),catalogYear:z.string().nullable(),lastVerified:z.iso.date().nullable(),
+  id:z.string().min(1),url:z.url().refine(url => ["https:", "http:"].includes(new URL(url).protocol), "Use an HTTP(S) source URL.").nullable(),institutionId:z.string().nullable(),catalogYear:z.string().nullable(),lastVerified:z.iso.date().nullable(),
   status:z.enum(["verified","unverified","illustrative","user-entered"]),note:z.string().optional(),
 }).superRefine((s,ctx)=>{if(s.status==="verified"&&(!s.url||!s.lastVerified||!s.catalogYear))ctx.addIssue({code:"custom",message:"Verified records require an official source URL, catalog year and verification date."});});
 export const courseSchema = z.object({id:z.string().min(1),institutionId:z.string().min(1),code:z.string().min(1),title:z.string().min(1),credits:z.number().nonnegative().max(30),level:z.union([z.literal(1000),z.literal(2000),z.literal(3000),z.literal(4000)]),prerequisiteIds:z.array(z.string()),category:z.string(),description:z.string().optional(),sourceId:z.string()});
@@ -19,6 +19,17 @@ export const catalogSchema=z.object({
   tuition:z.array(z.object({id:z.string(),institutionId:z.string(),academicYear:z.string(),perCredit:z.number().nonnegative().nullable(),residency:z.enum(["in-state","out-of-state"]),sourceId:z.string()})),
 }).superRefine((data,ctx)=>{
   const ids=new Set(data.sources.map(s=>s.id));
+  if(ids.size!==data.sources.length)ctx.addIssue({code:"custom",path:["sources"],message:"Duplicate source ID."});
+  const courseIds=new Set(data.courses.map(c=>c.id));
+  function checkRule(rule:RequirementRule,path:(string|number)[]) {
+    if((rule.type==="residency"||rule.type==="transfer")&&!ids.has(rule.sourceId))ctx.addIssue({code:"custom",path,message:"Nested policy must reference a supplied DataSource."});
+    if(rule.type==="course"&&!courseIds.has(rule.courseId))ctx.addIssue({code:"custom",path,message:"Unknown requirement course ID."});
+    if(rule.type==="group"&&rule.courseIds.some(id=>!courseIds.has(id)))ctx.addIssue({code:"custom",path,message:"Unknown group course ID."});
+    if(rule.type==="all"||rule.type==="any")rule.rules.forEach((r,i)=>checkRule(r,[...path,"rules",i]));
+    if(rule.type==="credits"||rule.type==="transfer")checkRule(rule.from,[...path,"from"]);
+  }
+  data.requirements.forEach((r,i)=>checkRule(r.rule,["requirements",i,"rule"]));
+  data.courses.forEach((c,i)=>{if(c.prerequisiteIds.some(id=>!courseIds.has(id)))ctx.addIssue({code:"custom",path:["courses",i,"prerequisiteIds"],message:"Unknown prerequisite course ID."});});
   for(const [key,records] of Object.entries({courses:data.courses,requirements:data.requirements,tuition:data.tuition})) {
     const seen=new Set<string>();
     records.forEach((r,index)=>{if(!ids.has(r.sourceId))ctx.addIssue({code:"custom",path:[key,index,"sourceId"],message:"Every record must reference a supplied DataSource."});if(seen.has(r.id))ctx.addIssue({code:"custom",path:[key,index,"id"],message:"Duplicate stable ID."});seen.add(r.id);});
