@@ -12,7 +12,7 @@ import { generatePlan } from "@/lib/schedule";
 import type { CompletedCourse } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const dreams = ["Therapist / Counselor", "Engineer", "Physician", "Teacher", "Entrepreneur", "Software Developer", "Still Exploring"];
+const dreams = ["Therapist / Counselor", "Astronaut", "Nurse", "Doctor", "Teacher", "EMT / Paramedic", "Electrician", "Engineer", "Entrepreneur", "Software Developer", "Still Exploring"];
 const priorityOptions = ["Lowest total cost", "Fastest graduation", "Balanced workload", "Mostly online", "Fewest campus days", "Career preparation"];
 const majors = ["Philosophy", "Psychology", "Sociology", "Undecided"];
 const titles = ["What would you love to do someday?", "Where are you starting?", "Where do you want to go?", "What have you completed?", "What matters most?", "Ready to map it out?"];
@@ -36,6 +36,7 @@ export function Wizard() {
   const [maxCredits, setMaxCredits] = useState(15);
   const [budget, setBudget] = useState("");
   const [error, setError] = useState("");
+  const [where, setWhere] = useState<"college" | "high-school">("college");
 
   const byId = new Map(courses.map((c) => [c.id, c]));
   const doneCredits = completed.reduce((n, c) => n + (byId.get(c.courseId)?.credits ?? 0), 0) + otherCredits;
@@ -51,7 +52,7 @@ export function Wizard() {
 
   const generate = () => {
     const [term, y] = semester.split("-");
-    const profile = { ...defaultProfile, dream: unsure ? "Still exploring" : dream.trim(), major, priorities, maxCreditsPerSemester: maxCredits, completed, startingSemester: semester, program, desiredDegree: degree, budget: budget ? Number(budget) : null, unverifiedExternalCredits: otherCredits };
+    const profile = { ...defaultProfile, currentStage: where, dream: unsure ? "Still exploring" : dream.trim(), major, priorities, maxCreditsPerSemester: maxCredits, completed, startingSemester: semester, program, desiredDegree: degree, budget: budget ? Number(budget) : null, unverifiedExternalCredits: otherCredits };
     try {
     const semesters = generatePlan(profile, courses, { term: term as "fall" | "spring", year: Number(y) });
     finish(profile, semesters);
@@ -89,16 +90,19 @@ export function Wizard() {
 
           {step === 1 && (
             <div className="mt-8 space-y-4">
-              <label className="block text-sm">Current institution
-                <select className={cn(field, "mt-1")} defaultValue="frcc" disabled><option value="frcc">{institutions[0].name}</option></select>
-                <span className="mt-1 block text-xs text-muted">FRCC is the only institution supported so far.</span>
+              <label className="block text-sm">Where are you right now?
+                <select className={cn(field, "mt-1")} value={where} onChange={(e) => setWhere(e.target.value as "college" | "high-school")}>
+                  <option value="college">In college at {institutions[0].name}</option>
+                  <option value="high-school">In a Colorado high school</option>
+                </select>
+                <span className="mt-1 block text-xs text-muted">{where === "high-school" ? "Your roadmap starts at FRCC when you begin. FRCC offers college classes to public high school students; see Colorado Dreams after you finish." : "FRCC is the only college supported so far."}</span>
               </label>
               <label className="block text-sm">Degree program
                 <select className={cn(field, "mt-1")} value={program} onChange={(e) => setProgram(e.target.value)}>
                   <option>Associate of Arts</option><option>Associate of Science</option><option>Not sure</option>
                 </select>
               </label>
-              <label className="block text-sm">Current semester
+              <label className="block text-sm">{where === "high-school" ? "When will you start at FRCC?" : "Current semester"}
                 <select className={cn(field, "mt-1")} value={semester} onChange={(e) => setSemester(e.target.value)}>
                   <option value="fall-2026">Fall 2026</option><option value="spring-2027">Spring 2027</option><option value="fall-2027">Fall 2027</option>
                 </select>

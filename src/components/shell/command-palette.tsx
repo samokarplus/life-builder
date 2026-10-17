@@ -8,6 +8,7 @@ import { courses } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { filterPalette, type PaletteItem } from "@/lib/palette";
 import { navItems } from "./nav";
+import { pathways } from "@/data/pathways";
 import { cn } from "@/lib/utils";
 
 export function CommandPalette() {
@@ -43,6 +44,7 @@ export function CommandPalette() {
     { id: "theme", label: `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`, group: "Actions" as const, run: go(() => setTheme(resolvedTheme === "dark" ? "light" : "dark")) },
     { id: "onboard", label: "Rebuild my roadmap (onboarding)", group: "Actions" as const, run: go(() => router.push("/onboarding")) },
     { id: "print", label: "Print my plan", group: "Actions" as const, run: go(() => router.push("/print")) },
+    ...pathways.map((p) => ({ id: `path-${p.id}`, label: p.career, group: "Pages" as const, hint: `Colorado dream route: ${p.title}`, run: go(() => router.push(`/paths?path=${p.id}`)) })),
     ...courses.map((c) => ({ id: c.id, label: c.code, hint: c.title, group: "Courses" as const, run: go(() => router.push(`/explorer?q=${encodeURIComponent(c.code)}`)) })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [resolvedTheme, router, setTheme]);

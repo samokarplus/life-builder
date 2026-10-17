@@ -87,7 +87,7 @@ dialog.drawer[open] { animation: slide-in 220ms ease-out; }
 /* ---- Visual depth layer ---- */
 :root {
   --shadow-lg: 0 2px 4px rgb(32 40 32 / 0.04), 0 12px 32px rgb(32 40 32 / 0.08);
-  --glow: radial-gradient(60% 50% at 50% 0%, rgb(169 191 168 / 0.55), transparent 70%);
+  --glow: radial-gradient(60% 50% at 50% 0%, rgb(169 191 168 / 0.32), transparent 70%);
 }
 .dark { --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.3), 0 12px 32px rgb(0 0 0 / 0.35); --glow: radial-gradient(60% 50% at 50% 0%, rgb(127 179 150 / 0.16), transparent 70%); }
 .hero-glow { background-image: var(--glow); }
@@ -109,3 +109,9 @@ dialog.drawer[open] { animation: slide-in 220ms ease-out; }
 :root { --gold: #d9a21b; --gold-soft: #fbf1d4; }
 .dark { --gold: #e8b94a; --gold-soft: #3a3118; }
 @theme inline { --color-gold: var(--gold); --color-gold-soft: var(--gold-soft); }
+
+/* ---- Career themes (decorative color; text stays on standard tokens) ---- */
+.t-indigo { --t-fg:#3f4fa3; --t-bg:#e6e9f8; } .t-teal { --t-fg:#1f7a74; --t-bg:#ddf1ee; } .t-rose { --t-fg:#b03a55; --t-bg:#f9e3e8; }
+.t-blue { --t-fg:#2563a8; --t-bg:#e0ecf8; } .t-red { --t-fg:#c2410c; --t-bg:#fce7dc; } .t-amber { --t-fg:#a16207; --t-bg:#fbefcf; } .t-green { --t-fg:#4d7c0f; --t-bg:#eaf3d6; }
+.dark .t-indigo { --t-fg:#a9b4f0; --t-bg:#232846; } .dark .t-teal { --t-fg:#7cd1c8; --t-bg:#16302d; } .dark .t-rose { --t-fg:#f0a0b2; --t-bg:#3a1d26; }
+.dark .t-blue { --t-fg:#8db9ee; --t-bg:#1b2d44; } .dark .t-red { --t-fg:#f2a27f; --t-bg:#3e2318; } .dark .t-amber { --t-fg:#f0c45f; --t-bg:#3a2e12; } .dark .t-green { --t-fg:#b5db74; --t-bg:#263314; }

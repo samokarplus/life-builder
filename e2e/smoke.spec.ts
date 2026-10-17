@@ -55,6 +55,32 @@ for(const version of [2,999])test(`invalid saved data version ${version} is pres
 });
 test('a different program is preserved and does not receive the AA audit',async({page})=>{
  await ready(page,'/profile');await page.getByLabel('Degree program').fill('Associate of Science');
- await page.getByRole('button',{name:'Save profile',exact:true}).click();
+ await page.getByRole('button',{name:'Save profile',exact:true}).click();await expect(page.getByText(/^Saved/).first()).toBeVisible();await page.waitForTimeout(800);
  await ready(page,'/roadmap');await expect(page.getByText('Requirements for your selected institution/program are not loaded.',{exact:false})).toBeVisible();
+});
+
+test('Colorado Dreams search, filters, real people and challenges',async({page})=>{
+ await ready(page,'/paths');
+ const cards=page.getByRole('list',{name:'Career routes'}).getByRole('listitem');
+ await expect(cards).toHaveCount(7);
+ await page.getByLabel(/Search careers/).fill('doctor');
+ await expect(cards).toHaveCount(1);
+ await page.getByLabel(/Search careers/).fill('');
+ await page.getByRole('group',{name:'Filters'}).getByRole('button',{name:'Can start without a degree'}).click();
+ await expect(cards).toHaveCount(3);
+ await page.getByRole('button',{name:/^Nurse /}).click();
+ await expect(page.getByRole('heading',{name:/Registered Nurse in Colorado/})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'What makes it hard'})).toBeVisible();
+ await expect(page.getByText('Joel Bitler')).toBeVisible();
+ await expect(page.getByText(/top 40/).first()).toBeVisible();
+ await page.getByRole('button',{name:"I'm from out of state"}).click();
+ await expect(page.getByText('Western Undergraduate Exchange (WUE) at FRCC')).toBeVisible();
+});
+
+test('onboarding offers high school as a starting point and a Colorado dream card',async({page})=>{
+ await ready(page,'/onboarding');
+ await page.getByRole('button',{name:'Nurse',exact:true}).click();
+ await page.getByRole('button',{name:/Continue/}).click();
+ await page.getByLabel('Where are you right now?').selectOption('high-school');
+ await expect(page.getByText(/When will you start at FRCC/)).toBeVisible();
 });

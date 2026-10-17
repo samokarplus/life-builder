@@ -4,6 +4,9 @@ import { Ridge } from "@/components/brand/ridge";
 import { coloradoCounselingPrograms } from "@/data/programs";
 import { bioastronauticsFaculty } from "@/data/people";
 import { fundingItems } from "@/data/funding";
+import { pathways } from "@/data/pathways";
+import { careerMeta } from "@/data/career-meta";
+import { CareerBadge } from "@/components/brand/career-badge";
 import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { RoadmapPreview } from "@/components/landing/roadmap-preview";
@@ -82,6 +85,19 @@ export default function Landing() {
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">See funding <ArrowRight size={14} aria-hidden /></span>
             </Link></Reveal>
           </div>
+        </section>
+
+        <section className="pb-6" aria-label="Colorado dream routes">
+          <ul className="flex flex-wrap justify-center gap-3">
+            {pathways.filter((p) => careerMeta[p.id]).map((p) => (
+              <li key={p.id}>
+                <Link href={`/paths?path=${p.id}`} className="lift flex items-center gap-3 rounded-2xl border border-border bg-surface py-2 pl-2 pr-4 shadow-card">
+                  <CareerBadge icon={careerMeta[p.id].icon} theme={careerMeta[p.id].theme} size={40} />
+                  <span className="text-sm font-medium">{p.career}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section id="how" className="scroll-mt-20 py-20" aria-labelledby="how-h">

@@ -7,6 +7,11 @@ import { coloradoCounselingPrograms, cuDenverCmhc, specialties } from "@/data/pr
 import { nextOccurrence } from "@/data/funding";
 import { bioastronauticsCourses, bioastronauticsFacilities, bioastronauticsFaculty } from "@/data/people";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { CareerBadge } from "@/components/brand/career-badge";
+import { CareerPicker, type PickerState } from "./career-picker";
+import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
+import { careerMeta } from "@/data/career-meta";
 import { sourceById } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
@@ -130,8 +135,12 @@ function Confidence({ sourceId }: { sourceId: string }) {
 export function DreamPaths() {
   const { profile, setProfile } = usePlanner();
   const today = useMemo(() => new Date(), []);
-  const [pathId, setPathId] = useState(pathways[0].id);
-  const [stage, setStage] = useState<Stage>("community-college");
+  const params = useSearchParams();
+  const qpPath = params.get("path");
+  const qpStage = params.get("stage") as Stage | null;
+  const [pathId, setPathId] = useState(pathways.some((p) => p.id === qpPath) ? (qpPath as string) : pathways[0].id);
+  const [stage, setStage] = useState<Stage>(qpStage && stageOrder.includes(qpStage) ? qpStage : "community-college");
+  const [picker, setPicker] = useState<PickerState>({ query: params.get("q") ?? "", category: "all", noDegree: false, highSchool: false });
   const [term, setTerm] = useState<EntryTerm>("fall");
   const [year, setYear] = useState(nextFallEntry(today));
   const path = pathways.find((p) => p.id === pathId)!;
@@ -167,25 +176,18 @@ export function DreamPaths() {
         )}
       </section>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-      <aside>
-        <ul className="space-y-2" aria-label="Dream paths">
-          {pathways.map((p) => (
-            <li key={p.id}>
-              <button onClick={() => setPathId(p.id)} aria-pressed={p.id === pathId} className={cn("lift w-full rounded-2xl border p-4 text-left", p.id === pathId ? "border-primary bg-soft" : "border-border bg-surface")}>
-                <span className="eyebrow">{p.career}</span>
-                <span className="mt-1 block font-medium">{p.title}</span>
-                <span className="mt-1 block text-xs text-muted">{p.jurisdiction} · {p.steps.length} steps</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Coming next, each added only with an official source: engineer, physician, teacher, entrepreneur, software developer, plus more Colorado campuses (CU Denver, CSU, Colorado School of Mines, Colorado Mesa and others).</p>
-      </aside>
+      <CareerPicker state={picker} onState={setPicker} selected={pathId} onSelect={setPathId} />
 
+      <div className="mt-10">
       <section className="min-w-0">
-        <h2 className="font-serif text-3xl">{path.title}</h2>
-        <p className="mt-2 text-muted">{path.summary}</p>
+        <div className="flex items-start gap-4">
+          {careerMeta[path.id] && <CareerBadge icon={careerMeta[path.id].icon} theme={careerMeta[path.id].theme} size={72} />}
+          <div>
+            <p className="eyebrow">{careerMeta[path.id]?.category ?? "Route"}</p>
+            <h2 className="font-serif text-3xl">{path.title}</h2>
+            <p className="mt-2 text-muted">{path.summary}</p>
+          </div>
+        </div>
         <div className="mt-4 flex items-center gap-3" role="img" aria-label={`${done.length} of ${path.steps.length} steps marked done by you`}>
           <div className="h-2 flex-1 overflow-hidden rounded-full bg-warm"><div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} /></div>
           <span className="tabular text-xs text-muted">{done.length}/{path.steps.length} done (self-reported)</span>
@@ -250,8 +252,10 @@ export function DreamPaths() {
             );
           })}
         </ol>
+        {careerMeta[path.id] && <><IdealPath meta={careerMeta[path.id]} /><People meta={careerMeta[path.id]} /><Challenges meta={careerMeta[path.id]} /></>}
       </section>
       </div>
+      <WaysIn initial={stage === "high-school" ? "high-school" : "high-school"} />
     </div>
   );
 }

@@ -1,0 +1,42 @@
+import { describe, expect, it } from "vitest";
+import { buildCards, searchCareers } from "./career-search";
+import { pathways } from "@/data/pathways";
+import { careerMeta } from "@/data/career-meta";
+import { sourceById } from "@/data/sample";
+
+const cards = buildCards();
+const ids = (r: ReturnType<typeof searchCareers>) => r.map((c) => c.id).sort();
+
+describe("career search", () => {
+  it("every pathway has metadata and a card", () => {
+    expect(cards.map((c) => c.id).sort()).toEqual(pathways.map((p) => p.id).sort());
+    for (const p of pathways) expect(careerMeta[p.id], p.id).toBeDefined();
+  });
+  it("finds by plain words and synonyms", () => {
+    expect(ids(searchCareers(cards, { query: "doctor" }))).toEqual(["physician-colorado"]);
+    expect(ids(searchCareers(cards, { query: "therapist" }))).toEqual(["lpc-colorado"]);
+    expect(ids(searchCareers(cards, { query: "space" }))).toContain("astronaut-bioastronautics");
+    expect(ids(searchCareers(cards, { query: "ambulance" }))).toEqual(["ems-colorado"]);
+  });
+  it("requires every typed word to match", () => {
+    expect(searchCareers(cards, { query: "nurse astronaut" })).toEqual([]);
+  });
+  it("filters by category, no-degree start and high-school step", () => {
+    expect(ids(searchCareers(cards, { category: "Skilled trades" }))).toEqual(["electrician-colorado"]);
+    for (const c of searchCareers(cards, { noDegree: true })) expect(c.meta.startsWithoutDegree).toBe(true);
+    expect(ids(searchCareers(cards, { noDegree: true }))).toEqual(expect.arrayContaining(["rn-colorado", "ems-colorado", "electrician-colorado"]));
+    expect(ids(searchCareers(cards, { highSchool: true })).length).toBe(cards.length);
+  });
+});
+
+describe("career data provenance", () => {
+  it("every challenge and person cites a verified source", () => {
+    for (const [id, m] of Object.entries(careerMeta)) {
+      for (const c of m.challenges) expect(sourceById(c.sourceId)?.status, `${id}: ${c.title}`).toBe("verified");
+      for (const p of m.people) { expect(sourceById(p.sourceId)?.status, `${id}: ${p.name}`).toBe("verified"); expect(p.url).toMatch(/^https:\/\//); }
+    }
+  });
+  it("official durations carry a source-backed note or fact", () => {
+    for (const m of Object.values(careerMeta)) for (const s of m.ideal) expect(["official", "estimate"]).toContain(s.basis);
+  });
+});
