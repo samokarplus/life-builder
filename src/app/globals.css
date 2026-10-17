@@ -103,3 +103,4 @@ dialog.drawer[open] { animation: slide-in 220ms ease-out; }
 .eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--primary); }
 @media (prefers-reduced-motion: reduce) { .lift:hover { transform: none; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+@media print { body { background: #fff; color: #000; } * { box-shadow: none !important; } }

@@ -32,3 +32,7 @@
 - Dashboard: "you are here" journey cards, progress ring, credits-per-semester chart (amber above your limit), and a Plan health checklist (prerequisites, credit limit, empty terms, unverified completed credit). Checks run on the plan only and are labeled as not a degree audit.
 - Roadmap: Ctrl/Cmd+Z undo and Shift+Ctrl/Cmd+Z / Ctrl+Y redo, ignored while typing.
 - Added `planHealth` with tests (67 unit tests); all 15 Playwright tests, including axe, contrast and 375px overflow checks, still pass.
+- Command palette (Ctrl/Cmd+K): jump to any page, run actions (undo, redo, theme, rebuild roadmap, print) or open a course in the explorer. Keyboard-navigable listbox.
+- Dashboard "Your route": a stop-by-stop route of your semesters with a "you are here" marker and destination.
+- Printable plan at `/print` (print or save as PDF), linked from the roadmap and palette.
+- 73 unit tests, 15 Playwright tests pass.

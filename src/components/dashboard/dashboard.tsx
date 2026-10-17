@@ -5,6 +5,8 @@ import { AlertCircle, ArrowRight, CalendarDays, CheckCircle2, CircleDollarSign, 
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { planHealth } from "@/lib/health";
+import { routeStops } from "@/lib/route";
+import { RouteMap } from "./route-map";
 import { courses, institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { prereqIssues, progress, semesterLabel, sortSemesters } from "@/lib/schedule";
@@ -78,6 +80,8 @@ export function Dashboard() {
           </li>
         ))}
       </ol>
+
+      <RouteMap stops={routeStops(semesters, courses)} destination={profile.dream || "Your career"} />
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         <Card title="Degree progress" icon={GraduationCap}>
