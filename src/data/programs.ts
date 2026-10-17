@@ -49,3 +49,30 @@ export const cuAesGrad = {
   sourceId: "src-cub-aes-apply",
   deadlineSourceId: "src-cub-aes-deadlines",
 };
+
+/**
+ * CU Denver MA in Counseling, Clinical Mental Health, from the program's own page (read 2026-10-16).
+ * The interview dates are only the two the page lists; later cycles must be re-read.
+ */
+export const cuDenverCmhc = {
+  institution: "University of Colorado at Denver",
+  program: "MA in Counseling, Clinical Mental Health",
+  format: "On campus (very few classes fully online)",
+  credits: 63,
+  recommendedTime: "3 to 4 years",
+  accreditation: "CACREP",
+  applicationWindows: [
+    { term: "Fall" as const, opens: { month: 11, day: 1 }, due: { month: 1, day: 15 } },
+    { term: "Spring" as const, opens: { month: 7, day: 1 }, due: { month: 9, day: 15 } },
+  ],
+  requirements: ["3 recommendation letters", "Official transcripts from all institutions attended", "Resume or CV", "Written statement", "$50 application fee"],
+  interviews: [
+    { cycle: "Spring 2027", date: "2026-10-23" },
+    { cycle: "Fall 2027", date: "2027-03-12" },
+  ],
+  interviewNote: "A half-day group interview on the Denver campus is required, there are no individual or alternate interviews, and you won't be accepted without attending.",
+  advice: "Only complete applications are reviewed; the program recommends submitting one to two months before the deadline.",
+  contact: { office: "Office of Recruitment & Outreach", phone: "303.315.6300", email: "education@ucdenver.edu" },
+  url: "https://education.ucdenver.edu/academics/graduate/counseling/detail/ma-counseling-clinical-mental-health",
+  sourceId: "src-cud-cmhc",
+};

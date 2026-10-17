@@ -15,6 +15,7 @@ const subject = (c: Course) => c.code.split(" ")[0];
 const subjects = [...new Set(courses.map(subject))].sort();
 import { ruleCourseIds as idsOf } from "@/lib/requirements";
 import { sourceById } from "@/data/sample";
+import { approvedElectiveBasis, electiveBasisLabel } from "@/data/frcc-electives";
 
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return <button aria-pressed={active} onClick={onClick} className={cn("rounded-full border px-3 py-1 text-xs", active ? "border-primary bg-soft text-primary" : "border-border bg-surface text-muted hover:text-foreground")}>{children}</button>;
@@ -122,6 +123,7 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
               <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} {sourceById(open.sourceId)?.status !== "verified" && <span className="text-xs text-muted">(assumed in sample)</span>}</dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>
+              <dt className="text-muted">Elective</dt><dd>{(() => { const b = open.institutionId === "frcc" ? approvedElectiveBasis(open.code, open.gtPathways) : null; return b ? electiveBasisLabel[b] : "Not on the loaded approved elective list (unverified sample or unlisted course)"; })()}</dd>
               <dt className="text-muted">gtPathways</dt><dd>{open.gtPathways?.join(", ") ?? "No verified gtPathways designation loaded"}</dd>
               {open.eligibilityNote && <><dt className="text-muted">Restrictions</dt><dd>{open.eligibilityNote}</dd></>}
               <dt className="text-muted">Offering</dt><dd>{open.notOffered ? "Marked not currently offered at FRCC" : "Offering by term unknown"}</dd>

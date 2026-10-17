@@ -36,7 +36,7 @@ describe("real FRCC AA requirements", () => {
   it("with nothing completed, mapped areas are unsatisfied and only electives need a check", () => {
     const r = evaluateRequirements(requirements, { ...base, completed: [] });
     for (const id of ["aa-written", "aa-oral", "aa-math", "aa-arts-hum", "aa-history", "aa-social", "aa-science", "aa-choice"]) expect(status(r, id), id).toBe("unsatisfied");
-    expect(status(r, "aa-electives")).toBe("uncertain");
+    expect(status(r, "aa-electives")).toBe("unsatisfied");
   });
   it("satisfies real gtPathways areas from official categories", () => {
     const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true, grade: "B" });
@@ -108,4 +108,19 @@ it('does not apply AA rules to a different institution or selected program',()=>
  expect(requirementsForProfile({currentInstitutionId:'frcc',program:'Associate of Science'})).toEqual([]);
  expect(requirementsForProfile({currentInstitutionId:'cub'})).toEqual([]);
  expect(requirementsForProfile({currentInstitutionId:'frcc'})).toBe(requirements);
+});
+
+import { cuDenverCmhc, coloradoCounselingPrograms } from "./programs";
+import { sourceById as srcById } from "./sample";
+describe("CU Denver counseling program details", () => {
+  it("cites a verified official source and matches the CACREP row", () => {
+    expect(srcById(cuDenverCmhc.sourceId)?.status).toBe("verified");
+    expect(coloradoCounselingPrograms.some((p) => p.institution === cuDenverCmhc.institution && p.specialty === "Clinical Mental Health Counseling")).toBe(true);
+  });
+  it("states the application windows from the program page", () => {
+    const fall = cuDenverCmhc.applicationWindows.find((w) => w.term === "Fall")!;
+    expect(fall.due).toEqual({ month: 1, day: 15 });
+    expect(cuDenverCmhc.applicationWindows.find((w) => w.term === "Spring")!.due).toEqual({ month: 9, day: 15 });
+    expect(cuDenverCmhc.credits).toBe(63);
+  });
 });
