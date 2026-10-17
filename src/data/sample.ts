@@ -1,65 +1,13 @@
 import { parseGt } from "./frcc-gtpathways";
 import { GT_SOURCE_ID } from "./frcc-gtpathways-raw";
-import type { Course, DataSource, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
+import type { Course, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
 
 /**
  * SAMPLE DATA ONLY. Course codes/titles come from the product brief as
  * illustrations. Credits are assumed (3) and nothing here is verified against
  * an official catalog. Replace via future importers.
  */
-export const sources: DataSource[] = [
-  {
-    id: "src-sample",
-    url: null,
-    institutionId: null,
-    catalogYear: null,
-    lastVerified: null,
-    status: "illustrative",
-    note: "Illustrative sample entry; not verified against an official catalog.",
-  },
-];
-
-/** Official sources checked by hand on the verification date below. Only figures stated on these pages are loaded. */
-export const VERIFIED_ON = "2026-10-16";
-sources.push(
-  {
-    id: "src-frcc-aa-2627",
-    url: "https://frontrange.smartcatalogiq.com/en/current/catalog/program-information/degree-descriptions/aa-degree",
-    institutionId: "frcc",
-    catalogYear: "2026-2027",
-    lastVerified: VERIFIED_ON,
-    status: "verified",
-    note: "FRCC catalog, Associate of Arts degree page. Titles, credits and requirement structure as listed there.",
-  },
-  {
-    id: "src-frcc-tuition-2627",
-    url: "https://frontrange.edu/admissions-aid/paying-for-college/tuition-fees/tuition-rates.html",
-    institutionId: "frcc",
-    catalogYear: "2026-2027",
-    lastVerified: VERIFIED_ON,
-    status: "verified",
-    note: "FRCC published 2026-2027 tuition rates (excludes campus fees).",
-  },
-  {
-    id: "src-cub-tuition-unresolved",
-    url: "https://www.colorado.edu/bursar/",
-    institutionId: "cub",
-    catalogYear: null,
-    lastVerified: null,
-    status: "unverified",
-    note: "Search results for CU Boulder per-credit tuition disagreed with each other, so no figure is loaded. Confirm with the CU Boulder Bursar.",
-  },
-);
-
-sources.push({
-  id: GT_SOURCE_ID,
-  url: "https://frontrange.smartcatalogiq.com/current/catalog/elective-lists/gt-pathway-courses/",
-  institutionId: "frcc",
-  catalogYear: "2026-2027",
-  lastVerified: VERIFIED_ON,
-  status: "verified",
-  note: "FRCC catalog, GT Pathway Courses list. Titles, credits and gtPathways categories as listed there.",
-});
+export { sources, sourceById, VERIFIED_ON } from "./sources";
 
 export const institutions: Institution[] = [
   { id: "frcc", name: "Front Range Community College", shortName: "FRCC", kind: "community-college", state: "CO" },
@@ -108,7 +56,6 @@ export const courses: Course[] = (() => {
   return out;
 })();
 
-export const sourceById = (id: string) => sources.find((x) => x.id === id);
 
 export const tuitionRates: TuitionRate[] = [
   { id: "t-frcc", institutionId: "frcc", academicYear: "2026-2027", perCredit: 299.75, cofStipend: 116, residency: "in-state", sourceId: "src-frcc-tuition-2627", note: "Regular resident, excluding campus fees. $183.75 per credit after the College Opportunity Fund stipend, if eligible." },

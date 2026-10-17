@@ -1,16 +1,4 @@
-import { sources, VERIFIED_ON } from "./sample";
-import "./pathways"; // registers the CU transfer-timeline source used below
 import type { Stage } from "./pathways";
-
-const v = (id: string, url: string, note: string, institutionId: string | null = null) =>
-  sources.push({ id, url, institutionId, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note });
-
-v("src-fafsa-fill", "https://studentaid.gov/apply-for-aid/fafsa/filling-out", "Federal Student Aid: Filling Out the FAFSA form.");
-v("src-fafsa-deadlines", "https://studentaid.gov/apply-for-aid/fafsa/fafsa-deadlines", "Federal Student Aid: FAFSA application deadlines (2027-28 listing). Colorado's entry says to contact the financial aid office of the school you plan to attend.");
-v("src-cub-fafsa", "https://www.colorado.edu/financialaid/apply-aid/fafsa", "CU Boulder Office of Financial Aid: Completing the FAFSA, with its annual timeline.", "cub");
-v("src-cub-firstgen", "https://www.colorado.edu/scholarships/first-generation", "CU Boulder Office of Scholarship Services: First Generation Scholarship.", "cub");
-v("src-cosgc", "https://www.colorado.edu/center/spacegrant/student-involvement-opportunities-space-grant", "NASA Colorado Space Grant Consortium: student involvement opportunities.", "cub");
-v("src-cub-bio-awards", "https://www.colorado.edu/bioastronautics/student-awards", "CU Boulder Bioastronautics: Student Awards page (2025 and 2026 entries).", "cub");
 
 /** Annual month/day dates from CU Boulder's published pages. Cycles change, so confirm each year. */
 export interface FundingDate { id: string; label: string; month: number; day: number; note?: string; sourceId: string }

@@ -1,9 +1,5 @@
-import { sources, VERIFIED_ON } from "./sample";
 
-sources.push(
-  { id: "src-cacrep-co", url: "https://www.cacrep.org/directory/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CACREP directory, state = CO, statuses Accredited / 2 Year / 8 Year (22 program rows read on the verification date). Statuses and cycle end dates change, so re-check the directory." },
-  { id: "src-cub-grad-deadlines", url: "https://www.colorado.edu/graduateschool/admissions/where-begin/program-information-deadlines", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Graduate School Program Information & Deadlines table." },
-);
+
 
 export interface CounselingProgram {
   institution: string;

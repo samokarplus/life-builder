@@ -1,10 +1,5 @@
-import { sources, VERIFIED_ON } from "./sample";
 
-sources.push(
-  { id: "src-cub-bio-faculty", url: "https://www.colorado.edu/bioastronautics/faculty", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Bioastronautics: Faculty page, plus each person's own Smead Aerospace Engineering Sciences profile." },
-  { id: "src-cub-bio-home", url: "https://www.colorado.edu/bioastronautics/", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Bioastronautics home page." },
-  { id: "src-cub-bio-curriculum", url: "https://www.colorado.edu/bioastronautics/curriculum", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Bioastronautics curriculum page." },
-);
+
 
 export interface Faculty {
   id: string;

@@ -1,5 +1,3 @@
-import { sources, VERIFIED_ON } from "./sample";
-import "./programs";
 
 /**
  * Dream Paths: multi-step routes from where you are to a specific career. Each step carries the
@@ -7,15 +5,7 @@ import "./programs";
  * only support is a search excerpt (official sites blocked automated reading) are "unverified"
  * and shown as "confirm with the official source".
  */
-sources.push(
-  { id: "src-cub-transfer-timeline", url: "https://www.colorado.edu/admissions/transfer/timeline", institutionId: "cub", catalogYear: "2027 transfer cycle", lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Transfer Timeline page: month/day deadlines; no year printed per date." },
-  { id: "src-cub-aes-grad", url: "https://www.colorado.edu/academics/grad-aerospace-engineering-sciences", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Aerospace Engineering Sciences graduate degrees page. It does not list application deadlines or GRE policy; use the Graduate School deadlines page." },
-  { id: "src-nasa-astronaut", url: "https://www.nasa.gov/humans-in-space/astronauts/become-an-astronaut/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "NASA 'Become an Astronaut' page (page dated Mar 27, 2026; some wording refers to the 2025 cycle). Applications are accepted as needed." },
-  { id: "src-co-lpc-rules", url: "https://www.sos.state.co.us/CCR/DisplayRule.do?action=ruleinfo&ruleId=2318&deptID=18&agencyID=61&deptName=Department%20of%20Regulatory%20Agencies&agencyName=Division%20of%20Professions%20and%20Occupations%20-%20Board%20of%20Licensed%20Professional%20Counselor%20Examiners&seriesNum=4%20CCR%20737-1", institutionId: null, catalogYear: "4 CCR 737-1, effective 2025-09-14", lastVerified: VERIFIED_ON, status: "verified", note: "Colorado Code of Regulations, State Board of Licensed Professional Counselor Examiners, current version effective 09/14/2025 (read from the official PDF)." },
-  { id: "src-dora-lpc-apps", url: "https://dpo.colorado.gov/ProfessionalCounselor/Applications", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "Colorado DORA Division of Professions and Occupations, Professional Counselor Applications and Forms page." },
-  { id: "src-dora-faq", url: "https://dpo.colorado.gov/MentalHealth/FAQ", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "Colorado DORA Mental Health FAQ." },
-  { id: "src-cacrep", url: "https://www.cacrep.org/directory/", institutionId: null, catalogYear: null, lastVerified: null, status: "unverified", note: "CACREP is the counseling program accreditor. No program list is loaded; use its directory." },
-);
+
 
 export type StepKind = "degree" | "transfer" | "application" | "exam" | "experience" | "license" | "selection" | "requirement";
 

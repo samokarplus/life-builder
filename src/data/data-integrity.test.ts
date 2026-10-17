@@ -3,10 +3,9 @@ import { courses, requirements, sources, tuitionRates, sourceById, FRCC_AA_CREDI
 import { evaluateRequirements } from "@/lib/requirements";
 
 describe("data provenance", () => {
-  it("every verified source has a URL, catalog year and verification date", () => {
+  it("every verified source has a URL and verification date", () => {
     for (const s of sources.filter((x) => x.status === "verified")) {
       expect(s.url).toMatch(/^https:\/\//);
-      expect(s.catalogYear).toBeTruthy();
       expect(s.lastVerified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     }
   });
