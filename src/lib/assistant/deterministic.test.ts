@@ -34,3 +34,12 @@ it("answers FAFSA and faculty questions from sourced data",async()=>{
   expect(await deterministicProvider.answer("How do I pay for this, FAFSA?",ctx)).toContain("June 30, 2028");
   expect(await deterministicProvider.answer("Which professors work on astronaut research?",ctx)).toContain("Torin Clark");
 });
+it('uses the requested spring year and separates graduate/licensing deadlines',async()=>{
+ expect(await deterministicProvider.answer('Transfer deadline for spring 2027?',ctx)).toContain('2026-10-01');
+ expect(await deterministicProvider.answer('Aerospace masters application deadline?',ctx)).toContain('Fall Dec. 1');
+ expect(await deterministicProvider.answer('LPC application deadline?',ctx)).not.toContain('Fall early-notification');
+});
+it('orders upcoming courses chronologically even with unsorted imported semesters',async()=>{
+ const answer=await deterministicProvider.answer('What courses are next?',{...ctx,semesters:[{...sampleSemesters[1],year:2029},sampleSemesters[1]]});
+ expect(answer).toContain('Spring 2027');
+});

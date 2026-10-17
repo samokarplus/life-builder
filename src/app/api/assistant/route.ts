@@ -1,4 +1,4 @@
-import { assistantRequestSchema, ACADEMIC_INSTRUCTIONS, responseText } from "@/lib/assistant/server";
+import { assistantRequestSchema, ACADEMIC_INSTRUCTIONS, responseText, readBoundedBody } from "@/lib/assistant/server";
 import { courses, requirements, sources } from "@/data/sample";
 import { evaluateRequirements } from "@/lib/requirements";
 import { planContext } from "@/lib/plan-context";
@@ -14,7 +14,7 @@ export async function POST(request:Request){
  const url=new URL(request.url);
  if(!["localhost","127.0.0.1","[::1]"].includes(url.hostname)||request.headers.get("origin")&&request.headers.get("origin")!==url.origin)return Response.json({error:"Only same-origin local requests are supported."},{status:403,headers});
  if(!configured())return Response.json({error:"Optional AI is not configured."},{status:503,headers});
- const raw=await request.text();if(raw.length>100000)return Response.json({error:"Plan is too large."},{status:413,headers});
+ let raw:string;try{raw=await readBoundedBody(request);}catch(error){return Response.json({error:error instanceof RangeError?"Plan is too large.":"Could not read plan."},{status:error instanceof RangeError?413:400,headers});}
  let data;try{data=assistantRequestSchema.parse(JSON.parse(raw));}catch{return Response.json({error:"Invalid structured plan."},{status:400,headers});}
  const {profile,semesters,tuitionPerCredit}=data.plan;
  const facts={question:data.question,plan:data.plan,courses,sources,requirements:evaluateRequirements(requirements,{courses,...planContext(semesters,profile.completed)}),metrics:pathMetrics(semesters,courses,profile.completed,tuitionPerCredit)};

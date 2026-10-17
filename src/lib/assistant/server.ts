@@ -10,3 +10,16 @@ export function responseText(data:unknown):string|null {
  if(!parsed.success)return null;
  const text=parsed.data.output.flatMap(o=>o.type==="message"?o.content??[]:[]).filter(c=>c.type==="output_text").map(c=>c.text??"").join("\n").trim();return text||null;
 }
+
+/** Enforce bytes while reading, including chunked requests without Content-Length. */
+export async function readBoundedBody(request: Request, limit = 100_000): Promise<string> {
+ const declared = Number(request.headers.get('content-length'));
+ if (declared > limit) throw new RangeError('Body too large');
+ const reader=request.body?.getReader();if(!reader)return '';
+ const chunks: Uint8Array[]=[];let size=0;
+ try {
+  for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>limit){await reader.cancel();throw new RangeError('Body too large');}chunks.push(value);}
+ } finally {reader.releaseLock();}
+ const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+ return new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+}
