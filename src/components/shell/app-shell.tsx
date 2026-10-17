@@ -8,6 +8,7 @@ import { Menu, PanelLeftClose, PanelLeftOpen, Search, Sun, Moon, Sparkles } from
 import { cn } from "@/lib/utils";
 import { navItems } from "./nav";
 import { AssistantPanel } from "./assistant-panel";
+import { CommandPalette } from "./command-palette";
 import { Modal } from "@/components/ui/modal";
 import { SaveStatus } from "./save-status";
 import { institutions } from "@/data/sample";
@@ -97,6 +98,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
         <main id="main-content" className="min-w-0 flex-1 p-4 pb-24 sm:p-6 md:p-8 lg:p-10">{children}</main>
         <AssistantPanel />
+        <CommandPalette />
       </div>
     </div>
   );

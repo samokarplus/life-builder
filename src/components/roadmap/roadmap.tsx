@@ -1,11 +1,12 @@
 "use client";
 import { useConfirm } from "@/components/ui/confirmation";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, closestCorners, useSensor, useSensors, type DragEndEvent, type DragStartEvent, type KeyboardCoordinateGetter } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { toast } from "sonner";
-import { Columns3, ListTree, Network, Plus, Redo2, Undo2, Sun, Flag } from "lucide-react";
+import Link from "next/link";
+import { Columns3, ListTree, Network, Plus, Printer, Redo2, Undo2, Sun, Flag } from "lucide-react";
 import { courses } from "@/data/sample";
 import { creditWarnings, prerequisiteFix, nextSummer } from "@/lib/roadmap";
 import { prereqIssues, semesterLabel, sortSemesters } from "@/lib/schedule";
@@ -25,6 +26,19 @@ type SemForm = { id?: string; term: Semester["term"]; year: number; institutionI
 export function Roadmap() {
   const confirm = useConfirm();
   const store = usePlanner();
+  // Cmd/Ctrl+Z undo, Shift+Cmd/Ctrl+Z or Ctrl+Y redo (never while typing).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))) return;
+      if (!(e.metaKey || e.ctrlKey)) return;
+      const k = e.key.toLowerCase();
+      if (k === "z" && !e.shiftKey) { e.preventDefault(); usePlanner.getState().undo(); }
+      else if ((k === "z" && e.shiftKey) || k === "y") { e.preventDefault(); usePlanner.getState().redo(); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const { semesters, profile, tuitionPerCredit } = store;
   const layout = store.roadmapView;
   const setLayout = store.setRoadmapView;
@@ -117,7 +131,8 @@ export function Roadmap() {
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-1">
           <button onClick={()=>{const summer=nextSummer(semesters,profile.currentInstitutionId); if(store.addSemester(summer)) toast.success(`${semesterLabel(summer)} added`);}} className="flex h-9 items-center gap-1 rounded-full border border-border px-3 text-sm"><Sun size={14}/> Summer semester</button>
-          <button onClick={store.undo} disabled={!store.past.length} aria-label="Undo" className="flex h-9 items-center gap-1 rounded-full px-3 text-sm hover:bg-soft disabled:opacity-40"><Undo2 size={15} /> Undo</button>
+          <Link href="/print" className="flex h-9 items-center gap-1 rounded-full px-3 text-sm hover:bg-soft"><Printer size={15} aria-hidden /> Print</Link>
+          <button onClick={store.undo} disabled={!store.past.length} aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" className="flex h-9 items-center gap-1 rounded-full px-3 text-sm hover:bg-soft disabled:opacity-40"><Undo2 size={15} /> Undo</button>
           <button onClick={store.redo} disabled={!store.future.length} aria-label="Redo" className="flex h-9 items-center gap-1 rounded-full px-3 text-sm hover:bg-soft disabled:opacity-40"><Redo2 size={15} /> Redo</button>
           <button onClick={() => openForm()} className="flex h-9 items-center gap-1 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground"><Plus size={15} /> Add semester</button>
         </div>
