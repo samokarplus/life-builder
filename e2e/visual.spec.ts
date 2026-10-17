@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import {mkdir} from 'node:fs/promises';
 const paths=['/','/onboarding','/overview','/roadmap','/explorer','/compare','/careers','/paths','/funding','/costs','/profile','/settings','/print'];
 for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${theme} ${width}: all pages, screenshots, contrast and overflow`,async({page})=>{
- test.setTimeout(120000);
+ test.setTimeout(240000);
  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>{localStorage.setItem('theme',theme);},theme);
  await mkdir('artifacts/screenshots',{recursive:true});
  for(const path of paths){
@@ -38,6 +38,33 @@ for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${th
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-paths-${tab.replaceAll(' ','-').toLowerCase()}.png`,fullPage:true,animations:'disabled'});
  }
+ // Every newly added route, audience, filter and empty state in each size/theme.
+ for (const route of ['rn-colorado','ems-colorado','electrician-colorado','teacher-colorado','physician-colorado']) {
+  await page.goto(`/paths?path=${route}&stage=high-school`);
+  await expect(page.getByRole('button',{name:/^High school Dreaming/})).toHaveAttribute('aria-pressed','true');
+  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-${route}.png`,fullPage:true,animations:'disabled'});
+ }
+ for (const audience of ["I'm in high school","I'm from out of state","I'm starting without a degree"]) {
+  await page.getByRole('button',{name:audience,exact:true}).click();
+  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-starting-${audience.includes('state')?'out-of-state':audience.includes('degree')?'no-degree':'high-school'}.png`,fullPage:true,animations:'disabled'});
+ }
+ await page.getByText('What do these abbreviations mean?',{exact:true}).click();
+ expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+ await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-glossary.png`,fullPage:true,animations:'disabled'});
+ await page.getByRole('button',{name:'Can start without a degree',exact:true}).click();
+ await page.getByRole('button',{name:'Skilled trades',exact:true}).click();
+ await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(2);
+ await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-career-filters.png`,fullPage:true,animations:'disabled'});
+ await page.getByRole('searchbox',{name:'Search careers, schools, programs and requirements'}).fill('zzzzzz');
+ await expect(page.getByRole('button',{name:'Clear search',exact:true})).toBeVisible();
+ expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
+ await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-career-empty.png`,fullPage:true,animations:'disabled'});
+ await page.getByRole('button',{name:'Clear search',exact:true}).press('Enter');
+ await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(16);
  await page.goto('/settings');await page.getByRole('button',{name:'Reset',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('button',{name:'Cancel',exact:true})).toBeFocused();
  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);

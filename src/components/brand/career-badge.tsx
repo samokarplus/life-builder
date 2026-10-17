@@ -2,6 +2,12 @@ import type { IconKey, ThemeKey } from "@/data/career-meta";
 import { cn } from "@/lib/utils";
 
 const art: Record<IconKey, React.ReactNode> = {
+  software:<><rect x="7" y="10" width="34" height="25" rx="4" stroke="var(--t-fg)" strokeWidth="3"/><path d="m16 19 5 4-5 4m10 0h6M17 41h14m-7-6v6" stroke="var(--t-fg)" strokeWidth="3" strokeLinecap="round"/></>,
+  engineer:<><circle cx="24" cy="24" r="15" stroke="var(--t-fg)" strokeWidth="3"/><path d="m18 33 6-21 6 21M14 28h20m-10-23v6m0 26v6M5 24h6m26 0h6" stroke="var(--t-fg)" strokeWidth="3" strokeLinecap="round"/></>,
+  pharmacist:<><path d="m16 12 20 20a10 10 0 0 1-14 0L12 22a10 10 0 0 1 14-14l10 10a10 10 0 0 1 0 14M17 27l14-14" stroke="var(--t-fg)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></>,
+  plumber:<><path d="M9 9h13v14h17v13H9z" stroke="var(--t-fg)" strokeWidth="3" strokeLinejoin="round"/><path d="M5 9h21M39 19v21" stroke="var(--t-fg)" strokeWidth="4" strokeLinecap="round"/></>,
+  dental:<><path d="M24 13c-7-7-15-4-15 4 0 8 4 22 8 22 3 0 1-13 7-13s4 13 7 13c4 0 8-14 8-22 0-8-8-11-15-4z" stroke="var(--t-fg)" strokeWidth="3" strokeLinejoin="round"/></>,
+  vet:<><ellipse cx="24" cy="31" rx="11" ry="9" fill="var(--t-fg)"/><ellipse cx="12" cy="19" rx="4" ry="6" fill="var(--t-fg)"/><ellipse cx="22" cy="12" rx="4" ry="6" fill="var(--t-fg)"/><ellipse cx="32" cy="13" rx="4" ry="6" fill="var(--t-fg)"/><ellipse cx="39" cy="23" rx="4" ry="6" fill="var(--t-fg)"/></>,
   // Astronaut helmet with a visor and a glint
   astronaut: (<>
     <path d="M7 41c0-7 7-11 17-11s17 4 17 11z" fill="var(--t-fg)" opacity=".55" />

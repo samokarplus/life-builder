@@ -1,3 +1,53 @@
+# Colorado routes: independent follow-up review (2026-10-16)
+
+Reviewed `origin/main` at `7f1d4ef` (the five-route and electives merges), on `codex/colorado-route-review`. The earlier review below remains historical evidence; this addendum supersedes its source counts and expansion deferrals. Baseline: 149 Vitest tests, ESLint and production build passed before edits.
+
+Detailed claim / original value / official-page findings and terms checks: [Colorado route claim ledger](review/colorado-route-claims.md). Official facts were read one public page at a time, with a live browser for DORA/CDPHE/CCCS panels. No bulk scraping or paid AI calls.
+
+## Findings by severity
+
+| Priority | Reproduction / impact | Fix status and regression evidence |
+| --- | --- | --- |
+| P1 | Mark five real three-credit electives and illustrative PHI1030 complete: the broad elective range accepted the sample course and falsely satisfied18 official elective credits. | Fixed official elective candidates to require verified catalog provenance; Explorer no longer labels illustrative course numbers approved. Adversarial18-credit regression remains unsatisfied and excludes the sample ID. Corrected requirement citation to the elective list. |
+| P1 | Open any high-school route or starting-point card: ASCENT advertised among current options despite FRCC’s June30,2026 sunset notice. | Fixed across routes/access cards; historical notice retained. Data regression test rejects the old list. |
+| P1 | Profile dream “physician assistant”, “electrical engineer”, “psychologist”, “CNA” or “paramedic”: broad substring matcher silently selected a different credential. “workspace” matched astronaut; multiple dreams chose the first regex. | Fixed whole-word normalization and explicit ambiguity/unsupported-credential guards. Dashboard offers an explicit route choice. Unit tests cover accented/messy input, distinct professions, negation and multiple dreams. |
+| P1 | Ideal paths labeled “about two more years” official because an associate might leave ~60 credits; apprentice “right away” was also official. Summing electrician milestones implied consecutive durations. | Fixed estimates; official durations now require a sourceId in the type and show its link. Electrician milestones clearly overlap/have alternatives; removed unsupported NASA earliest-decade claim. |
+| P1 | Read the Care Forward access card: a 2023 alumni story presented as current available zero-cost training. | Fixed historical tense/title and explicit unknown current funding. Unit regression. |
+| P2 | RN route generalized Larimer admission details. Campus selection could send a Boulder County student looking for an ADN there. | Fixed: FRCC lists AAS nursing at Larimer/Westminster, not Boulder County. Independent Westminster page reviewed; specific transcript and notification differences recorded. Source links rendered. |
+| P2 | RN exam two-part application cited FAQ; mixed-profession interstate card cited only electrical; WUE dollars cited a page without the dollars. | Fixed primary/additional citations, rendered all authorities; tuition rates scoped to regular classes, excluding fees/online/nursing differences. Source-resolution tests. |
+| P2 | Bridge partner names from image labels included Saint Augustine’s; current CCCS text names Coppin State. | Current text corrected; 12 Colorado schools +WGU corroborated through CCCS partner destination links. Saint Augustine’s disagreement visibly flagged, not promised. |
+| P2 | AMCAS deadline baked “passed” into facts regardless of date; recurring-date helper would be unsafe for this fixed cycle. | Fixed dated-event records and civil-day before/on/after UI. Never recurs implicitly. Unit tests include next year, DST and invalid dates. |
+| P2 | Invalid URL stage ignored saved high-school stage; query unbounded; client navigation retained initial route state; imported unknown/duplicate progress IDs inflated progress. | Fixed bounded query parser and profile-aware fallback, page key on query navigation, filtered/deduplicated progress. Pure tests and browser regression. |
+| P2 | Search “RN” matched substrings inside unrelated words; advertised “no degree” query had no filter semantics; no exact-name ranking. | Fixed token-prefix matching, synonyms/diacritics, query bound, no-degree semantics and stable exact-name ranking. Unit tests. |
+| P2 | Profile could retain a high-school stage but offered no way to edit it. | Added labeled starting-point selector. Migration/import/export tests preserve high-school data and reject invalid stages without replacing the plan; browser reload test. |
+| P2 | On375px, career search appeared below a tall stage selector, making route discovery slow. Selecting a card left keyboard users at the picker. | Moved search first; selection focuses the route heading. Browser test selects with Enter and checks focus. This is a heuristic first-year review, not a measured study with students. |
+| P3 | Abbreviations were unexplained; alumni “now” employment could imply a current verified job; Menon “not a pilot” was an unsupported inference. | Added sourced plain-language glossary for all eight requested terms. Dated historical roles/plans, labeled takeaways as our interpretation, removed negative inference. |
+| P3 | README still said Playwright uses3000. | Corrected documentation to3100; existing config already refuses server reuse. Port3000 left untouched. |
+
+## Bug/security audit disposition
+
+The central immutable source registry still resolves without feature-import order; new additionalSourceIds and duration source links are covered by tests. Existing requirement-engine, migration, import/export, deterministic-assistant and server-security regressions were rerun. The elective candidate adapter now excludes illustrative catalog records; the generic requirement engine and storage implementation remain unchanged. Unknown program requirements, external-credit uncertainty and completed/planned separation remain intact.
+
+Reviewed the optional AI route’s same-origin/local-host guard, bounded streaming request body, Zod projection, omission of private dream/budget/history, provider timeout, no-store responses and generic failures. Provider behavior is mocked in tests; no paid request was sent. Imported text renders as React text, not HTML; unknown route/query strings do not become arbitrary navigation targets. This is a code review, not a penetration test or a guarantee against model hallucination. Multiple-tab concurrent plan editing still has no conflict merge; keep the existing documented limitation.
+
+Runtime dependency audit (`npm audit --omit=dev`): zero vulnerabilities. The five baseline high findings remain in development tooling; no forced dependency downgrade.
+
+## Visual/accessibility review
+
+The full browser suite captures13 pages at1440/768/375 in both themes, alternate roadmap views, the course drawer, confirmation dialog, five new route states, three starting-point choices, filters and empty results. Axe checks WCAG2A/AA and2.1AA; explicit document-width assertions catch horizontal overflow. Keyboard smoke covers drag announcements, focus return, route selection and reset cancel focus. Screenshots live under ignored `artifacts/screenshots/`; contact sheets are review aids, not pixel-baseline tests.
+
+Cheap friction fixes: search above stage choices; explicit recovery for unsupported dreams; editable starting point; source links on official durations; glossary. Badge color is accompanied by icon, career title and category text. Empty story lists remain honest empty states. Screen-reader usability beyond automated axe and focus checks still deserves testing with actual users.
+
+## Remaining source questions
+
+CDPHE’s initial and reciprocity pages disagree about intermediate-level ACLS wording; the app surfaces the difference. Its generic exam wording may lag level-specific NREMT changes. NASA still carries June2025 alternatives, so no future-cycle guarantee is inferred. CU’s MD requirements page says primary applications usually open early June while its2026–27 timeline says May; cycle-specific facts are used. Current Care Forward availability and Saint Augustine’s Bridge participation remain unconfirmed. More campus/course/career datasets are separate expansion work, not silently filled with estimates.
+
+## Validation
+
+Final results:161 Vitest tests passed; `npx eslint src` and `npx next build` passed; `PW_PORT=3100 npx playwright test` passed all21 tests, including six complete responsive/theme matrices with zero axe violations. The attached ledger is the factual review record; the original review below is retained for traceability.
+
+---
+
 # Dream Helper review
 
 Reviewed October 16, 2026 (America/Los_Angeles). Base: `origin/main` at `cbbf4da`. Fix branch: `codex/review-fixes`.
@@ -121,3 +171,42 @@ Baseline before edits: `npm install`, **105 tests passing**, production build pa
 - `npm run test:e2e`: **18 tests pass**, including all six responsive/theme matrices; **120 screenshots**, no axe violations in tested states, no document overflow at 375px.
 
 The [screenshot manifest](review/screenshot-manifest.json) lists the page captures. Local logs: `/tmp/dream-helper-review-build.log` and `/tmp/dream-helper-review-e2e.log`. The course audit is deterministic against the saved official document; external facts can change after the review date. No live AI call, campus expansion or deployment was performed.
+
+## Theme H: source reliability follow-up
+
+The offline source checker inventories56 sources and436 cited factual records. It flags >90 days, invalid/future dates and missing/dangling citations; it never downloads pages or changes verification dates. A deterministic Jan15,2027 check correctly flags53 stale sources and exits1 with `--strict`. The CI-ready command checks provenance independently of age. A GitHub workflow wrapper was omitted because the connected token cannot create workflows; no permission expansion was requested. The inventory also refuses unregistered new data modules, so future campus/career work cannot silently bypass the check. Official durations, nested requirement policies and secondary citations are checked. Individual Bioastronautics summaries now have sourceIds.
+
+Settings and shared source badges expose last checks and stale warnings. A stale date does not turn an estimate into a verified claim or alter any student preference. Automated freshness is a reminder to manually re-read the authority, not evidence a fact is still current.
+
+
+## Campus expansion A (2026-10-16)
+
+Evidence: [campus sources and terms](review/colorado-campus-sources.md). Six destination planners added to Colorado Dreams and Funding. New data is registered in the provenance inventory (506 records; 77 sources).
+
+| Priority | Reproduction / risk | Disposition |
+| --- | --- | --- |
+| P1 | Use one campus per-credit number for every program or multiply it into a full-time quote. Mines/UNC use bands, UCCS uses cohort/program tables, CU Denver assesses by course. | Loaded scoped one-credit examples with period, resident eligibility, COF and fees caveats. No automatic semester cost conversion. |
+| P2 | Read UNC resident table at8 or19 credits: source totals are internally inconsistent. | Quarantined multi-credit totals; only independently checked one-credit row loaded, discrepancy disclosed. |
+| P2 | Follow UNC Current Transfer Guides: redirects to Aims2UNC; older UCCS Colorado community-college URL and CU Denver www1 hostname fail. | Current CU Denver maps used. UNC/UCCS gaps stated; FRCC/CCCS engineering agreements remain explicitly scoped, no blanket equivalencies. |
+| P2 | Ask for a2028 admission date from a source that only publishes2027. | Fixed-cycle records do not recur. Annual patterns explicitly label selected year as assumption; unknown selection asks for official confirmation. Civil-day tests cover passed/on-day/DST/prior-year dates. |
+
+Remaining A gaps: UCCS precise current-cycle first-year/transfer deadline not verified; no FRCC-specific every-major maps verified for CSU/UNC/UCCS. Some summer first-year dates are unloaded. Official advisers and current campus pages remain the authority. Importer parses reviewed local JSON only and does not fetch or activate data. No judgment call is required to preserve these unknowns.
+
+Validation for A: 170 Vitest tests, ESLint, production build, provenance check and all28 Playwright tests passed. The six campus states were exercised at1440/768/375 in both themes with axe and overflow checks; all six captured campus layouts were visually inspected. Full-site screenshot matrix also passed. Port3000 untouched.
+
+
+## CU Boulder expansion B (2026-10-16)
+
+[Program/source evidence and scope](review/boulder-program-sources.md). Added65 fixed-credit course records, four program structures, a scoped tuition example and explicit manual conditions.599 factual records /85 sources in the inventory.
+
+| Priority | Reproduction / impact | Disposition |
+| --- | --- | --- |
+| P1 | A full program contains many equivalent missing-course branches and overlapping aggregate categories. Evaluator repeatedly recalculates the same candidate sets and exhausts bounds even when distinct allocations are small. | Memoized candidate sets by requirement and allocated courses; deduplicated equivalent AND frontier states before safety cap. Regression includes mixed aerospace focus tracks and a fully populated catalog. Existing bounds/warnings retained. |
+| P1 | Use a generic residency rule for PHIL residency: unrelated Boulder ASEN credits could count. | Added optional scoped `from` rule and source-preserving importer support. Tests reject unrelated campus credits and FRCC-earned transfer credit while preserving legacy unscoped rules. |
+| P2 | Treat BIA5137 or5044 as mutually exclusive math/elective credit, or treat the Professional MS as the traditional BIA focus. | Encoded current handbook's exact category overlap and degree scope. Credits remain unique. B− / planned / unverified-credit tests; MS-wide graduation conditions stay manual. |
+| P2 | Place a CU catalog course in an FRCC semester and mistake catalog identity for equivalency. | Choices preserved; Roadmap explains the mismatch and offers a working semester-institution review action. No inferred equivalencies. |
+| P2 | Apply a single CU tuition figure to every entering cohort, program and credit load. | Published Group V12-credit base/engineering examples shown with period, cohort, campus, tentative COF assumption and fees exclusions. Automatic universal rate remains unloaded. |
+
+B gaps: full elective/ancillary course metadata, approved degree-audit lists, GPA, independent-study/internship caps, precise prerequisite/corequisite handling and complete college/MS graduation audits are not loaded. PHIL4040 has an unlinked/untitled row in the requirement page, so no invented Course record was added. Named special-topic math is not treated as every offering of ASEN5519. Preview controls do not alter the student's chosen program. These are disclosed limits, not guessed requirements.
+
+B validation:179 Vitest tests, ESLint src, production build and provenance passed; all35 Playwright tests passed on3100. Four program states at1440/768/375 in both themes passed axe/overflow checks, plus explicit course planning/conflict action. All six program screenshots visually inspected; full-site matrix passed. No port3000 or paid AI calls.

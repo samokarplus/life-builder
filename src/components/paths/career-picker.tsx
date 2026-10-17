@@ -7,7 +7,7 @@ import { buildCards, searchCareers } from "@/lib/career-search";
 import type { Category } from "@/data/career-meta";
 import { cn } from "@/lib/utils";
 
-const categories: Category[] = ["Space & science", "Mental health", "Health care", "Skilled trades", "Education"];
+const categories: Category[] = ["Space & science", "Mental health", "Health care", "Skilled trades", "Education", "Technology", "Engineering"];
 
 export interface PickerState { query: string; category: Category | "all"; noDegree: boolean; highSchool: boolean }
 
@@ -24,7 +24,7 @@ export function CareerPicker({ state, onState, selected, onSelect }: { state: Pi
       <label className="relative mt-4 block max-w-xl">
         <span className="sr-only">Search careers, schools, programs and requirements</span>
         <Search size={16} className="absolute left-4 top-3.5 text-muted" aria-hidden />
-        <input type="search" value={state.query} onChange={(e) => onState({ ...state, query: e.target.value })} placeholder="Search a job, school, exam or keyword (try “nurse”, “no degree”, “NASA”)" className="h-12 w-full rounded-full border border-border bg-surface pl-11 pr-4 text-sm shadow-card" />
+        <input type="search" maxLength={200} value={state.query} onChange={(e) => onState({ ...state, query: e.target.value })} placeholder="Search a job, school, exam or keyword (try “nurse”, “no degree”, “NASA”)" className="h-12 w-full rounded-full border border-border bg-surface pl-11 pr-4 text-sm shadow-card" />
       </label>
       <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Filters">
         <button onClick={() => onState({ ...state, category: "all" })} aria-pressed={state.category === "all"} className={chip(state.category === "all")}>All fields</button>
@@ -60,7 +60,7 @@ export function CareerPicker({ state, onState, selected, onSelect }: { state: Pi
           <button onClick={clear} className="mt-2 text-primary underline">Clear search</button>
         </div>
       )}
-      <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Coming next, each added only with an official source: engineer, software developer, entrepreneur and more Colorado campuses (CU Denver, CSU, Colorado School of Mines, Colorado Mesa, UNC).</p>
+      <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Each route is added only with official sources. A college pathway is one option; licensed professions have separate state requirements.</p>
     </section>
   );
 }

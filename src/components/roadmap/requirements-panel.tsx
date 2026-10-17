@@ -23,7 +23,7 @@ export function RequirementsPanel() {
   return (
     <section className="mt-10 rounded-[14px] border border-border bg-surface p-5 shadow-card" aria-labelledby="req-h">
       <h2 id="req-h" className="font-medium">Requirement tracker</h2>
-      <p className="mt-1 text-xs text-muted">Based on the FRCC Associate of Arts 2026-27 catalog and its gtPathways course list. The approved electives list is not loaded yet. The catalog also requires a 2.0 cumulative GPA, C or better grades, and at least 15 credits earned at FRCC. GPA and residency are not fully audited here. Planning aid, not an official degree audit; completed and planned coursework are kept separate.</p>
+      <p className="mt-1 text-xs text-muted">Based on the FRCC Associate of Arts 2026-27 catalog and its gtPathways course list. Approved electives are matched against the loaded catalog criteria; special restrictions still require confirmation. The catalog also requires a 2.0 cumulative GPA, C or better grades, and at least 15 credits earned at FRCC. GPA and residency are not fully audited here. Planning aid, not an official degree audit; completed and planned coursework are kept separate.</p>
       <ul className="mt-4 divide-y divide-border">
         {results.map((r) => {
           const m = meta[r.status];

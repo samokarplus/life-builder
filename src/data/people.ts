@@ -36,18 +36,18 @@ export const bioastronauticsFaculty: Faculty[] = [
   { id: "stodieck", name: "Louis Stodieck", title: "Research Professor Emeritus (retired)", status: "emeritus", url: "https://www.colorado.edu/aerospace/louis-stodieck", sourceId: "src-cub-bio-faculty", interests: ["Emeritus; see his profile."] },
 ];
 
-export interface BioCourse { code: string; title: string; offered: string; summary: string }
+export interface BioCourse { sourceId: string; code: string; title: string; offered: string; summary: string }
 
 /** Bioastronautics courses listed on the program's curriculum page; summaries are paraphrased. */
 export const bioastronauticsCourses: BioCourse[] = [
-  { code: "ASEN 3036", title: "Introduction to Human Spaceflight", offered: "periodic", summary: "Overview of human spaceflight, including astronaut selection and training, physiological and psychological concerns, and life support basics. Counts as upper-division humanities credit." },
-  { code: "ASEN 5158", title: "Space Habitat Design", offered: "Fall, core MS", summary: "Systems engineering of a spacecraft built for people, from mission objectives to integrated vehicle schematics." },
-  { code: "ASEN 5016", title: "Space Life Sciences", offered: "Spring, core MS", summary: "Factors affecting living organisms in spaceflight, from life support needs to human adaptation; emphasizes technical writing and proposals." },
-  { code: "ASEN 5018/6028", title: "Graduate Projects I & II (Human Spacecraft)", offered: "Fall and Spring", summary: "Two-semester design, fabrication and evaluation project that meets the MS project requirement." },
-  { code: "ASEN 5137", title: "Experimental Design and Statistical Methods", offered: "periodic", summary: "Designing experiments and analyzing results, with a focus on human-subject research." },
-  { code: "ASEN 5226", title: "Medicine in Space and Surface Environments", offered: "periodic", summary: "Joint with CU Anschutz Emergency Medicine: medical care for Moon or Mars missions, hands-on skills, CPR and Wilderness First Aid certification, and a simulated spacewalk field component at the Mars Desert Research Station." },
-  { code: "ASEN 6116", title: "Spacecraft Life Support Systems", offered: "periodic", summary: "Environmental control and life support technologies, with computational work. Prerequisite ASEN 5158 or instructor consent." },
-  { code: "ASEN 6216", title: "Human Operation of Aerospace Vehicles", offered: "periodic", summary: "Human operator capabilities and limits, spatial orientation illusions, and display and control interface design." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 3036", title: "Introduction to Human Spaceflight", offered: "periodic", summary: "Overview of human spaceflight, including astronaut selection and training, physiological and psychological concerns, and life support basics. Counts as upper-division humanities credit." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 5158", title: "Space Habitat Design", offered: "Fall, core MS", summary: "Systems engineering of a spacecraft built for people, from mission objectives to integrated vehicle schematics." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 5016", title: "Space Life Sciences", offered: "Spring, core MS", summary: "Factors affecting living organisms in spaceflight, from life support needs to human adaptation; emphasizes technical writing and proposals." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 5018/6028", title: "Graduate Projects I & II (Human Spacecraft)", offered: "Fall and Spring", summary: "Two-semester design, fabrication and evaluation project that meets the MS project requirement." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 5137", title: "Experimental Design and Statistical Methods", offered: "periodic", summary: "Designing experiments and analyzing results, with a focus on human-subject research." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 5226", title: "Medicine in Space and Surface Environments", offered: "periodic", summary: "Joint with CU Anschutz Emergency Medicine: medical care for Moon or Mars missions, hands-on skills, CPR and Wilderness First Aid certification, and a simulated spacewalk field component at the Mars Desert Research Station." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 6116", title: "Spacecraft Life Support Systems", offered: "periodic", summary: "Environmental control and life support technologies, with computational work. Prerequisite ASEN 5158 or instructor consent." },
+  { sourceId: "src-cub-bio-curriculum", code: "ASEN 6216", title: "Human Operation of Aerospace Vehicles", offered: "periodic", summary: "Human operator capabilities and limits, spatial orientation illusions, and display and control interface design." },
 ];
 
 export const bioastronauticsFacilities = [

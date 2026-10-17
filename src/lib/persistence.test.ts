@@ -46,3 +46,18 @@ it('exports the exact invalid original without unblocking writes',async()=>{
  const original='{invalid JSON';const {db,m}=memory();m.set('p',original);const adapter=createPlannerStorage(db,()=>undefined);adapter.blockWrites();
  expect(await adapter.readBackup('p')).toBe(original);await adapter.setItem('p','replacement');expect(m.get('p')).toBe(original);
 });
+
+it('preserves high-school starting point through legacy migration and JSON import/export',async()=>{
+ const before=usePlanner.getState().exportJson();
+ try {
+  const old=JSON.parse(before);old.version=1;old.profile.currentStage='high-school';
+  const legacy=JSON.stringify({state:old,version:0});const {db}=memory();
+  const adapter=createPlannerStorage(db,()=>({getItem:()=>legacy}));
+  const envelope=JSON.parse(await adapter.getItem('dream-helper:v1') as string);
+  expect(migratePlan(envelope.state).profile?.currentStage).toBe('high-school');
+  expect(usePlanner.getState().importJson(JSON.stringify(old)).ok).toBe(true);
+  expect(JSON.parse(usePlanner.getState().exportJson()).profile.currentStage).toBe('high-school');
+  old.profile.currentStage='invalid';expect(usePlanner.getState().importJson(JSON.stringify(old)).ok).toBe(false);
+  expect(JSON.parse(usePlanner.getState().exportJson()).profile.currentStage).toBe('high-school');
+ }finally{usePlanner.getState().importJson(before);}
+});

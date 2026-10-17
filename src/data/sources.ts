@@ -50,7 +50,7 @@ registry.push(
     catalogYear: null,
     lastVerified: null,
     status: "unverified",
-    note: "Search results for CU Boulder per-credit tuition disagreed with each other, so no figure is loaded. Confirm with the CU Boulder Bursar.",
+    note: "No universal CU Boulder per-credit rate is loaded: cohort, program, credit bands and COF change the price. A scoped official Group V semester example is available under src-cub-group-v; confirm a personal quote with the Bursar.",
   },
 );
 
@@ -108,7 +108,7 @@ v("src-cub-aes-deadlines", "https://www.colorado.edu/aerospace/admissions/gradua
 
 // Careers, access routes and real people (read 2026-10-16)
 v("src-frcc-hs", "https://www.frontrange.edu/programs-courses/concurrent-enrollment/index.html", "FRCC Concurrent Enrollment: college classes for public high school students in grades 9-12.", "frcc");
-v("src-frcc-wue", "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html", "FRCC Western Undergraduate Exchange page: eligibility, price rule and how to apply.", "frcc");
+v("src-frcc-wue", "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html", "FRCC Western Undergraduate Exchange page: eligibility, price rule and how to apply. Dollar figures belong to src-frcc-tuition-2627, with separate rates for online/nursing.", "frcc");
 v("src-frcc-b2b", "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html", "FRCC Bridge to Bachelor's page: guaranteed admission to participating four-year schools. Partner schools appear as logos; names were read from the image labels.", "frcc");
 v("src-frcc-transfer-guides", "https://www.frontrange.edu/student-experience/transfer-planning/transfer-guides.html", "FRCC transfer guides and agreements, including statewide and institution-specific agreements.", "frcc");
 v("src-dora-nursing-apps", "https://dpo.colorado.gov/Nursing/Applications", "Colorado DORA nursing applications and forms: RN by exam (two-part process), endorsement, certified nurse aide.");
@@ -125,6 +125,71 @@ v("src-cu-aero-astronauts", "https://www.colorado.edu/aerospace/about-us/astrona
 v("src-frcc-story-bitler", "https://blog.frontrange.edu/2020/12/02/during-covid-alumnus-gets-creative-with-care-at-local-nursing-homes/", "FRCC blog (Dec. 2020): alumnus Joel Bitler. A college-published story; outcomes are as reported there.", "frcc");
 v("src-frcc-story-guida", "https://blog.frontrange.edu/2023/09/06/graduate-starts-paramedic-career-with-care-forward-colorado/", "FRCC blog (Sept. 2023): graduate Tom Guida and Care Forward Colorado. A college-published story.", "frcc");
 v("src-frcc-story-andrade", "https://blog.frontrange.edu/2026/05/12/first-generation-graduate-pursues-dream-of-becoming-a-flight-nurse/", "FRCC news (May 2026): graduate Alyssa Andrade's commencement story. A college-published story.", "frcc");
+
+v("src-cdphe-ems-reciprocity", "https://cdphe.colorado.gov/emergency-care/emergency-medical-services/ems-providers/ems-provider-reciprocity", "CDPHE reciprocity page, read live 2026-10-16: no automatic practice from another state’s credential. ACLS wording differs from the initial-certification page; confirm level-specific rules.");
+v("src-frcc-general-admission", "https://www.frontrange.edu/", "FRCC homepage advertises automatic admission for applicants over 17; selective programs and younger applicants have separate conditions.", "frcc");
+
+v("src-cccs-b2b", "https://cccs.edu/our-colleges/colleges/transfer-programs/bridge-to-bachelors/", "Read 2026-10-16: 13 partner destination URLs in University Partners (12 Colorado plus WGU); Special Programs text names Texas Southern and Coppin State. Does not corroborate FRCC’s Saint Augustine’s logo.");
+
+v("src-frcc-nursing-overview", "https://frontrange.edu/programs-courses/program-list/nursing-program/index.html", "Live browser read 2026-10-16: AAS nursing offered at Larimer and Westminster; Boulder County is not listed.", "frcc");
+v("src-frcc-west-adn", "https://www.frontrange.edu/programs-courses/program-list/nursing-program/westminster-campus-nursing/associate-degree-admissions.html", "Read 2026-10-16: top-40 ranking, five HESI subjects and campus-specific in-progress transcript instructions and 30-business-day notification wording.", "frcc");
+
+
+// Campus evidence: individual official pages reviewed 2026-10-16; terms in review/colorado-campus-sources.md.
+v("src-cud-ug-admissions", "https://www.cudenver.edu/undergraduate-admissions", "2027 undergraduate priority dates.", "cud");
+v("src-cud-transfer", "https://www.cudenver.edu/transfer-admissions", "2027 transfer application deadlines.", "cud");
+v("src-cud-ug-tuition", "https://www.cudenver.edu/student-finances/tuition-fees/undergraduate-tuition/2026-2027-undergraduate-tuition-and-fees", "2026–27 live table: standard resident base533, COF116. Fees and differentiated courses separate.", "cud");
+v("src-cud-transfer-maps", "https://www.cudenver.edu/advising/transfer-planning/transfer-degree-maps", "Official undergraduate transfer degree maps index; not individual credit equivalencies.", "cud");
+v("src-csu-first", "https://admissions.colostate.edu/apply/freshmen/", "First-year application annual date patterns; confirm entry cycle.", "csu");
+v("src-csu-transfer", "https://admissions.colostate.edu/apply/transfer/", "Transfer application annual patterns and scholarship consideration distinctions.", "csu");
+v("src-csu-tuition", "https://thehub.colostate.edu/billing/tuition-and-fees/", "Expanded Fall2026/Spring2027 resident undergraduate table: one-credit base632.61, COF116. Full-time and differential rules separate.", "csu");
+v("src-mines-first", "https://undergraduate-admissions.mines.edu/first-year/", "First-year priority, regular and general scholarship date patterns.", "mines");
+v("src-mines-transfer", "https://undergraduate-admissions.mines.edu/transfer-students/", "Fall2027 domestic/international transfer, FAFSA and scholarship dates; FRCC Mines Academy partner.", "mines");
+v("src-mines-tuition", "https://bursar.mines.edu/wp-content/uploads/sites/340/2022/04/Tuition-Schedule.pdf", "Rendered PDF page1, 2026–27 Golden undergraduate, updatedSept1,2026; base776/credit, COF116, student15–19credit band9900. URL directory is not academic year.", "mines");
+v("src-cmu-admissions", "https://catalog.coloradomesa.edu/undergraduate-admission-information/undergraduate-admission-information-procedures-degree-seeking-students/", "Explicit2027 admission dates, separate from new-student enrollment form.", "cmu");
+v("src-cmu-transfer", "https://www.coloradomesa.edu/admissions/requirements/transfer/index.html", "Transfer admissions requirements; no program admission guarantee imported.", "cmu");
+v("src-cmu-tuition", "https://www.coloradomesa.edu/student-accounts/documents/undergraduate-in-state-fall.pdf", "Single-page PDF under Fall2026/Spring2027 expenses: resident classroom452.90, COF116; fees and online separate. Rendered and visually checked.", "cmu");
+v("src-cmu-agreements", "https://www.coloradomesa.edu/transfer/articulation-agreements.html", "Statewide articulation and CCCS Bridge to Bachelor resources.", "cmu");
+v("src-unc-first", "https://www.unco.edu/admissions-aid/undergraduate/first-year/", "First-year annual priority and last-chance application dates.", "unc");
+v("src-unc-transfer", "https://www.unco.edu/admissions-aid/undergraduate/transfer/", "Rolling admission, annual term table and community-college transfer guidance. Current Transfer Guides link resolved to Aims2UNC; no FRCC-specific map verified.", "unc");
+v("src-unc-tuition", "https://www.unco.edu/admissions-aid/tuition-fees/i-am-a/resident-undergraduate/", "2026–27 resident one-credit505.75, COF116. 13–16 discount window. Multi-credit table arithmetic anomalies quarantined; no inferred corrected totals.", "unc");
+v("src-uccs-first", "https://www.uccs.edu/admissions-aid/details/first-year", "First-year application guidance read; no precise current-cycle application deadline verified.", "uccs");
+v("src-uccs-transfer", "https://transfer.uccs.edu/contact/faq", "Transfer rolling-admission FAQ; review requires official transcripts. Not a review or acceptance timing guarantee.", "uccs");
+v("src-uccs-tuition", "https://bursar.uccs.edu/sites/default/files/2026-08/UCCS_TuitionFees_Fall_2026_0.pdf", "Fall2026 PDF page12 rendered: new undergraduate/continuing junior-senior resident traditional LAS/PublicService base498, COF116. Rounded figures, fees and other programs separate.", "uccs");
+v("src-cccs-campus-agreements", "https://cccs.edu/academic-student-affairs/academic-affairs/curriculum-management/transfer-and-articulation/transfer-agreements-with-other-colleges/", "Linked by FRCC transfer guides. CSU, Mines and UCCS engineering agreements; not blanket all-major articulation.", null);
+
+
+// CU Boulder degree evidence: terms and scope in review/boulder-program-sources.md.
+v("src-cub-phil-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/arts-sciences/programs-study/philosophy/philosophy-bachelor-arts-ba/", "2026–27 general-track BA required areas and alternatives; credit, grade, residency, GPA, independent-study/internship and distinct-area conditions.", "cub");
+v("src-cub-psyc-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/arts-sciences/programs-study/psychology-neuroscience/psychology-bachelor-arts-ba/", "2026–27 Psychology BA core, four-of-five, methods, ancillary alternatives and major conditions. College graduation rules are separate.", "cub");
+v("src-cub-aes-ba", "https://catalog.colorado.edu/undergraduate/colleges-schools/engineering-applied-science/programs-study/aerospace-engineering-sciences/aerospace-engineering-science-bachelor-science-bsae/", "2026–27 BSAE four-page catalog PDF read: required course alternatives, focus pairs,128-credit minimum, elective totals and grade distinctions. PDF title uses BSAE, not a generic BS route.", "cub");
+v("src-cub-phil-courses", "https://catalog.colorado.edu/courses-a-z/phil/", "Individual fixed-credit PHIL titles and credits,2026–27. No prerequisite or term-offering equivalencies imported.", "cub");
+v("src-cub-psyc-courses", "https://catalog.colorado.edu/courses-a-z/psyc/", "Individual fixed-credit PSYC titles and credits,2026–27. No prerequisite or term-offering equivalencies imported.", "cub");
+v("src-cub-asen-courses", "https://catalog.colorado.edu/courses-a-z/asen/", "Individual fixed-credit ASEN graduate titles and credits,2026–27. Special topics not automatically mapped; prerequisite/corequisite and enrollment restrictions need official review.", "cub");
+v("src-cub-bio-handbook", "https://www.colorado.edu/aerospace/media/9332", "Graduate Handbook AY2026–27: pp.11–12 MS-wide requirements; pp.33–34 traditional MS BIA core/elective/non-BIA/math, permitted math overlap. Pages rendered and visually checked. Not Professional MS or PhD.", "cub");
+v("src-cub-group-v", "https://www.colorado.edu/bursar/media/1130", "Official Group V Fall2026/Spring2027 in-state rate sheet, rendered page1. Loaded only12-credit base and engineering examples for the stated entering cohort. COF assumption footnoted tentative; no universal per-credit rate.", "cub");
+
+
+// Career expansion: official public pages and DORA-linked guides; see review/colorado-career-expansion.md.
+v("src-frcc-computing", "https://frontrange.edu/programs-courses/program-list/computer-science-programming.html", "FRCC AAS Software Development workforce preparation vs separate AS Computer Science transfer purpose; nominal two-year program. No job guarantee.", "frcc");
+v("src-dora-pe-guide", "https://drive.google.com/file/d/1EisnVDK3Xinxr6DpE2UW9t3u8xaWCnJE/view", "DORA AES Applications links May2025 Professional Engineer Licensing Guide. Read public PDF. Simplified education/experience/FE-EI/PE/NCEES/application pathway; exact years, exam format and current CPC not generalized.", null);
+v("src-dora-pe-apps", "https://dpo.colorado.gov/AES/Applications", "Read browser Professional Engineer and Engineer Exam Information tabs. Current-format specifics require NCEES confirmation; old open-book wording is not loaded.", null);
+v("src-dora-pa", "https://dpo.colorado.gov/Medical/PALicensingRequirements", "Read live Initial License Requirements: qualifying PA education, NCCPA national exam, practice/FSMB history and collaboration/supervision distinctions.", null);
+v("src-dora-medical-apps", "https://dpo.colorado.gov/Medical/Applications", "Read live PA application methods, education/practice verification forms and disclosures; distinct from physician license.", null);
+v("src-cu-pharm-admissions", "https://pharmacy.cuanschutz.edu/degreesandprograms/pharmd/admissions-information", "Entry-level PharmD: no bachelor degree required to apply; C-or-better prerequisites before entry, existing degree does not waive prerequisites. No blanket transfer equivalencies loaded.", null);
+v("src-cu-pharmd", "https://pharmacy.cuanschutz.edu/degreesandprograms/pharmd", "Four-year professional PharmD example. Overview mixes47-credit entry wording and three-year pre-professional language; no fixed prerequisite duration loaded.", null);
+v("src-dora-pharm-intern", "https://dpo.colorado.gov/Pharmacy/InternFAQ", "Live FAQ:1500 intern hours within five years of graduation from Board-approved pharmacy school or FPGEC certification; permitted supervision methods.", null);
+v("src-dora-pharm-apps", "https://dpo.colorado.gov/Pharmacy/Applications", "Live pharmacist, pharmacy intern and technician application methods; professions remain distinct.", null);
+v("src-dora-pharm-guide", "https://drive.google.com/file/d/14jIuS_Uo5XlCBrNcKOwCJEtKTwijfDPA/view", "DORA-linked Pharmacy Licensing Guide: original/examination applicant checklists, NAPLEX/MPJE, two-year exam interval, application and profile. Foreign-trained section not generalized.", null);
+v("src-dora-plumb-apprentice", "https://dpo.colorado.gov/Plumbing/ApprenticeInfo", "Live page: registered supervised apprentice work, employer30-day registration, two-party activation and registration until Colorado license issued.", null);
+v("src-dora-plumb-apps", "https://dpo.colorado.gov/Plumbing/Applications", "Read live Licensure Requirements tab: residential3400hr, journeyworker6800hr, master8500hr as separate credentials; experience affidavits and examination approval. Language/monthly-hour inconsistencies not generalized.", null);
+v("src-dora-dh-guide", "https://drive.google.com/file/d/1J-OWXiWl93EQFxI9JHdVQpW9lGowQB7x/view", "DORA-linked Dental Hygienist/Therapist guide: qualifying education, national/accepted clinical examination, application/transcripts/practice history and liability-insurance attestation. Hygienist route separated from therapist/dentist.", null);
+v("src-dora-dental-apps", "https://dpo.colorado.gov/Dental/Applications", "Read live dental hygienist initial examination/endorsement methods, forms and separate permits.", null);
+v("src-dora-sw-guide", "https://drive.google.com/file/d/19vx1IIoG3JGokDLFXSJ71-zFy9pvYhTt/view", "DORA-linked Social Work Licensing Guide: graduate CSWE/equivalent education, jurisprudence, ASWB required LCSW vs removed LSW. Exact supervised-hour total/compact launch prediction not loaded.", null);
+v("src-dora-sw-apps", "https://dpo.colorado.gov/SocialWork/Applications", "Live LSW/LCSW/candidate tabs; authorized status before counting postdegree hours, official supervision form and disclosures.", null);
+v("src-frcc-paramedic-admissions", "https://frontrange.edu/programs-courses/program-list/admission-reqs/paramedic-reqs.html", "Competitive paramedic AAS admission, C-or-better prerequisites and2.5GPA, NREMT/BLS documentation; no admission guarantee.", "frcc");
+v("src-dora-vet-guide", "https://drive.google.com/file/d/1psCjp3uTpySJhsZClCs-odKT20_GzXVi/view", "DORA-linked Veterinary Licensing Guide: DVM education, AVMA/equivalency distinction, NAVLE, competency alternatives and application. No technician/professional-associate substitution.", null);
+v("src-dora-vet-apps", "https://dpo.colorado.gov/Veterinary/Applications", "Live veterinarian initial examination/endorsement application methods and linked official guide.", null);
 
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));

@@ -1,7 +1,9 @@
 "use client";
+import { BoulderPrograms } from "./boulder-programs";
+import { CampusPlanner } from "./campus-planner";
 
 import { useMemo, useState } from "react";
-import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
+import { CalendarClock, ExternalLink, GraduationCap, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
 import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
 import { coloradoCounselingPrograms, cuDenverCmhc, specialties } from "@/data/programs";
 import { nextOccurrence } from "@/data/funding";
@@ -11,8 +13,11 @@ import { useSearchParams } from "next/navigation";
 import { CareerBadge } from "@/components/brand/career-badge";
 import { CareerPicker, type PickerState } from "./career-picker";
 import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
+import { glossary } from "@/data/glossary";
 import { careerMeta } from "@/data/career-meta";
-import { sourceById } from "@/data/sample";
+import { SourceStatus } from "@/components/ui/source-status";
+import { describeDatedEvent } from "@/lib/dated-event";
+import { parseDreamParams, routeProgress } from "@/lib/dream-params";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
 import { cn } from "@/lib/utils";
@@ -126,26 +131,22 @@ function BioFinder() {
 }
 
 function Confidence({ sourceId }: { sourceId: string }) {
-  const src = sourceById(sourceId);
-  if (src?.status === "verified")
-    return <a href={src.url ?? undefined} target="_blank" rel="noreferrer" title={src.note} className="inline-flex items-center gap-1 rounded-full bg-soft px-2.5 py-0.5 text-xs font-medium text-primary"><BadgeCheck size={12} aria-hidden /> Official source, checked {src.lastVerified}</a>;
-  return <span title={src?.note} className="inline-flex items-center gap-1 rounded-full bg-warm px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300"><HelpCircle size={12} aria-hidden /> Confirm with the official source</span>;
+  return <SourceStatus sourceId={sourceId} />;
 }
 
 export function DreamPaths() {
   const { profile, setProfile } = usePlanner();
   const today = useMemo(() => new Date(), []);
   const params = useSearchParams();
-  const qpPath = params.get("path");
-  const qpStage = params.get("stage") as Stage | null;
-  const [pathId, setPathId] = useState(pathways.some((p) => p.id === qpPath) ? (qpPath as string) : pathways[0].id);
-  const [stage, setStage] = useState<Stage>(qpStage && stageOrder.includes(qpStage) ? qpStage : "community-college");
-  const [picker, setPicker] = useState<PickerState>({ query: params.get("q") ?? "", category: "all", noDegree: false, highSchool: false });
+  const initial = parseDreamParams(params, profile);
+  const [pathId, setPathId] = useState(initial.pathId);
+  const [stage, setStage] = useState<Stage>(initial.stage);
+  const [picker, setPicker] = useState<PickerState>({ query: initial.query, category: "all", noDegree: false, highSchool: false });
   const [term, setTerm] = useState<EntryTerm>("fall");
   const [year, setYear] = useState(nextFallEntry(today));
   const path = pathways.find((p) => p.id === pathId)!;
   const key = `path:${path.id}`;
-  const done = profile.careerStageProgress?.[key] ?? [];
+  const done = routeProgress(path.id, profile.careerStageProgress?.[key]);
   const toggle = (id: string) => setProfile({ careerStageProgress: { ...profile.careerStageProgress, [key]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } });
   const deadlines = cuTransferDeadlines(term, year);
   const pct = Math.round((done.length / path.steps.length) * 100);
@@ -155,7 +156,11 @@ export function DreamPaths() {
   const next = path.steps.find((st) => stageOrder.indexOf(st.stage) >= stageIdx && !done.includes(st.id)) ?? path.steps.find((st) => !done.includes(st.id));
   return (
     <div>
-      <section className="hero-glow rounded-[24px] border border-border bg-surface p-6 shadow-card sm:p-8">
+      <CareerPicker state={picker} onState={setPicker} selected={pathId} onSelect={id => {
+        setPathId(id);
+        requestAnimationFrame(() => document.getElementById("route-details")?.focus());
+      }} />
+      <section className="hero-glow mt-8 rounded-[24px] border border-border bg-surface p-6 shadow-card sm:p-8">
         <p className="eyebrow flex items-center gap-2"><Sparkles size={13} aria-hidden /> Colorado Dreams</p>
         <h2 className="mt-2 font-serif text-3xl sm:text-4xl">Where are you now, and where do you want to go?</h2>
         <p className="mt-2 max-w-2xl text-muted">Pick your stage and your dream. We&apos;ll show your next step, the dates that matter, and the Colorado schools and rules along the way.</p>
@@ -176,7 +181,6 @@ export function DreamPaths() {
         )}
       </section>
 
-      <CareerPicker state={picker} onState={setPicker} selected={pathId} onSelect={setPathId} />
 
       <div className="mt-10">
       <section className="min-w-0">
@@ -184,7 +188,7 @@ export function DreamPaths() {
           {careerMeta[path.id] && <CareerBadge icon={careerMeta[path.id].icon} theme={careerMeta[path.id].theme} size={72} />}
           <div>
             <p className="eyebrow">{careerMeta[path.id]?.category ?? "Route"}</p>
-            <h2 className="font-serif text-3xl">{path.title}</h2>
+            <h2 id="route-details" tabIndex={-1} className="scroll-mt-24 font-serif text-3xl">{path.title}</h2>
             <p className="mt-2 text-muted">{path.summary}</p>
           </div>
         </div>
@@ -205,9 +209,10 @@ export function DreamPaths() {
                   {i < path.steps.length - 1 && <span className="w-px flex-1 bg-sage" aria-hidden />}
                 </div>
                 <article className={cn("mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card")}>
-                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} /></div>
+                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} />{s.additionalSourceIds?.map(id => <Confidence key={id} sourceId={id} />)}</div>
                   <h3 className={cn("mt-2 font-medium", isDone && "text-muted line-through")}>{s.title}</h3>
                   <p className="mt-1 text-sm text-muted">{s.detail}</p>
+                  {s.datedEvents && <ul className="mt-3 space-y-2 text-sm">{s.datedEvents.map(event => <li key={event.label}>{event.label}: {event.date} — {describeDatedEvent(event.date, today)}. <Confidence sourceId={event.sourceId} /></li>)}</ul>}
                   {s.facts && <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{s.facts.map((f) => <li key={f}>{f}</li>)}</ul>}
 
                   {s.deadlines === "cu-transfer" && (
@@ -255,7 +260,13 @@ export function DreamPaths() {
         {careerMeta[path.id] && <><IdealPath meta={careerMeta[path.id]} /><People meta={careerMeta[path.id]} /><Challenges meta={careerMeta[path.id]} /></>}
       </section>
       </div>
-      <WaysIn initial={stage === "high-school" ? "high-school" : "high-school"} />
+      <details className="mt-8 rounded-2xl border border-border bg-surface p-5">
+        <summary className="cursor-pointer font-medium">What do these abbreviations mean?</summary>
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2">{glossary.map(item => <div key={item.term}><dt className="font-medium">{item.term}</dt><dd className="mt-1 text-sm text-muted">{item.meaning} <Confidence sourceId={item.sourceId} /></dd></div>)}</dl>
+      </details>
+      <BoulderPrograms />
+      <CampusPlanner />
+      <WaysIn />
     </div>
   );
 }

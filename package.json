@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:smoke": "playwright test e2e/smoke.spec.ts"
+    "test:smoke": "playwright test e2e/smoke.spec.ts",
+    "verify-sources": "tsx scripts/verify-sources.ts",
+    "check-provenance": "tsx scripts/verify-sources.ts --provenance-only"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -41,6 +43,7 @@
     "eslint-config-next": "16.4.2",
     "fake-indexeddb": "^6.2.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.5"
   }

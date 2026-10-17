@@ -1,3 +1,25 @@
+## CU Boulder requirement previews (2026-10-16)
+
+- Added four sourced program structures and65 reviewed course records: Philosophy general-track BA, Psychology BA, Aerospace BSAE and traditional MS Bioastronautics. Explicit manual checks prevent partial mappings from certifying graduation; FRCC equivalencies are never inferred.
+- Added scoped residency rules, exact BIA/math overlap, graduate catalog levels and importer support for unmapped conditions. Memoized requirement alternatives and removed equivalent frontier states to avoid repeated work and false safety-limit warnings.
+- Added program previews to Colorado Dreams/Roadmap and a separately scoped Group V tuition example to Costs. Cross-campus course placement preserves choices and offers an institution-review action. Updated Explorer metadata and level filters.
+
+## Colorado campuses (2026-10-16)
+
+- Added six sourced destination planners to Colorado Dreams and Funding: CU Denver, CSU, Mines, Colorado Mesa, UNC and UCCS. Applicant type, term and year controls distinguish published cycles from annual planning patterns; missing dates remain explicit.
+- Added scoped resident one-credit tuition examples, COF eligibility and fees/band caveats, excluded from automatic cost estimates. Recorded UNC arithmetic inconsistencies and broken campus transfer-guide links instead of silently repairing facts.
+- Added a local JSON campus importer contract/fixture, citation validation, cycle/date regressions and responsive campus smoke/axe coverage. Evidence and terms: `review/colorado-campus-sources.md`.
+
+## 2026-10-16 — Independent Colorado route review
+
+- Re-read official route/access/story pages and checked site notices; claim-by-claim evidence and unresolved discrepancies in `review/colorado-route-claims.md` and `REVIEW.md`.
+- Prevented illustrative course numbers from satisfying official AA electives; corrected the elective source and Explorer label.
+- Fixed sunset ASCENT/current-funding claims, campus-specific ADN guidance, Bridge partner discrepancy, mixed-source citations and official-versus-estimated duration labels.
+- Safer dream matching/search, invalid-link recovery, bounded queries, valid progress counts and fixed-cycle AMCAS date labels; high-school profile migration/import/export regression coverage.
+- Career search comes first; keyboard selection focuses the route; starting point is editable; added sourced plain-language glossary and historical story attribution.
+- Expanded responsive axe/screenshot coverage to new routes, starting points, filters and empty states. Port3000 untouched; browser tests use3100.
+- Validation: 161 Vitest tests, ESLint, production build and all21 Playwright tests pass; six size/theme combinations have zero axe violations and no document overflow. Runtime dependency audit: zero vulnerabilities.
+
 # Changelog
 
 ## Dream Helper refinement — October 16, 2026
@@ -113,3 +135,16 @@ Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright t
 - **High school as a starting point** in onboarding (profile `currentStage`), and a dashboard "Your dream" card that maps what you typed (nurse, astronaut, doctor...) to your route.
 - **Colorful, searchable Colorado Dreams**: original career badges in their own colors, search by job, school or keyword, and filters for field, "can start without a degree" and "has a high school step". Careers are also in the command palette.
 - 149 unit tests and 20 browser tests pass on this build.
+
+## 2026-10-16 — Source reliability (theme H)
+
+- Added offline `verify-sources` with >90-day warnings, deterministic as-of dates and strict failure mode; no automatic fetching or false verification updates.
+- Added CI-ready `check-provenance` and explicit data inventory, catching missing/unknown/nested citations and unregistered data modules. Bioastronautics course summaries now carry sourceIds.
+- Reused accessible last-checked/stale/unverified badges on routes, funding, tuition and course details; added the Settings source inventory.
+- Tests cover the90/91-day boundary, invalid/future dates, missing citations, data registration and the stale mobile UI. Validation:165 Vitest tests, ESLint, production build, provenance check and22 Playwright tests pass. A strict Jan15,2027 audit correctly fails for53 sources older than90 days.
+
+## Integration of Codex's review and expansion stack (claude/integrate-codex-stack)
+
+- Combines Codex's stacked PRs (route review and fixes, source-reliability checks, six-campus planner, CU Boulder requirement previews and scoped tuition) with its finished-but-unsaved set of nine more Colorado career routes (PA, paramedic, software, PE, pharmacist, plumber, dental hygienist, LCSW social work, veterinarian). Firefighter and pilot were left out because no complete official pathway could be verified.
+- 16 Colorado routes now; the browser tests expect that count and the "psychologist" example for a profession that stays explicitly unmapped. Two save-then-reload tests now wait for the save to finish.
+- 184 unit tests, provenance check (657 records), lint, build and 35 browser tests pass on this build.

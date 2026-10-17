@@ -27,7 +27,8 @@ export function ruleCourseIds(rule: RequirementRule): string[] {
   if(rule.type==="course") return [rule.courseId];
   if(rule.type==="group") return unique(rule.courseIds);
   if(rule.type==="credits"||rule.type==="transfer") return ruleCourseIds(rule.from);
-  if(rule.type==="residency"||rule.type==="unmapped") return [];
+  if(rule.type==="residency") return rule.from ? ruleCourseIds(rule.from) : [];
+  if(rule.type==="unmapped") return [];
   return unique(rule.rules.flatMap(ruleCourseIds));
 }
 function credits(ids:string[],ctx:EvalContext) {return unique(ids).reduce((n,id)=>n+(ctx.courses.find(c=>c.id===id)?.credits??0),0);}
@@ -61,7 +62,16 @@ function candidates(rule:RequirementRule,ctx:SearchContext,taken:Set<string>):Ev
       // A course may support multiple clauses within one requirement, but earns credits once.
       let combos:Eval[]=[{status:"satisfied",used:[],notes:[],missing:[]}];
       for(const child of rule.rules) {
-        const next=combos.flatMap(a=>candidates(child,ctx,rule.distinctCourses?new Set([...taken,...a.used]):taken).map(b=>combine([a,b]))).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status));
+        const alternatives=combos.flatMap(a=>candidates(child,ctx,rule.distinctCourses?new Set([...taken,...a.used]):taken).map(b=>combine([a,b]))).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status));
+        // Missing alternatives with the same status and allocation cannot change
+        // a later result. Keep the first explanation rather than multiplying
+        // identical empty allocations until the safety frontier is exhausted.
+        const distinct=new Map<string,Eval>();
+        for(const option of alternatives){
+          const key=JSON.stringify([option.status,[...option.used].sort()]);
+          if(!distinct.has(key))distinct.set(key,option);
+        }
+        const next=[...distinct.values()];
         if(next.length>256) ctx.truncated?.();
         combos=next.slice(0,256);
       }
@@ -100,7 +110,7 @@ function candidates(rule:RequirementRule,ctx:SearchContext,taken:Set<string>):Ev
         const origin=c.earnedInstitutionId??(c.kind==="transfer"||c.kind==="ap-ib"?undefined:catalog.get(c.courseId)?.institutionId);
         return origin===rule.institutionId;
       })};
-      return candidates({type:"credits",min:rule.minCredits,from:{type:"group",courseIds:unique([...eligible,...filtered.completed.map(c=>c.courseId)])}},filtered,taken).map(e=>({...e,notes:[...e.notes,`Residency at ${rule.institutionId}: transfer/AP/IB credit is excluded unless its earned institution is known.`]}));
+      return candidates({type:"credits",min:rule.minCredits,from:rule.from??{type:"group",courseIds:unique([...eligible,...filtered.completed.map(c=>c.courseId)])}},filtered,taken).map(e=>({...e,notes:[...e.notes,`Residency at ${rule.institutionId}: transfer/AP/IB credit is excluded unless its earned institution is known.`]}));
     }
     case "transfer": return candidates(rule.from,ctx,taken).map(e=>{
       const transfer=e.used.filter(id=>{const c=completed.get(id);return c?.kind==="transfer"||c?.kind==="ap-ib";});
@@ -114,10 +124,13 @@ export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):R
   const weights:Record<ReqStatus,number>={satisfied:100,projected:10,uncertain:1,unsatisfied:0};
   let bestScore=-1, visits=0, limited=false;
   let best=new Map<string,Eval>();
+  // Aggregate rules often share courses legitimately. Reusing their candidate sets
+  // avoids repeating the same subset search at every allocation branch.
+  const optionCache=new Map<string,Eval[]>();
   function search(index:number,allocated:Map<string,string[]>,chosen:Map<string,Eval>,score:number) {
     if(++visits>50000){limited=true;return;}
     if(index===ordered.length){if(score>bestScore){bestScore=score;best=new Map(chosen);}return;}
-    if(score+(ordered.length-index)*100<bestScore)return;
+    if(score+(ordered.length-index)*100<=bestScore)return;
     const r=ordered[index];
     const institution=r.institutionId??ctx.programInstitutions?.[r.programId];
     const policy=ctx.institutionPolicies?.find(p=>p.institutionId===institution);
@@ -128,7 +141,12 @@ export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):R
       return ctx.allowDoubleCount??(policy?.allowDoubleCount===true||policy?.sharedRequirementPairs?.some(pair=>pair.includes(previous)&&pair.includes(r.id))===true);
     };
     const taken=new Set([...allocated].filter(([,owners])=>owners.some(owner=>!canShare(owner))).map(([id])=>id));
-    const options=candidates(r.rule,{...ctx,truncated:()=>{limited=true;}},taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
+    const cacheKey=JSON.stringify([r.id,[...taken].sort()]);
+    let options=optionCache.get(cacheKey);
+    if(!options){
+      options=candidates(r.rule,{...ctx,truncated:()=>{limited=true;}},taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
+      optionCache.set(cacheKey,options);
+    }
     const seen=new Set<string>();
     for(const e of options){
       const key=e.status+e.used.slice().sort().join("|");if(seen.has(key))continue;seen.add(key);
