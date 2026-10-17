@@ -1,3 +1,4 @@
+import { civilDay } from "@/lib/calendar";
 import type { Stage } from "./pathways";
 
 /** Annual month/day dates from CU Boulder's published pages. Cycles change, so confirm each year. */
@@ -86,14 +87,18 @@ export const fundingItems: FundingItem[] = [
 
 /** Next occurrence of a month/day on or after `from`. */
 export function nextOccurrence(month: number, day: number, from: Date): Date {
-  const thisYear = new Date(from.getFullYear(), month - 1, day);
-  const startOfToday = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  return thisYear >= startOfToday ? thisYear : new Date(from.getFullYear() + 1, month - 1, day);
+  const today = civilDay(from);
+  if (!Number.isInteger(month) || !Number.isInteger(day) || month < 1 || month > 12 || day < 1 || day > new Date(2000, month, 0).getDate()) throw new RangeError("Invalid month/day");
+  for (let year = from.getFullYear(); year <= from.getFullYear() + 8; year++) {
+    const date = new Date(year, month - 1, day);
+    if (date.getMonth() === month - 1 && date.getDate() === day && civilDay(date) >= today) return date;
+  }
+  throw new RangeError("No valid occurrence");
 }
 
 export function upcomingFundingDates(from: Date) {
   return fundingDates
     .map((d) => ({ ...d, date: nextOccurrence(d.month, d.day, from) }))
     .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map((d) => ({ ...d, days: Math.round((d.date.getTime() - new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime()) / 86_400_000) }));
+    .map((d) => ({ ...d, days: civilDay(d.date) - civilDay(from) }));
 }
