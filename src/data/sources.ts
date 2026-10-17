@@ -131,6 +131,9 @@ v("src-frcc-general-admission", "https://www.frontrange.edu/", "FRCC homepage ad
 
 v("src-cccs-b2b", "https://cccs.edu/our-colleges/colleges/transfer-programs/bridge-to-bachelors/", "Read 2026-10-16: 13 partner destination URLs in University Partners (12 Colorado plus WGU); Special Programs text names Texas Southern and Coppin State. Does not corroborate FRCC’s Saint Augustine’s logo.");
 
+v("src-frcc-nursing-overview", "https://frontrange.edu/programs-courses/program-list/nursing-program/index.html", "Live browser read 2026-10-16: AAS nursing offered at Larimer and Westminster; Boulder County is not listed.", "frcc");
+v("src-frcc-west-adn", "https://www.frontrange.edu/programs-courses/program-list/nursing-program/westminster-campus-nursing/associate-degree-admissions.html", "Read 2026-10-16: top-40 ranking, five HESI subjects and campus-specific in-progress transcript instructions and 30-business-day notification wording.", "frcc");
+
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));
 const byId = new Map(sources.map(s => [s.id, s]));

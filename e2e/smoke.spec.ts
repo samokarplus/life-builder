@@ -84,3 +84,17 @@ test('onboarding offers high school as a starting point and a Colorado dream car
  await page.getByLabel('Where are you right now?').selectOption('high-school');
  await expect(page.getByText(/When will you start at FRCC/)).toBeVisible();
 });
+
+test('invalid dream links recover; profile stage edits and ambiguous dreams stay explicit',async({page})=>{
+ await ready(page,'/paths?path=invalid&stage=invalid&q=RN');
+ await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(1);
+ await page.getByRole('list',{name:'Career routes'}).getByRole('button').press('Enter');
+ await expect(page.getByRole('heading',{name:'Registered Nurse in Colorado',exact:true})).toBeFocused();
+ await ready(page,'/profile');await page.getByLabel('Current starting point',{exact:true}).selectOption('high-school');
+ await page.getByLabel('Dream career',{exact:true}).fill('physician assistant');await page.getByRole('button',{name:'Save profile',exact:true}).click();
+ await page.reload();await expect(page.getByLabel('Current starting point',{exact:true})).toHaveValue('high-school');
+ await ready(page,'/overview');await page.getByRole('link',{name:'Find your route',exact:true}).click();
+ await expect(page.getByRole('button',{name:/^High school Dreaming/})).toHaveAttribute('aria-pressed','true');
+ await page.getByText('What do these abbreviations mean?',{exact:true}).click();
+ await expect(page.getByText('AMCAS',{exact:true})).toBeVisible();
+});

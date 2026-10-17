@@ -18,6 +18,7 @@ export function ProfileForm() {
   return <form onSubmit={save} className="mx-auto max-w-2xl space-y-6 rounded-2xl border border-border bg-surface p-5 shadow-card sm:p-7">
     <div><p className="text-xs font-semibold uppercase tracking-widest text-primary">A plan that fits your life</p><h2 className="mt-2 font-serif text-2xl">Your starting point & direction</h2><p className="mt-2 text-sm text-muted">These are your preferences. Updating them never silently moves courses or verifies a requirement.</p></div>
     <div className="grid gap-4 sm:grid-cols-2">
+      <label className="space-y-1 text-sm">Current starting point<select className={input} value={draft.currentStage ?? "college"} onChange={e=>patch({currentStage:e.target.value as "high-school" | "college"})}><option value="high-school">High school</option><option value="college">College / exploring college</option></select></label>
       <label className="space-y-1 text-sm">Dream career<input className={input} value={draft.dream} onChange={e=>patch({dream:e.target.value})}/></label>
       <label className="space-y-1 text-sm">Intended major<input required className={input} value={draft.major} onChange={e=>patch({major:e.target.value})}/></label>
       <label className="space-y-1 text-sm">Current institution<select className={input} value={draft.currentInstitutionId} onChange={e=>patch({currentInstitutionId:e.target.value})}>{institutions.map(i=><option key={i.id} value={i.id}>{i.name}</option>)}</select></label>

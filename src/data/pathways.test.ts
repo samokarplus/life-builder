@@ -63,3 +63,9 @@ it("scopes nursing admissions to Larimer and preserves source-backed fixed-cycle
  expect(md.datedEvents?.map(d=>d.date)).toEqual(['2026-10-15','2026-11-30']);
  expect(md.facts?.join(' ')).not.toContain('(passed)');
 });
+
+import { glossary } from "./glossary";
+it("explains requested jargon with linked provenance", () => {
+ expect(glossary.map(g=>g.term)).toEqual(['gtPathways','CACREP','NCLEX','NREMT','AMCAS','MCAT','WUE','COF']);
+ for (const item of glossary) expect(sourceById(item.sourceId)?.url).toMatch(/^https:\/\//);
+});

@@ -74,9 +74,9 @@ export function Dashboard() {
         const path = pid ? pathwayById(pid) : null;
         const meta = pid ? careerMeta[pid] : null;
         const stage = profile.currentStage === "high-school" ? "high-school" : "community-college";
-        if (!path || !meta) return null;
+        if (!path || !meta) return <p className="mt-6 rounded-2xl border border-border bg-surface p-4 text-sm">Choose a Colorado route to explore. We won&apos;t substitute a different profession for your dream. <Link href={`/paths?stage=${stage}`} className="text-primary underline">Find your route</Link></p>;
         return (
-          <Link href={`/paths?path=${path.id}&stage=${stage}`} className="lift mt-6 flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 shadow-card">
+          <Link href={`/paths?path=${path.id}&stage=${stage}`} className="lift mt-6 flex flex-wrap items-center gap-4 sm:flex-nowrap rounded-2xl border border-border bg-surface p-4 shadow-card">
             <CareerBadge icon={meta.icon} theme={meta.theme} size={56} />
             <span className="min-w-0 flex-1">
               <span className="eyebrow">{profile.currentStage === "high-school" ? "You're in high school, dreaming big" : "Your dream"}</span>

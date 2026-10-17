@@ -1,8 +1,8 @@
 import { pathways, stageOrder, type Stage } from "@/data/pathways";
-import type { Profile } from "./types";
+import type { StudentProfile } from "./types";
 
 /** Query strings are navigation hints, never saved profile changes. */
-export function parseDreamParams(params: Pick<URLSearchParams, "get">, profile: Pick<Profile, "currentStage">) {
+export function parseDreamParams(params: Pick<URLSearchParams, "get">, profile: Pick<StudentProfile, "currentStage">) {
   const requestedPath = params.get("path");
   const requestedStage = params.get("stage");
   return {

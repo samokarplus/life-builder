@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { CareerBadge } from "@/components/brand/career-badge";
 import { CareerPicker, type PickerState } from "./career-picker";
 import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
+import { glossary } from "@/data/glossary";
 import { careerMeta } from "@/data/career-meta";
 import { sourceById } from "@/data/sample";
 import { describeDatedEvent } from "@/lib/dated-event";
@@ -156,7 +157,11 @@ export function DreamPaths() {
   const next = path.steps.find((st) => stageOrder.indexOf(st.stage) >= stageIdx && !done.includes(st.id)) ?? path.steps.find((st) => !done.includes(st.id));
   return (
     <div>
-      <section className="hero-glow rounded-[24px] border border-border bg-surface p-6 shadow-card sm:p-8">
+      <CareerPicker state={picker} onState={setPicker} selected={pathId} onSelect={id => {
+        setPathId(id);
+        requestAnimationFrame(() => document.getElementById("route-details")?.focus());
+      }} />
+      <section className="hero-glow mt-8 rounded-[24px] border border-border bg-surface p-6 shadow-card sm:p-8">
         <p className="eyebrow flex items-center gap-2"><Sparkles size={13} aria-hidden /> Colorado Dreams</p>
         <h2 className="mt-2 font-serif text-3xl sm:text-4xl">Where are you now, and where do you want to go?</h2>
         <p className="mt-2 max-w-2xl text-muted">Pick your stage and your dream. We&apos;ll show your next step, the dates that matter, and the Colorado schools and rules along the way.</p>
@@ -177,7 +182,6 @@ export function DreamPaths() {
         )}
       </section>
 
-      <CareerPicker state={picker} onState={setPicker} selected={pathId} onSelect={setPathId} />
 
       <div className="mt-10">
       <section className="min-w-0">
@@ -185,7 +189,7 @@ export function DreamPaths() {
           {careerMeta[path.id] && <CareerBadge icon={careerMeta[path.id].icon} theme={careerMeta[path.id].theme} size={72} />}
           <div>
             <p className="eyebrow">{careerMeta[path.id]?.category ?? "Route"}</p>
-            <h2 className="font-serif text-3xl">{path.title}</h2>
+            <h2 id="route-details" tabIndex={-1} className="scroll-mt-24 font-serif text-3xl">{path.title}</h2>
             <p className="mt-2 text-muted">{path.summary}</p>
           </div>
         </div>
@@ -257,6 +261,10 @@ export function DreamPaths() {
         {careerMeta[path.id] && <><IdealPath meta={careerMeta[path.id]} /><People meta={careerMeta[path.id]} /><Challenges meta={careerMeta[path.id]} /></>}
       </section>
       </div>
+      <details className="mt-8 rounded-2xl border border-border bg-surface p-5">
+        <summary className="cursor-pointer font-medium">What do these abbreviations mean?</summary>
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2">{glossary.map(item => <div key={item.term}><dt className="font-medium">{item.term}</dt><dd className="mt-1 text-sm text-muted">{item.meaning} <Confidence sourceId={item.sourceId} /></dd></div>)}</dl>
+      </details>
       <WaysIn />
     </div>
   );
