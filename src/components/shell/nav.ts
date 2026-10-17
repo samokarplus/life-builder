@@ -12,3 +12,11 @@ export const navItems = [
   { href: "/profile", label: "My Profile", icon: User },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
+
+/** Grouped for the sidebar: dream first, then planning, then exploring. */
+export const navGroups = [
+  { label: "Dream", hrefs: ["/paths", "/funding"] },
+  { label: "Plan", hrefs: ["/overview", "/roadmap", "/compare", "/costs"] },
+  { label: "Explore", hrefs: ["/explorer", "/careers"] },
+  { label: "You", hrefs: ["/profile", "/settings"] },
+].map((g) => ({ label: g.label, items: g.hrefs.map((h) => navItems.find((n) => n.href === h)!) }));

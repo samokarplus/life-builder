@@ -104,3 +104,8 @@ dialog.drawer[open] { animation: slide-in 220ms ease-out; }
 @media (prefers-reduced-motion: reduce) { .lift:hover { transform: none; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 @media print { body { background: #fff; color: #000; } * { box-shadow: none !important; } }
+
+/* ---- Colorado accent ---- */
+:root { --gold: #d9a21b; --gold-soft: #fbf1d4; }
+.dark { --gold: #e8b94a; --gold-soft: #3a3118; }
+@theme inline { --color-gold: var(--gold); --color-gold-soft: var(--gold-soft); }

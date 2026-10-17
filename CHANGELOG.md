@@ -80,3 +80,11 @@ First verified data, each with its source URL, catalog year and verification dat
 - Not found: Integrative Physiology faculty doing space research (no dedicated IPHY space lab surfaced), scholarship amounts for Space Grant and the transfer scholarship, Colorado state aid deadlines.
 - Assistant answers FAFSA/scholarship and professor questions. 105 unit tests pass.
 - **Test infrastructure fix:** Playwright used to reuse whatever server was already on port 3000, which can be a different checkout. It now starts its own server on `PW_PORT` (default 3100) and never reuses one, so results always reflect the code in this repo. Running it that way found and fixed a landing-page contrast failure and a keyboard-unreachable scroll region on the dashboard route map, and the visual test now covers `/paths`, `/funding` and `/print`. 15 Playwright tests pass.
+
+## Colorado brand and simpler navigation (claude/colorado-brand-ui)
+
+- New **logo**: the Colorado flag's "C" and gold disc with Rocky Mountain peaks rising out of the letter, plus a "Dream Helper / Colorado" wordmark. Used in the sidebar, mobile header, landing page and as the favicon (`src/app/icon.svg`).
+- Added a Colorado gold accent (light and dark), a mountain-ridge divider, and a gold marker on the active sidebar item.
+- Sidebar regrouped into **Dream** (Colorado Dreams, Funding & FAFSA), **Plan**, **Explore** and **You**, so the vision comes first and the rest is easy to find.
+- Landing page: "Colorado dreams" section (LPC route, astronaut route, funding) with counts read from the data files, so they can't drift from the real content.
+- `docs/CODEX_REVIEW_PROMPT.md`: a ready-to-paste prompt for an independent review.
