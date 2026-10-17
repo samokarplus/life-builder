@@ -98,3 +98,9 @@ First verified data, each with its source URL, catalog year and verification dat
 - Expanded browser coverage; remaining academic, accessibility and deployment limitations are documented in REVIEW.md.
 
 Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright tests; ESLint and production build pass. The browser run captures 120 screenshots.
+
+## Approved electives and CU Denver counseling (claude/electives-and-cu-denver)
+
+- **FRCC approved electives list** transcribed from the catalog (expanding its collapsed sections): every gtPathways course, the named courses, and the "or higher" ranges (which exclude specialized courses and the 3000/4000 level). The AA tracker's electives requirement now evaluates from it instead of reporting "needs a check", and each course's drawer in the Explorer says why it does or doesn't count as an elective. Not modeled: the 3-credit cap on PED/OUT/DAN, and extra math/science credits flowing into electives.
+- **CU Denver MA in Counseling, Clinical Mental Health** (read from the program's own page): on campus, 63 credits, CACREP, fall applications open Nov 1 and are due Jan 15, spring open Jul 1 and are due Sep 15, required group interview (Oct 23, 2026 and Mar 12, 2027 are the dates listed), application materials, and contact. Shown in the LPC route with live countdowns.
+- 140 unit tests pass.

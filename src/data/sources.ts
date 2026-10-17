@@ -26,6 +26,15 @@ registry.push(
     note: "FRCC catalog, Associate of Arts degree page. Titles, credits and requirement structure as listed there.",
   },
   {
+    id: "src-frcc-electives-2627",
+    url: "https://frontrange.smartcatalogiq.com/en/current/catalog/elective-lists/approved-elective-list",
+    institutionId: "frcc",
+    catalogYear: "2026-2027",
+    lastVerified: VERIFIED_ON,
+    status: "verified",
+    note: "FRCC catalog, Approved Elective List (category sections expanded and transcribed).",
+  },
+  {
     id: "src-frcc-tuition-2627",
     url: "https://frontrange.edu/admissions-aid/paying-for-college/tuition-fees/tuition-rates.html",
     institutionId: "frcc",
@@ -57,6 +66,7 @@ registry.push({
 
 
 registry.push(
+  { id: "src-cud-cmhc", url: "https://education.ucdenver.edu/academics/graduate/counseling/detail/ma-counseling-clinical-mental-health", institutionId: "cud", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Denver School of Education & Human Development: MA in Counseling, Clinical Mental Health program page (deadlines, requirements, interview dates). The program's own page says 63 credits." },
   { id: "src-cacrep-co", url: "https://www.cacrep.org/directory/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CACREP directory, state = CO, statuses Accredited / 2 Year / 8 Year (22 program rows read on the verification date). Statuses and cycle end dates change, so re-check the directory." },
   { id: "src-cub-grad-deadlines", url: "https://www.colorado.edu/graduateschool/admissions/where-begin/program-information-deadlines", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "unverified", note: "Previously transcribed Graduate School table; it did not load in this review. Current Aerospace claims use the department’s own application and deadline pages instead." },
 );

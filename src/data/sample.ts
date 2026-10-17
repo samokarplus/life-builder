@@ -1,3 +1,4 @@
+import { approvedElectiveBasis } from "./frcc-electives";
 import { parseGt } from "./frcc-gtpathways";
 import { GT_SOURCE_ID } from "./frcc-gtpathways-raw";
 import type { Course, DegreeRequirement, Institution, Career, TuitionRate, Semester, StudentProfile } from "@/lib/types";
@@ -114,14 +115,14 @@ export const illustrativeRequirements: DegreeRequirement[] = [
 /**
  * FRCC Associate of Arts, 2026-2027 catalog (60 credits). Written and oral
  * communication and general education areas use the reviewed gtPathways list.
- * Approved electives remain unmapped; GPA and residency need an official audit.
+ * Electives use the approved electives list (gtPathways courses, named courses and "or higher" ranges); GPA and residency need an official audit.
  */
 const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
 const gtIds = (...cats: string[]) => courses.filter((c) => c.gtPathways?.some((g) => cats.includes(g))).map((c) => c.id);
 const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats), minGrade: "C" } });
 const pair = (a: string, b: string) => ({ type: "all" as const, distinctCourses: true, rules: [fromGt(3, a), fromGt(3, b)] });
 const AH = ["GT-AH1", "GT-AH2", "GT-AH3", "GT-AH4"];
-const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs the approved electives list, not loaded yet; check eWOLF DegreeCheck.` });
+const electiveIds = () => courses.filter((c) => c.institutionId === "frcc" && approvedElectiveBasis(c.code, c.gtPathways)).map((c) => c.id);
 
 export const requirements: DegreeRequirement[] = [
   aa("aa-written", "Written communication (6 cr, ENG 1021 + 1022 or ENG 1022 + GT-CO3)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1022", minGrade: "C" }, { type: "any", rules: [{ type: "course", courseId: "frcc:ENG-1021", minGrade: "C" }, fromGt(3, "GT-CO3")] }] }),
@@ -133,7 +134,7 @@ export const requirements: DegreeRequirement[] = [
   aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", fromGt(6, "GT-SS1", "GT-SS2", "GT-SS3")),
   aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", distinctCourses: true, rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
   aa("aa-choice", "Student choice (3 cr, one more GT-AH, GT-HI or GT-SS course)", fromGt(3, ...AH, "GT-HI1", "GT-SS1", "GT-SS2", "GT-SS3")),
-  aa("aa-electives", "Electives (18-23 cr from the approved electives list)", gt(18, "Approved electives list")),
+  aa("aa-electives", "Electives (18-23 cr from the approved electives list)", { type: "credits", min: 18, from: { type: "group", courseIds: electiveIds() } }),
 ];
 
 /** Total credits for the FRCC AA degree per the 2026-2027 catalog. */

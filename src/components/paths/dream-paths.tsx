@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
 import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
-import { coloradoCounselingPrograms, specialties } from "@/data/programs";
+import { coloradoCounselingPrograms, cuDenverCmhc, specialties } from "@/data/programs";
+import { nextOccurrence } from "@/data/funding";
 import { bioastronauticsCourses, bioastronauticsFacilities, bioastronauticsFaculty } from "@/data/people";
 import Link from "next/link";
 import { sourceById } from "@/data/sample";
@@ -24,6 +25,33 @@ const stageBlurb: Record<Stage, string> = {
   career: "Logging hours and heading for the finish line.",
 };
 
+function CuDenverCard() {
+  const today = new Date();
+  const d = cuDenverCmhc;
+  const upcoming = d.applicationWindows.map((w) => ({ ...w, date: nextOccurrence(w.due.month, w.due.day, today) })).sort((a, b) => a.date.getTime() - b.date.getTime());
+  const days = (date: Date) => Math.round((date.getTime() - new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()) / 86_400_000);
+  return (
+    <div className="mt-3 rounded-xl border border-gold bg-gold-soft p-4 text-sm">
+      <p className="font-medium">{d.institution}: {d.program}</p>
+      <p className="mt-1 text-xs text-muted">{d.format} · {d.credits} credits · {d.recommendedTime} · {d.accreditation}</p>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {upcoming.map((w) => (
+          <li key={w.term} className="rounded-lg bg-surface p-3">
+            <p className="font-medium">{w.term} applications</p>
+            <p className="tabular text-xs text-muted">Opens {w.opens.month}/{w.opens.day} · due {w.date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</p>
+            <p className={cn("tabular text-xs", days(w.date) <= 60 ? "font-medium text-amber-800 dark:text-amber-300" : "text-primary")}>in {days(w.date)} days</p>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-muted">Application needs</p>
+      <ul className="mt-1 list-disc space-y-0.5 pl-5">{d.requirements.map((r) => <li key={r}>{r}</li>)}</ul>
+      <p className="mt-3"><span className="font-medium">Required interview.</span> <span className="text-muted">{d.interviewNote} Listed dates: {d.interviews.map((i) => `${i.cycle}: ${new Date(`${i.date}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`).join("; ")}.</span></p>
+      <p className="mt-2 text-xs text-muted">{d.advice} Contact: {d.contact.office}, {d.contact.phone}, {d.contact.email}.</p>
+      <a href={d.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary underline">Official program page <ExternalLink size={11} aria-hidden /></a>
+    </div>
+  );
+}
+
 function CounselingFinder() {
   const [spec, setSpec] = useState("Clinical Mental Health Counseling");
   const rows = coloradoCounselingPrograms.filter((p) => p.specialty === spec);
@@ -33,6 +61,7 @@ function CounselingFinder() {
       <label className="mt-3 flex flex-col gap-1 text-xs text-muted">Specialty
         <select value={spec} onChange={(e) => setSpec(e.target.value)} className="h-9 rounded-full border border-border bg-surface px-3 text-sm text-foreground">{specialties.map((x) => <option key={x}>{x}</option>)}</select>
       </label>
+      {spec === "Clinical Mental Health Counseling" && <CuDenverCard />}
       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {rows.map((p) => (
           <li key={p.institution + p.specialty + p.degree} className="lift rounded-xl border border-border bg-surface p-3 text-sm">
