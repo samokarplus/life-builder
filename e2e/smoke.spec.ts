@@ -45,3 +45,16 @@ test('top-bar search opens a filtered explorer and repeated searches update it',
  await page.getByRole('textbox',{name:'Search courses',exact:true}).fill('PHI');await expect(page.getByRole('button',{name:/PHI 1014/})).toBeVisible();
  await page.getByRole('searchbox',{name:'Search courses',exact:true}).fill('GEY');await page.getByRole('searchbox',{name:'Search courses',exact:true}).press('Enter');await expect(page.getByRole('button',{name:/GEY 1108/})).toBeVisible();
 });
+for(const version of [2,999])test(`invalid saved data version ${version} is preserved instead of overwritten`,async({page})=>{
+ await page.addInitScript(version=>{if(!localStorage.getItem('dream-helper:v1'))localStorage.setItem('dream-helper:v1',JSON.stringify({version,state:{profile:{major:'Keep this original'}}}));},version);
+ await page.goto('/overview');await expect(page.getByRole('heading',{name:'Your saved plan needs attention'})).toBeVisible();
+ const download=page.waitForEvent('download');await page.getByRole('button',{name:'Export original backup',exact:true}).click();expect((await download).suggestedFilename()).toBe('dream-helper-original-backup.json');
+ await page.getByRole('button',{name:'Retry loading',exact:true}).click();
+ expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('dream-helper:v1')!).state.profile.major)).toBe('Keep this original');
+ await page.reload();await expect(page.getByRole('heading',{name:'Your saved plan needs attention'})).toBeVisible();
+});
+test('a different program is preserved and does not receive the AA audit',async({page})=>{
+ await ready(page,'/profile');await page.getByLabel('Degree program').fill('Associate of Science');
+ await page.getByRole('button',{name:'Save profile',exact:true}).click();
+ await ready(page,'/roadmap');await expect(page.getByText('Requirements for your selected institution/program are not loaded.',{exact:false})).toBeVisible();
+});
