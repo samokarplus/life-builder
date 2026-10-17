@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout } from "lucide-react";
+import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
 import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
 import { coloradoCounselingPrograms, specialties } from "@/data/programs";
+import { bioastronauticsCourses, bioastronauticsFacilities, bioastronauticsFaculty } from "@/data/people";
+import Link from "next/link";
 import { sourceById } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
@@ -41,6 +43,50 @@ function CounselingFinder() {
         ))}
       </ul>
       <p className="mt-3 text-xs text-muted">{spec === "Clinical Mental Health Counseling" ? "This is the specialty most closely tied to clinical counseling. " : ""}A listing is not an endorsement or an admission guarantee. Check each school&apos;s own admissions page, costs and deadlines, and confirm with DORA that the degree meets licensing rules. <a href="https://www.cacrep.org/directory/" target="_blank" rel="noreferrer" className="text-primary underline">Open the CACREP directory</a></p>
+    </div>
+  );
+}
+
+function BioFinder() {
+  const [tab, setTab] = useState<"people" | "courses" | "labs">("people");
+  const [showEmeritus, setShowEmeritus] = useState(false);
+  const people = bioastronauticsFaculty.filter((p) => showEmeritus || p.status === "active");
+  const tabBtn = (id: typeof tab, label: string) => <button key={id} onClick={() => setTab(id)} aria-pressed={tab === id} className={cn("rounded-full border px-4 py-1.5 text-sm", tab === id ? "border-primary bg-surface text-primary" : "border-border")}>{label}</button>;
+  return (
+    <div className="mt-4 rounded-xl bg-soft p-4">
+      <p className="flex items-center gap-2 text-sm font-medium"><Rocket size={15} className="text-primary" aria-hidden /> CU Boulder Bioastronautics: who, what and where</p>
+      <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Bioastronautics sections">{tabBtn("people", "Professors")}{tabBtn("courses", "Courses")}{tabBtn("labs", "Labs and centers")}</div>
+      {tab === "people" && (
+        <>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {people.map((p) => (
+              <li key={p.id} className="lift rounded-xl border border-border bg-surface p-3 text-sm">
+                <p className="font-medium">{p.name}</p>
+                <p className="text-xs text-muted">{p.title}</p>
+                <ul className="mt-2 list-disc space-y-0.5 pl-4 text-xs">{p.interests.slice(0, 4).map((i) => <li key={i}>{i}</li>)}</ul>
+                {p.highlights && <ul className="mt-2 space-y-0.5 text-xs text-muted">{p.highlights.map((h) => <li key={h}>{h}</li>)}</ul>}
+                <a href={p.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-primary underline">Official profile <ExternalLink size={11} aria-hidden /></a>
+              </li>
+            ))}
+          </ul>
+          <label className="mt-3 flex items-center gap-2 text-xs"><input type="checkbox" checked={showEmeritus} onChange={(e) => setShowEmeritus(e.target.checked)} className="accent-[var(--primary)]" /> Also show emeritus and retired scholars</label>
+          <p className="mt-2 text-xs text-muted">From the program&apos;s Faculty page, checked 2026-10-16. A name here is a place to start reading, not a promise that someone is taking students. Email the group through its official pages.</p>
+        </>
+      )}
+      {tab === "courses" && (
+        <ul className="mt-3 space-y-2">
+          {bioastronauticsCourses.map((c) => (
+            <li key={c.code} className="rounded-xl border border-border bg-surface p-3 text-sm"><p><span className="tabular font-medium text-primary">{c.code}</span> {c.title} <span className="text-xs text-muted">· {c.offered}</span></p><p className="mt-1 text-xs text-muted">{c.summary}</p></li>
+          ))}
+          <li className="text-xs text-muted">From the Bioastronautics curriculum page. Degree requirements for the focus area are on the department&apos;s page, linked below.</li>
+        </ul>
+      )}
+      {tab === "labs" && (
+        <ul className="mt-3 space-y-2">
+          {bioastronauticsFacilities.map((f) => <li key={f.name} className="rounded-xl border border-border bg-surface p-3 text-sm"><p className="font-medium">{f.name}</p><p className="mt-1 text-xs text-muted">{f.detail}</p><a href={f.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs text-primary underline">Official page <ExternalLink size={11} aria-hidden /></a></li>)}
+          <li className="text-xs text-muted">Equipment lists (for example imaging or motion-capture systems) weren&apos;t on the pages we could read. Ask the research groups directly.</li>
+        </ul>
+      )}
     </div>
   );
 }
@@ -116,6 +162,7 @@ export function DreamPaths() {
           <span className="tabular text-xs text-muted">{done.length}/{path.steps.length} done (self-reported)</span>
         </div>
         <p className="mt-3 rounded-xl border border-border bg-surface p-3 text-xs text-muted">{path.caution}</p>
+        <Link href="/funding" className="lift mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-primary"><PiggyBank size={15} aria-hidden /> FAFSA, scholarships and deadlines for this path</Link>
 
         <ol className="mt-8 space-y-0">
           {path.steps.map((s, i) => {
@@ -166,6 +213,7 @@ export function DreamPaths() {
                   {s.links && <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">{s.links.map((l) => <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary underline">{l.label}<ExternalLink size={12} aria-hidden /></a>)}</p>}
 
                   {s.programFinder === "co-counseling" && <CounselingFinder />}
+                  {s.programFinder === "cu-bioastronautics" && <BioFinder />}
 
                   <label className="mt-4 flex items-center gap-2 text-xs"><input type="checkbox" checked={isDone} onChange={() => toggle(s.id)} className="accent-[var(--primary)]" /> I&apos;ve completed this (self-reported)</label>
                 </article>

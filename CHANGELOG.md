@@ -71,3 +71,11 @@ First verified data, each with its source URL, catalog year and verification dat
 - **Colorado counseling program finder**: all 22 Colorado rows in the CACREP directory (Adams State, CCU, CSU, Denver Seminary, Regis, UCCS, CU Denver, DU, UNC) with specialty, degree, status and accreditation cycle end.
 - CU Boulder Aerospace Engineering Sciences graduate details verified from the Graduate School table: MS/PhD/Professional MS, GRE not required, spring Oct. 1, fall Dec. 1.
 - 97 unit tests pass. Still not loaded: scholarship amounts, program costs and deadlines for counseling programs, other Colorado campuses' course data.
+
+## Funding, FAFSA and bioastronautics people (claude/funding-and-people)
+
+- New **Funding & FAFSA** page with a dated calendar (countdowns) and sourced cards, filterable by dream (astronaut or counselor) and stage. Read from official pages on 2026-10-16: studentaid.gov (2027-28 FAFSA is available; federal deadline June 30, 2028; corrections Sept 12, 2028; Colorado's entry says to contact the school's aid office), CU Boulder Financial Aid (FAFSA recommended by March 1; scholarship application opens Dec 1, due March 15; transfer June 15), the CU Boulder First Generation Scholarship ($4,000/yr Colorado residents, $8,000/yr nonresidents), and the Colorado Space Grant Consortium (open to high school through graduate students).
+- Astronaut-path funding examples come from the CU Bioastronautics Student Awards page (NSF GRFP, NASA NSTGRO, Draper, Zonta Amelia Earhart, NASA Pathways internships). They are labeled as examples; amounts and eligibility are not loaded.
+- Astronaut path now shows **CU Boulder Bioastronautics**: professors with official profile links and listed research interests, eight bioastronautics courses (paraphrased), and BioServe Space Technologies and AReS. Equipment lists were not on the readable pages, so none are claimed.
+- Not found: Integrative Physiology faculty doing space research (no dedicated IPHY space lab surfaced), scholarship amounts for Space Grant and the transfer scholarship, Colorado state aid deadlines.
+- Assistant answers FAFSA/scholarship and professor questions. 105 unit tests pass.

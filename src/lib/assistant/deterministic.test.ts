@@ -29,3 +29,8 @@ it("answers deadlines, LPC and astronaut questions with sourced, hedged text",as
   expect(await deterministicProvider.answer("How do I become an LPC therapist?",ctx)).toContain("2,000 supervised hours");
   expect(await deterministicProvider.answer("What does NASA require for astronaut?",ctx)).toContain("three years");
 });
+
+it("answers FAFSA and faculty questions from sourced data",async()=>{
+  expect(await deterministicProvider.answer("How do I pay for this, FAFSA?",ctx)).toContain("June 30, 2028");
+  expect(await deterministicProvider.answer("Which professors work on astronaut research?",ctx)).toContain("Torin Clark");
+});
