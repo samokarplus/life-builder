@@ -7,6 +7,8 @@ import { z } from "zod";
 import { sampleSemesters } from "@/data/sample";
 import type { CourseStatus, PlanningScenario, Semester, StudentProfile } from "@/lib/types";
 import { sortSemesters } from "@/lib/schedule";
+import type { ActionRecords, ActionStatus, Snapshot } from "@/lib/journey/types";
+import { createCustomAction, removeAction, reopenAction, restoreSuggested, setActionStatus, updateActionDetails } from "@/lib/journey/actions";
 
 export const defaultProfile: StudentProfile = {
   dream: "",
@@ -43,10 +45,17 @@ interface PlannerState {
   requiredCredits: number; // FRCC AA = 60 per the 2026-27 catalog; user-editable
   tuitionPerCredit: Record<string, number | null>; // user-entered only
   scenarios: PlanningScenario[];
+  actions: ActionRecords;
   costInputs: CostInputs;
   past: Semester[][];
   future: Semester[][];
 
+  setActionStatus: (id: string, status: Exclude<ActionStatus, "suggested">, snapshot: Snapshot) => void;
+  updateAction: (id: string, patch: Parameters<typeof updateActionDetails>[2], snapshot: Snapshot) => void;
+  restoreAction: (id: string) => void;
+  reopenAction: (id: string) => void;
+  addCustomAction: (input: { title: string; notes?: string; dueDate?: string; goalLabel?: string; goalId?: string }) => void;
+  deleteAction: (id: string) => void;
   setCostInputs: (c: Partial<CostInputs>) => void;
   saveScenario: (name: string, semesters?: Semester[], major?: string) => void;
   loadScenario: (id: string) => void;
@@ -92,10 +101,17 @@ export const usePlanner = create<PlannerState>()(
         requiredCredits: 60,
         tuitionPerCredit: { frcc: null, cub: null },
         scenarios: [],
+        actions: {},
         costInputs: defaultCostInputs,
         past: [],
         future: [],
 
+        setActionStatus: (id, status, snapshot) => set((s) => ({ actions: setActionStatus(s.actions, id, status, snapshot, new Date()) })),
+        updateAction: (id, patch, snapshot) => set((s) => ({ actions: updateActionDetails(s.actions, id, patch, snapshot, new Date()) })),
+        restoreAction: (id) => set((s) => ({ actions: restoreSuggested(s.actions, id, new Date()) })),
+        reopenAction: (id) => set((s) => ({ actions: reopenAction(s.actions, id, new Date()) })),
+        addCustomAction: (input) => set((s) => ({ actions: createCustomAction(s.actions, input, uid(), new Date()) })),
+        deleteAction: (id) => set((s) => ({ actions: removeAction(s.actions, id) })),
         setCostInputs: (c) => set((s) => ({ costInputs: { ...s.costInputs, ...c } })),
         saveScenario: (name, semesters, major) =>
           set((s) => ({
@@ -157,15 +173,15 @@ export const usePlanner = create<PlannerState>()(
             return nxt ? { semesters: nxt, past: [...s.past, s.semesters], future: s.future.slice(1) } : s;
           }),
         resetToSample: () =>
-          set({ onboarded: false, profile: defaultProfile, semesters: sampleSemesters, requiredCredits: 60, tuitionPerCredit: { frcc: null, cub: null }, scenarios: [], costInputs: defaultCostInputs, past: [], future: [] }),
+          set({ onboarded: false, profile: defaultProfile, semesters: sampleSemesters, requiredCredits: 60, tuitionPerCredit: { frcc: null, cub: null }, scenarios: [], actions: {}, costInputs: defaultCostInputs, past: [], future: [] }),
         exportJson: () => {
-          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs, roadmapView } = get();
-          return JSON.stringify({ app: "dream-helper", version: 2, onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, costInputs, roadmapView }, null, 2);
+          const { onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, actions, costInputs, roadmapView } = get();
+          return JSON.stringify({ app: "dream-helper", version: 2, onboarded, profile, semesters, requiredCredits, tuitionPerCredit, scenarios, actions, costInputs, roadmapView }, null, 2);
         },
         importJson: (json) => {
           try {
             const d = exportSchema.parse(JSON.parse(json));
-            set({ roadmapView: d.roadmapView ?? "board", onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs, past: [], future: [] });
+            set({ roadmapView: d.roadmapView ?? "board", onboarded: d.onboarded, profile: d.profile, semesters: d.semesters, requiredCredits: d.requiredCredits, tuitionPerCredit: d.tuitionPerCredit, scenarios: d.scenarios ?? [], actions: d.actions ?? {}, costInputs: d.costInputs ?? defaultCostInputs, past: [], future: [] });
             return { ok: true };
           } catch (e) {
             return { ok: false, error: e instanceof z.ZodError ? "This file isn't a valid Dream Helper export." : "Couldn't read that file as JSON." };
@@ -184,7 +200,7 @@ export const usePlanner = create<PlannerState>()(
       merge: (persisted, current) => ({ ...current, ...migratePlan(persisted) }),
       skipHydration: true,
       onRehydrateStorage: () => (_, error) => { if (error) hydrationFailed(); },
-      partialize: (s) => ({ roadmapView: s.roadmapView, onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit, scenarios: s.scenarios, costInputs: s.costInputs }),
+      partialize: (s) => ({ roadmapView: s.roadmapView, onboarded: s.onboarded, profile: s.profile, semesters: s.semesters, requiredCredits: s.requiredCredits, tuitionPerCredit: s.tuitionPerCredit, scenarios: s.scenarios, actions: s.actions, costInputs: s.costInputs }),
     }
   )
 );
@@ -194,7 +210,7 @@ export function migratePlan(state: unknown): Partial<z.infer<typeof exportSchema
   if (state == null) return {};
   z.object({ app: z.literal("dream-helper").optional(), version: z.union([z.literal(1), z.literal(2)]).optional() }).parse(state);
   const d = exportSchema.parse({ ...(state as object), app: "dream-helper", version: 2 });
-  return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs };
+  return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], actions: d.actions ?? {}, costInputs: d.costInputs ?? defaultCostInputs };
 }
 
 /** Rehydrates from IndexedDB on the client; false during SSR/first paint to avoid mismatches. */
