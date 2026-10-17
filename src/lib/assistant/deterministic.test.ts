@@ -15,7 +15,7 @@ describe("deterministic assistant", () => {
     expect(await deterministicProvider.answer("Can I graduate by summer 2027?", ctx)).toMatch(/Spring 2027.*on or before Summer 2027/);
   });
   it("refuses to invent tuition or modality", async () => {
-    expect(await deterministicProvider.answer("Would this save money?", ctx)).toMatch(/don't include verified tuition/);
+    expect(await deterministicProvider.answer("Would this save money?", ctx)).toMatch(/Choose or enter per-credit rates/);
     expect(await deterministicProvider.answer("Can I take only two in-person classes?", ctx)).toMatch(/aren't verified/);
   });
   it("does not invent major requirements", async () => {
@@ -42,4 +42,9 @@ it('uses the requested spring year and separates graduate/licensing deadlines',a
 it('orders upcoming courses chronologically even with unsorted imported semesters',async()=>{
  const answer=await deterministicProvider.answer('What courses are next?',{...ctx,semesters:[{...sampleSemesters[1],year:2029},sampleSemesters[1]]});
  expect(answer).toContain('Spring 2027');
+});
+it('handles the suggested unmet-requirements question rather than matching completed first',async()=>{
+ const requirements=[{requirementId:'r',label:'Missing writing area',status:'unsatisfied' as const,creditsCounted:0,usedCourseIds:[],completedCourseIds:[],projectedCourseIds:[],uncertainCourseIds:[],missingCourseIds:[],notes:[]}];
+ expect(await deterministicProvider.answer("Which requirements haven't I completed?",{...ctx,requirements})).toContain('Missing writing area');
+ expect(await deterministicProvider.answer('Which requirements are missing?',ctx)).toContain('unknown, check official sources');
 });

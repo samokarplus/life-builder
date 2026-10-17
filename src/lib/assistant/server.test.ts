@@ -17,3 +17,8 @@ it('does not leak provider errors or keys',async()=>{
  const res=await POST(new Request('http://localhost/api/assistant',{method:'POST',body:JSON.stringify({question:'Help',plan:{profile:defaultProfile,semesters:[],tuitionPerCredit:{}}})}));
  expect(res.status).toBe(502);expect(await res.text()).not.toContain('test-secret');
 });
+it('does not send AA requirement results for an Associate of Science plan',async()=>{
+ vi.stubEnv('OPENAI_API_KEY','test-secret');vi.stubEnv('OPENAI_MODEL','test-model');const fetch=vi.fn().mockResolvedValue(Response.json({output:[{type:'message',content:[{type:'output_text',text:'unknown, check official sources'}]}]}));vi.stubGlobal('fetch',fetch);
+ await POST(new Request('http://localhost/api/assistant',{method:'POST',body:JSON.stringify({question:'Requirements?',plan:{profile:{...defaultProfile,program:'Associate of Science'},semesters:[],tuitionPerCredit:{}}})}));
+ const facts=JSON.parse(JSON.parse(fetch.mock.calls[0][1].body).input);expect(facts.requirements).toEqual([]);expect(facts.requirementCoverage).toContain('unknown');
+});

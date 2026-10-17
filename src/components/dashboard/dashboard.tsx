@@ -115,7 +115,7 @@ export function Dashboard() {
             </>
           ) : (
             <>
-              <p className="text-sm">No verified tuition data is loaded yet, so we don&apos;t show a made-up number.</p>
+              <p className="text-sm">Choose or enter rates for every institution in your plan to see a tuition estimate.</p>
               <Link href="/settings" className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">Enter your tuition rate <ArrowRight size={14} /></Link>
             </>
           )}
@@ -178,7 +178,7 @@ export function Dashboard() {
                 <span className="font-medium">{byId.get(i.courseId)?.code}</span> is planned before {i.missing.map((m) => byId.get(m)?.code).join(", ")}. <Link href="/roadmap" className="text-primary underline">Take a look</Link>
               </li>
             ))}
-            {unverified > 0 && <li>{unverified} course{unverified > 1 ? "s are" : " is"} from the sample catalog and haven&apos;t been verified. Confirm with your institution.</li>}
+            {unverified > 0 && <li>{unverified} course{unverified > 1 ? " entries need" : " entry needs"} offering, prerequisite and transfer checks. A catalog listing alone does not verify your plan.</li>}
             <li className="text-muted">Transfer equivalencies to {dest.shortName} aren&apos;t loaded yet, so none are assumed.</li>
             <li className="text-muted">Course availability by term is unknown.</li>
           </ul>

@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2, CircleDashed, CircleHelp, Clock } from "lucide-react";
-import { courses, requirements } from "@/data/sample";
+import { courses, requirementsForProfile } from "@/data/sample";
 import { evaluateRequirements, type ReqStatus } from "@/lib/requirements";
 import { planContext } from "@/lib/plan-context";
 import { usePlanner } from "@/store/planner";
@@ -16,8 +16,10 @@ const meta: Record<ReqStatus, { label: string; icon: React.ElementType; cls: str
 export function RequirementsPanel() {
   const { semesters, profile } = usePlanner();
   const ctx = planContext(semesters, profile.completed);
+  const requirements = requirementsForProfile(profile);
   const results = evaluateRequirements(requirements, { courses, ...ctx });
   const code = (id: string) => courses.find((c) => c.id === id)?.code ?? id;
+  if (!requirements.length) return <section className="mt-10 rounded-[14px] border border-border bg-surface p-5" aria-labelledby="req-h"><h2 id="req-h" className="font-medium">Requirement tracker</h2><p className="mt-2 text-sm text-muted">Requirements for your selected institution/program are not loaded. The available rules cover the FRCC Associate of Arts only. Your course choices are preserved; confirm your program with an adviser.</p></section>;
   return (
     <section className="mt-10 rounded-[14px] border border-border bg-surface p-5 shadow-card" aria-labelledby="req-h">
       <h2 id="req-h" className="font-medium">Requirement tracker</h2>
