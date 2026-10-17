@@ -13,7 +13,7 @@ const iso = (y: number, m: number, d: number) => `${y}-${String(m).padStart(2, "
 /**
  * CU Boulder transfer application dates, from the pattern published on its Transfer Timeline page
  * (spring Oct 1; summer final/fall early notification Mar 15; fall final Jun 1; scholarship + FAFSA Jun 15).
- * The page gives month/day only, so each cycle must be re-confirmed.
+ * The dates are month/day entries; the page separately announces the open application cycle. Confirm each cycle.
  */
 export function cuTransferDeadlines(term: EntryTerm, year: number): Deadline[] {
   if (!Number.isInteger(year) || year < 2000 || year > 2100) throw new RangeError("Invalid entry year");

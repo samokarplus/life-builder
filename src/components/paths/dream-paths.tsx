@@ -84,7 +84,7 @@ function BioFinder() {
       {tab === "labs" && (
         <ul className="mt-3 space-y-2">
           {bioastronauticsFacilities.map((f) => <li key={f.name} className="rounded-xl border border-border bg-surface p-3 text-sm"><p className="font-medium">{f.name}</p><p className="mt-1 text-xs text-muted">{f.detail}</p><a href={f.url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs text-primary underline">Official page <ExternalLink size={11} aria-hidden /></a></li>)}
-          <li className="text-xs text-muted">Equipment lists (for example imaging or motion-capture systems) weren&apos;t on the pages we could read. Ask the research groups directly.</li>
+          <li className="text-xs text-muted">Equipment listings do not confirm student access or current availability. Ask the research groups directly.</li>
         </ul>
       )}
     </div>
@@ -203,7 +203,7 @@ export function DreamPaths() {
                           );
                         })}
                       </ul>
-                      <p className="mt-3 text-xs text-muted">Month and day come from CU Boulder&apos;s Transfer Timeline page; it doesn&apos;t print years, so confirm the dates for your cycle.</p>
+                      <p className="mt-3 text-xs text-muted">Month and day come from CU Boulder&apos;s Transfer Timeline page; the selected year is a planning assumption. Confirm the dates for your application cycle.</p>
                     </div>
                   )}
 

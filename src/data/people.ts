@@ -14,16 +14,16 @@ export interface Faculty {
 
 /** People listed on the Bioastronautics Faculty page (checked 2026-10-16). Names link to official profiles; no private contact details are copied. */
 export const bioastronauticsFaculty: Faculty[] = [
-  { id: "clark", name: "Torin Clark", title: "Associate Professor; Associate Chair for Department Affairs", status: "active", url: "https://www.colorado.edu/aerospace/torin-clark", sourceId: "src-cub-bio-faculty",
+  { id: "clark", name: "Torin Clark", title: "Associate Professor; Associate Chair for Department Affairs", status: "active", url: "https://www.colorado.edu/aerospace/torin-clark", sourceId: "src-cub-profile-clark",
     interests: ["Astronaut biomedical and cognitive issues", "Aerospace human factors", "Human sensorimotor and vestibular function and adaptation", "Spatial orientation perception and motion sickness models", "Pilot spatial disorientation", "Artificial gravity", "Human-in-the-loop experiments"],
     highlights: ["PhD Aeronautics and Astronautics, MIT (2013); BS Aerospace Engineering Sciences, CU (2008)", "Selected for the National Academies' Forum for New Leaders in Space Science (2016)"] },
-  { id: "hayman", name: "Allie Hayman", title: "Associate Professor", status: "active", url: "https://www.colorado.edu/aerospace/allie-anderson", sourceId: "src-cub-bio-faculty",
+  { id: "hayman", name: "Allie Hayman", title: "Associate Professor", status: "active", url: "https://www.colorado.edu/aerospace/allie-hayman", sourceId: "src-cub-profile-hayman",
     interests: ["Space and aviation biomedical issues", "Spacesuit design", "Astronaut vision changes in long-duration spaceflight", "Behavioral health in isolated, confined environments", "Planetary exploration", "Wearable sensor systems"],
     highlights: ["PhD Aerospace Biomedical Engineering, MIT (2014)", "NSF CAREER Award (2023)"] },
-  { id: "nabity", name: "James Nabity", title: "Associate Professor; Associate Chair for Academic Operations", status: "active", url: "https://www.colorado.edu/aerospace/james-nabity", sourceId: "src-cub-bio-faculty",
+  { id: "nabity", name: "James Nabity", title: "Associate Professor; Associate Chair for Academic Operations", status: "active", url: "https://www.colorado.edu/aerospace/james-nabity", sourceId: "src-cub-profile-nabity",
     interests: ["Environmental Control and Life Support Systems (ECLSS) for human spaceflight", "Space habitat design", "Propulsion and power"],
     highlights: ["Listed focus area: Bioastronautics", "Profile lists being a NASA highly qualified candidate for the astronaut class (2009)"] },
-  { id: "arquilla", name: "Katya Arquilla", title: "Assistant Professor", status: "active", url: "https://www.colorado.edu/aerospace/katya-arquilla", sourceId: "src-cub-bio-faculty",
+  { id: "arquilla", name: "Katya Arquilla", title: "Assistant Professor", status: "active", url: "https://www.colorado.edu/aerospace/katya-arquilla", sourceId: "src-cub-profile-arquilla",
     interests: ["How humans interact with and adapt to complex systems, including spacecraft, aircraft, autonomous and robotic systems, and Earth's changing climate"],
     highlights: ["PhD Aerospace Engineering Sciences, CU Boulder (2021)", "Previously Boeing Assistant Professor at MIT"] },
   { id: "anderson-arian", name: "Arian Anderson", title: "Assistant Professor", status: "active", url: "https://som.cuanschutz.edu/Profiles/Faculty/Profile/36443", sourceId: "src-cub-bio-faculty", interests: ["Profile is on the CU Anschutz School of Medicine site; see it for research details."] },
@@ -52,5 +52,5 @@ export const bioastronauticsCourses: BioCourse[] = [
 
 export const bioastronauticsFacilities = [
   { name: "BioServe Space Technologies", detail: "A research center in the Aerospace department, established in 1987. It has designed, built and flown biotechnology payloads on over 100 space flight missions since 1991, including to the International Space Station.", url: "https://www.colorado.edu/bioastronautics/", sourceId: "src-cub-bio-home" },
-  { name: "Aerospace Research Simulator (AReS)", detail: "Listed on the program's Laboratory Equipment page. No further description was on that page.", url: "https://www.colorado.edu/bioastronautics/laboratory-equipment", sourceId: "src-cub-bio-home" },
+  { name: "Aerospace Research Simulator (AReS)", detail: "Listed on the program's Laboratory Equipment page. No further description was on that page.", url: "https://www.colorado.edu/bioastronautics/laboratory-equipment", sourceId: "src-cub-bio-equipment" },
 ];

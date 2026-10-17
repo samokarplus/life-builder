@@ -31,7 +31,7 @@ export const fundingItems: FundingItem[] = [
   {
     id: "fafsa", title: "FAFSA (Free Application for Federal Student Aid)", kind: "federal",
     summary: "The one form that opens federal grants, work-study and loans, and that many states and colleges use for their own aid. It is free and only on a .gov website.",
-    eligibility: ["Dependent students need a parent's information on the form; independent students can complete it themselves.", "Everyone who adds information needs their own StudentAid.gov account."],
+    eligibility: ["Dependent students need a parent's information on the form; independent students may need spouse information if married and filing separately.", "Everyone who adds information needs their own StudentAid.gov account."],
     howToApply: ["Make a StudentAid.gov account (name as on your Social Security card, date of birth, email).", "Pick the 2027-28 form for aid from July 1, 2027 to June 30, 2028 (it asks for 2025 tax information). The 2026-27 form covers July 1, 2026 to June 30, 2027.", "Most people can transfer their tax information from the IRS instead of finding documents.", "If your finances changed a lot, submit anyway and then explain to the school's financial aid office."],
     stages: ["high-school", "community-college", "university", "graduate"], paths: ["all"], sourceId: "src-fafsa-fill", url: "https://studentaid.gov/apply-for-aid/fafsa/filling-out",
     caveat: "Never pay to file a FAFSA. If a site asks for payment, it is the wrong site.",
@@ -52,8 +52,8 @@ export const fundingItems: FundingItem[] = [
   {
     id: "cub-first-gen", title: "CU Boulder First Generation Scholarship", kind: "scholarship",
     summary: "For first-generation incoming and transfer students with significant financial need.",
-    amount: "Colorado residents: $4,000 per year for up to 10 semesters or 150 credit hours. Nonresidents: $8,000 per year for up to 4 years.",
-    eligibility: ["Neither parent has a bachelor's degree (the page explains the definition and how to describe unusual situations).", "Incoming first-year (resident or nonresident) or resident transfer student.", "Significant financial need as determined by the financial aid application.", "Recipients take part in the First Generation Scholarship Program."],
+    amount: "Colorado residents: $4,000 per year for up to 10 semesters or 150 credit hours, whichever comes first. Nonresidents: $8,000 per year for up to 4 years.",
+    eligibility: ["Neither parent has a bachelor's degree (the page explains the definition and how to describe unusual situations).", "Incoming first-year (resident or nonresident) or resident transfer student.", "Significant financial need as determined by the financial aid application.", "Recipients take part in the First Generation Scholarship Program.", "Nonresidents must also be offered the Presidential or Chancellor’s Achievement Scholarship.", "Transfer credits count toward the 150-credit limit; the award cannot fund summer courses."],
     howToApply: ["File the FAFSA (or apply as an undocumented student).", "Complete the CU Boulder Scholarship Application by June 15 if you're a transfer student (March 15 for first-year students).", "You'll be prompted to complete the First Generation application if eligible."],
     stages: ["community-college", "university"], paths: ["all"], sourceId: "src-cub-firstgen", url: "https://www.colorado.edu/scholarships/first-generation",
     caveat: "Not every eligible student is awarded it; applications are reviewed comprehensively.",
@@ -67,7 +67,7 @@ export const fundingItems: FundingItem[] = [
   },
   {
     id: "cosgc", title: "Colorado Space Grant Consortium (NASA)", kind: "program",
-    summary: "NASA-funded statewide program with 21 Colorado colleges and universities. Open to high school, undergraduate and graduate students, from community colleges or four-year schools, STEM majors or not. Includes hands-on projects, competitions and student positions that open every semester.",
+    summary: "Statewide Space Grant student opportunities. Open to high school, undergraduate and graduate students, from community colleges or four-year schools, STEM majors or not. Includes hands-on projects, competitions and student positions that open every semester.",
     eligibility: ["Statewide design challenges: Robotics Challenge, DemoSat High-Altitude Balloon Program, Wearables Quest, EONS Challenge, Rocketry Challenge.", "Some open student positions are for current CU Boulder students only."],
     stages: ["high-school", "community-college", "university", "graduate"], paths: ["astronaut-bioastronautics"], sourceId: "src-cosgc", url: "https://www.colorado.edu/center/spacegrant/student-involvement-opportunities-space-grant",
     caveat: "The page doesn't list award amounts or deadlines. Check the open positions listing each semester.",
