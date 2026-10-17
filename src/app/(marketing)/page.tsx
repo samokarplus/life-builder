@@ -1,4 +1,10 @@
-import { ArrowRight, Heart, ListChecks, Map, GitCompare, GraduationCap, Lock, ScanSearch, Sparkles, WifiOff } from "lucide-react";
+import { ArrowRight, HandCoins, Heart, ListChecks, Map, GitCompare, GraduationCap, Lock, Mountain, Rocket, ScanSearch, Stethoscope, WifiOff } from "lucide-react";
+import { Logo } from "@/components/brand/logo";
+import { Ridge } from "@/components/brand/ridge";
+import { coloradoCounselingPrograms } from "@/data/programs";
+import { bioastronauticsFaculty } from "@/data/people";
+import { fundingItems } from "@/data/funding";
+import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { RoadmapPreview } from "@/components/landing/roadmap-preview";
 import { Reveal } from "@/components/landing/reveal";
@@ -25,8 +31,9 @@ export default function Landing() {
       <div className="hero-glow pointer-events-none absolute inset-x-0 top-0 h-[34rem]" aria-hidden />
       <div className="relative mx-auto w-full max-w-6xl px-6">
         <header className="sticky top-0 z-20 -mx-6 flex h-16 items-center justify-between bg-background/75 px-6 backdrop-blur">
-          <span className="flex items-center gap-2 font-serif text-lg text-primary"><Sparkles size={18} aria-hidden /> Dream Helper</span>
+          <Logo size={34} />
           <nav aria-label="Page" className="hidden items-center gap-6 text-sm text-muted sm:flex">
+            <a href="#colorado" className="hover:text-foreground">Colorado dreams</a>
             <a href="#how" className="hover:text-foreground">How it works</a>
             <a href="#try" className="hover:text-foreground">Try it</a>
             <a href="#promise" className="hover:text-foreground">Our promise</a>
@@ -36,7 +43,7 @@ export default function Landing() {
 
         <section className="py-16 text-center md:py-24">
           <p className="eyebrow mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 normal-case tracking-normal">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden /> FRCC → CU Boulder · more pathways coming
+            <Mountain size={13} className="text-gold" aria-hidden /> Built for Colorado students · FRCC → CU Boulder and beyond
           </p>
           <h1 className="font-serif text-5xl leading-[1.05] tracking-tight md:text-8xl">Your future,<br className="hidden md:block" /> mapped out.</h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted">
@@ -50,6 +57,32 @@ export default function Landing() {
 
         <Reveal><RoadmapPreview /></Reveal>
         <div id="try" className="scroll-mt-20"><PlannerDemo /></div>
+
+        <section id="colorado" className="scroll-mt-20 py-16" aria-labelledby="co-h">
+          <p className="eyebrow">Colorado dreams</p>
+          <h2 id="co-h" className="mt-2 font-serif text-3xl md:text-5xl">Your school dream and your job dream, in one route.</h2>
+          <p className="mt-3 max-w-2xl text-muted">Pick where you are and what you want to become. We line up the degrees, transfer dates, exams, schools, professors and funding, each with its source.</p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <Reveal><Link href="/paths" className="lift block h-full rounded-[20px] border border-border bg-surface p-6 shadow-card">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gold-soft text-primary"><Stethoscope size={20} aria-hidden /></span>
+              <h3 className="mt-4 font-serif text-xl">Become a Colorado counselor</h3>
+              <p className="mt-2 text-sm text-muted">The official LPC route, from the state&apos;s own rules, plus {coloradoCounselingPrograms.length} CACREP-listed counseling programs in Colorado.</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">See the route <ArrowRight size={14} aria-hidden /></span>
+            </Link></Reveal>
+            <Reveal><Link href="/paths" className="lift block h-full rounded-[20px] border border-border bg-surface p-6 shadow-card">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gold-soft text-primary"><Rocket size={20} aria-hidden /></span>
+              <h3 className="mt-4 font-serif text-xl">Become an astronaut at CU Boulder</h3>
+              <p className="mt-2 text-sm text-muted">NASA&apos;s stated requirements, CU Boulder&apos;s bioastronautics program, and {bioastronauticsFaculty.filter((p) => p.status === "active").length} faculty profiles to start reading.</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">See the route <ArrowRight size={14} aria-hidden /></span>
+            </Link></Reveal>
+            <Reveal><Link href="/funding" className="lift block h-full rounded-[20px] border border-border bg-surface p-6 shadow-card">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gold-soft text-primary"><HandCoins size={20} aria-hidden /></span>
+              <h3 className="mt-4 font-serif text-xl">Pay for it, with dates</h3>
+              <p className="mt-2 text-sm text-muted">FAFSA, CU Boulder&apos;s scholarship timeline and {fundingItems.length} sourced funding items, with countdowns to each deadline.</p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">See funding <ArrowRight size={14} aria-hidden /></span>
+            </Link></Reveal>
+          </div>
+        </section>
 
         <section id="how" className="scroll-mt-20 py-20" aria-labelledby="how-h">
           <p className="eyebrow">How it works</p>
@@ -88,6 +121,7 @@ export default function Landing() {
           <ButtonLink href="/onboarding" className="mt-8 h-12 bg-background px-8 text-foreground hover:bg-surface">Build My Roadmap <ArrowRight size={16} aria-hidden /></ButtonLink>
         </section>
 
+        <Ridge className="-mx-6 h-20 w-[calc(100%+3rem)]" />
         <footer className="border-t border-border py-8 text-xs text-muted">
           Dream Helper is a planning aid, not an official advising or licensing service. Always confirm requirements with your institution.
         </footer>

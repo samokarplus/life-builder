@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTheme } from "next-themes";
-import { Menu, PanelLeftClose, PanelLeftOpen, Search, Sun, Moon, Sparkles } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen, Search, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { navItems } from "./nav";
+import { navGroups } from "./nav";
 import { AssistantPanel } from "./assistant-panel";
 import { CommandPalette } from "./command-palette";
 import { Modal } from "@/components/ui/modal";
+import { Logo, LogoMark } from "@/components/brand/logo";
 import { SaveStatus } from "./save-status";
 import { institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
@@ -17,26 +18,32 @@ import { usePlanner } from "@/store/planner";
 function Nav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const path = usePathname();
   return (
-    <nav aria-label="Main" className="flex flex-col gap-1 px-2">
-      {navItems.map(({ href, label, icon: Icon }) => {
-        const active = path === href;
-        return (
-          <Link
-            key={href}
-            href={href}
-            onClick={onNavigate}
-            aria-current={active ? "page" : undefined}
-            title={collapsed ? label : undefined}
-            className={cn(
-              "flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition",
-              active ? "bg-soft font-medium text-primary" : "text-muted hover:bg-soft hover:text-foreground"
-            )}
-          >
-            <Icon size={17} aria-hidden />
-            {!collapsed && <span>{label}</span>}
-          </Link>
-        );
-      })}
+    <nav aria-label="Main" className="flex flex-col gap-4 px-2">
+      {navGroups.map((group) => (
+        <div key={group.label} role="group" aria-label={group.label} className="flex flex-col gap-0.5">
+          {!collapsed && <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[.18em] text-muted">{group.label}</p>}
+          {group.items.map(({ href, label, icon: Icon }) => {
+            const active = path === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={onNavigate}
+                aria-current={active ? "page" : undefined}
+                title={collapsed ? label : undefined}
+                className={cn(
+                  "relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition",
+                  active ? "bg-soft font-medium text-primary" : "text-muted hover:bg-soft hover:text-foreground"
+                )}
+              >
+                {active && <span className="absolute left-0 top-2 h-5 w-[3px] rounded-full bg-gold" aria-hidden />}
+                <Icon size={17} aria-hidden />
+                {!collapsed && <span>{label}</span>}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </nav>
   );
 }
@@ -54,10 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen"><a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-surface focus:p-3">Skip to content</a>
       <aside className={cn("hidden shrink-0 flex-col gap-4 border-r border-border bg-surface py-4 transition-all lg:flex", collapsed ? "w-16" : "w-60")}>
-        <Link href="/" className="flex items-center gap-2 px-5 font-serif text-lg text-primary">
-          <Sparkles size={18} aria-hidden />
-          {!collapsed && "Dream Helper"}
-        </Link>
+        <Link href="/" aria-label="Dream Helper Colorado, home" className="px-4"><Logo compact={collapsed} size={32} /></Link>
         <Nav collapsed={collapsed} />
         <button
           onClick={() => setCollapsed((c) => !c)}
@@ -74,6 +78,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur">
           <button aria-label="Open menu" className="lg:hidden" onClick={() => setMobileOpen(true)}><Menu size={20} /></button>
+          <Link href="/" aria-label="Dream Helper Colorado, home" className="lg:hidden"><LogoMark size={26} /></Link>
           <span className="hidden rounded-full bg-soft px-3 py-1 text-xs font-medium text-primary sm:inline">{institutionName(profile.currentInstitutionId)} → {institutionName(profile.destinationInstitutionId)} · {onboarded ? "Your plan" : "Sample plan"}</span>
           <form onSubmit={(e)=>{e.preventDefault();router.push(`/explorer?q=${encodeURIComponent(search)}`);}} className="relative ml-auto hidden max-w-xs flex-1 sm:block">
             <Search size={15} className="absolute left-3 top-2.5 text-muted" aria-hidden />
@@ -85,7 +90,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="h-9 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm"
             />
           </form>
-          <Link href="/roadmap" className="mr-auto text-xs font-medium text-primary sm:hidden">My roadmap</Link>
+          <Link href="/roadmap" className="mr-auto whitespace-nowrap text-xs font-medium text-primary sm:hidden">My roadmap</Link>
           <SaveStatus />
           <button
             aria-label="Toggle theme"
