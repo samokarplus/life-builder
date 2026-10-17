@@ -35,7 +35,8 @@ function combine(parts:Eval[]): Eval {
   const has=(s:ReqStatus)=>parts.some(p=>p.status===s);
   return {status:has("unsatisfied")?"unsatisfied":has("uncertain")?"uncertain":has("projected")?"projected":"satisfied",used:unique(parts.flatMap(p=>p.used)),missing:unique(parts.flatMap(p=>p.missing)),notes:unique(parts.flatMap(p=>p.notes))};
 }
-function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval[] {
+type SearchContext = EvalContext & { truncated?: () => void };
+function candidates(rule:RequirementRule,ctx:SearchContext,taken:Set<string>):Eval[] {
   const catalog=new Map(ctx.courses.map(c=>[c.id,c]));
   const completed=new Map(ctx.completed.map(c=>[c.courseId,c]));
   switch(rule.type) {
@@ -44,6 +45,7 @@ function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval
       if(!course) return [empty([`${code}: course data unknown; check official sources`],[rule.courseId])];
       if(taken.has(rule.courseId)) return [empty([`${code} already counts toward another requirement`],[rule.courseId])];
       const c=completed.get(rule.courseId);
+      if(course.eligibilityNote && (c || ctx.projected.includes(rule.courseId))) return [{status:"uncertain",used:[rule.courseId],missing:[],notes:[`${code}: ${course.eligibilityNote}`]}];
       if(c) {
         if(rule.minGrade) {
           const ok=meetsGrade(c.grade,rule.minGrade);
@@ -58,7 +60,11 @@ function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval
     case "all": {
       // A course may support multiple clauses within one requirement, but earns credits once.
       let combos:Eval[]=[{status:"satisfied",used:[],notes:[],missing:[]}];
-      for(const child of rule.rules) combos=combos.flatMap(a=>candidates(child,ctx,taken).map(b=>combine([a,b]))).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)).slice(0,256);
+      for(const child of rule.rules) {
+        const next=combos.flatMap(a=>candidates(child,ctx,rule.distinctCourses?new Set([...taken,...a.used]):taken).map(b=>combine([a,b]))).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status));
+        if(next.length>256) ctx.truncated?.();
+        combos=next.slice(0,256);
+      }
       return combos;
     }
     case "any": return rule.rules.length?rule.rules.flatMap(r=>candidates(r,ctx,taken)):[empty(["No alternatives loaded; check official sources"])];
@@ -74,6 +80,7 @@ function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval
           const item=candidates({type:"course",courseId:id,minGrade:rule.from.minGrade},ctx,taken)[0];
           if(item.status==="unsatisfied") continue;
           const additions=subsets.filter(s=>credits(s.used,ctx)<rule.min).map(s=>combine([s,item]));
+          if(subsets.length+additions.length>1024) ctx.truncated?.();
           subsets=[...subsets,...additions].sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx)).slice(0,1024);
         }
         options.push(...subsets.filter(s=>credits(s.used,ctx)>=rule.min));
@@ -121,7 +128,7 @@ export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):R
       return ctx.allowDoubleCount??(policy?.allowDoubleCount===true||policy?.sharedRequirementPairs?.some(pair=>pair.includes(previous)&&pair.includes(r.id))===true);
     };
     const taken=new Set([...allocated].filter(([,owners])=>owners.some(owner=>!canShare(owner))).map(([id])=>id));
-    const options=candidates(r.rule,ctx,taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
+    const options=candidates(r.rule,{...ctx,truncated:()=>{limited=true;}},taken).sort((a,b)=>rank.indexOf(a.status)-rank.indexOf(b.status)||credits(a.used,ctx)-credits(b.used,ctx));
     const seen=new Set<string>();
     for(const e of options){
       const key=e.status+e.used.slice().sort().join("|");if(seen.has(key))continue;seen.add(key);
@@ -134,6 +141,6 @@ export function evaluateRequirements(reqs:DegreeRequirement[],ctx:EvalContext):R
   return reqs.map(r=>{
     const e=best.get(r.id)??empty(["Allocation could not be evaluated; check official sources"]);
     const done=e.used.filter(id=>ctx.completed.some(c=>c.courseId===id));
-    return {requirementId:r.id,label:r.label,status:limited&&e.status==="unsatisfied"?"uncertain":e.status,creditsCounted:credits(e.used,ctx),usedCourseIds:e.used,completedCourseIds:done,projectedCourseIds:e.used.filter(id=>!done.includes(id)),uncertainCourseIds:done.filter(id=>!ctx.completed.find(c=>c.courseId===id)?.verified),missingCourseIds:e.missing,notes:limited?[...e.notes,"Allocation search limit reached; review uncertain results with an adviser."]:e.notes};
+    return {requirementId:r.id,label:r.label,status:limited&&e.status==="unsatisfied"?"uncertain":e.status,creditsCounted:credits(e.used,ctx),usedCourseIds:e.used,completedCourseIds:done,projectedCourseIds:e.used.filter(id=>!done.includes(id)),uncertainCourseIds:done.filter(id=>!ctx.completed.find(c=>c.courseId===id)?.verified || e.notes.some(note=>note.startsWith(`${ctx.courses.find(c=>c.id===id)?.code}:`) || note.startsWith(`${ctx.courses.find(c=>c.id===id)?.code} needs`))),missingCourseIds:e.missing,notes:limited?[...e.notes,"Allocation search limit reached; review uncertain results with an adviser."]:e.notes};
   });
 }

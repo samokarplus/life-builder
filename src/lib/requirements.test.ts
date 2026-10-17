@@ -70,3 +70,8 @@ it("backtracks across flexible rules instead of greedily exhausting shared cours
  const result=evaluateRequirements([either("first",[a,b]),either("second",[a,c]),either("third",[a,c])],{courses,projected:[],completed:[a,b,c].map(courseId=>({courseId,verified:true}))});
  expect(result.map(r=>r.status)).toEqual(["satisfied","satisfied","satisfied"]);expect(result[0].usedCourseIds).toEqual([b]);
 });
+it('reports uncertainty when a bounded subset search prunes possible completions',()=>{
+ const many=Array.from({length:14},(_,i)=>({...courses[0],id:`many-${i}`,credits:3}));
+ const result=evaluateRequirements([{id:'large',programId:'p',label:'large',sourceId:'src-sample',rule:{type:'credits',min:36,from:{type:'group',courseIds:many.map(c=>c.id)}}}],{courses:many,completed:many.map(c=>({courseId:c.id,verified:true})),projected:[]})[0];
+ expect(result.status).toBe('uncertain');expect(result.notes.join(' ')).toContain('search limit');
+});

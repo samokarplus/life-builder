@@ -32,7 +32,7 @@ const baseCourses: Course[] = [
   mk("GEY 1111", "Geology course (title unverified)", "Natural Science (sample)"),
   { ...mk("ENG 1021", "English Composition I", "Written Communication (GT-CO1)"), sourceId: "src-frcc-aa-2627" },
   // Prerequisite below is NOT confirmed by the source above.
-  { ...mk("ENG 1022", "English Composition II", "Written Communication (GT-CO2)", ["frcc:ENG-1021"]), sourceId: "src-frcc-aa-2627" },
+  { ...mk("ENG 1022", "English Composition II", "Written Communication (GT-CO2)", ["frcc:ENG-1021"]), prerequisiteSourceId: "src-sample", sourceId: "src-frcc-aa-2627" },
   mk("PHI 1014", "Comparative Religions", "Arts & Humanities (sample)"),
   mk("PHI 1030", "Philosophy of AI", "Major-related (sample)"),
   mk("ENP 1005", "Introduction to Entrepreneurship", "Elective (sample)"),
@@ -49,7 +49,7 @@ export const courses: Course[] = (() => {
   for (const g of parseGt()) {
     const id = `frcc:${g.code.replace(" ", "-")}`;
     const i = out.findIndex((c) => c.id === id);
-    const official = { title: g.title, credits: g.credits, gtPathways: g.categories, notOffered: g.notOffered || undefined, sourceId: GT_SOURCE_ID, category: g.categories.join(" / ") };
+    const official = { title: g.title, credits: g.credits, gtPathways: g.categories, eligibilityNote: ["SCI 1055", "SCI 1056"].includes(g.code) ? "Only guaranteed under the Early Childhood / Elementary Teacher Education agreements; both SCI 1055 and SCI 1056 need C or better. Confirm with both institutions before enrolling." : undefined, notOffered: g.notOffered || undefined, sourceId: GT_SOURCE_ID, category: g.categories.join(" / ") };
     if (i >= 0) out[i] = { ...out[i], ...official };
     else out.push({ id, institutionId: "frcc", code: g.code, level: Number(g.code.split(" ")[1]) >= 2000 ? 2000 : 1000, prerequisiteIds: [], planDefault: false, ...official });
   }
@@ -119,20 +119,20 @@ export const illustrativeRequirements: DegreeRequirement[] = [
  */
 const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
 const gtIds = (...cats: string[]) => courses.filter((c) => c.gtPathways?.some((g) => cats.includes(g))).map((c) => c.id);
-const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats) } });
-const pair = (a: string, b: string) => ({ type: "all" as const, rules: [fromGt(3, a), fromGt(3, b)] });
+const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats), minGrade: "C" } });
+const pair = (a: string, b: string) => ({ type: "all" as const, distinctCourses: true, rules: [fromGt(3, a), fromGt(3, b)] });
 const AH = ["GT-AH1", "GT-AH2", "GT-AH3", "GT-AH4"];
 const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs the approved electives list, not loaded yet; check eWOLF DegreeCheck.` });
 
 export const requirements: DegreeRequirement[] = [
-  aa("aa-written", "Written communication (6 cr)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021" }, { type: "course", courseId: "frcc:ENG-1022" }] }),
-  aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150" }, { type: "course", courseId: "frcc:COM-1250" }, { type: "course", courseId: "frcc:COM-2300" }] }),
+  aa("aa-written", "Written communication (6 cr, ENG 1021 + 1022 or ENG 1022 + GT-CO3)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1022", minGrade: "C" }, { type: "any", rules: [{ type: "course", courseId: "frcc:ENG-1021", minGrade: "C" }, fromGt(3, "GT-CO3")] }] }),
+  aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150", minGrade: "C" }, { type: "course", courseId: "frcc:COM-1250", minGrade: "C" }, { type: "course", courseId: "frcc:COM-2300", minGrade: "C" }] }),
   aa("aa-math", "Mathematics (3-5 cr, one GT-MA1 course)", fromGt(3, "GT-MA1")),
   // Two GT-AH courses from two different areas: any of the six area pairings.
   aa("aa-arts-hum", "Arts & humanities (6 cr, two GT-AH courses from different areas)", { type: "any", rules: AH.flatMap((a, i) => AH.slice(i + 1).map((b) => pair(a, b))) }),
   aa("aa-history", "History (3 cr, one GT-HI1 course)", fromGt(3, "GT-HI1")),
   aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", fromGt(6, "GT-SS1", "GT-SS2", "GT-SS3")),
-  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
+  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", distinctCourses: true, rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
   aa("aa-choice", "Student choice (3 cr, one more GT-AH, GT-HI or GT-SS course)", fromGt(3, ...AH, "GT-HI1", "GT-SS1", "GT-SS2", "GT-SS3")),
   aa("aa-electives", "Electives (18-23 cr from the approved electives list)", gt(18, "Approved electives list")),
 ];

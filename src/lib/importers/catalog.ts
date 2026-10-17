@@ -8,7 +8,7 @@ export const courseSchema = z.object({id:z.string().min(1),institutionId:z.strin
 const ruleSchema:z.ZodType<RequirementRule>=z.lazy(()=>z.discriminatedUnion("type",[
   z.object({type:z.literal("course"),courseId:z.string(),minGrade:z.string().optional()}),
   z.object({type:z.literal("group"),courseIds:z.array(z.string()),minGrade:z.string().optional()}),
-  z.object({type:z.literal("all"),rules:z.array(ruleSchema)}),z.object({type:z.literal("any"),rules:z.array(ruleSchema)}),
+  z.object({type:z.literal("all"),rules:z.array(ruleSchema),distinctCourses:z.boolean().optional()}),z.object({type:z.literal("any"),rules:z.array(ruleSchema)}),
   z.object({type:z.literal("credits"),min:z.number().nonnegative(),from:ruleSchema}),
   z.object({type:z.literal("residency"),institutionId:z.string(),minCredits:z.number().nonnegative(),sourceId:z.string()}),
   z.object({type:z.literal("transfer"),from:ruleSchema,maxCredits:z.number().nonnegative(),sourceId:z.string()}),

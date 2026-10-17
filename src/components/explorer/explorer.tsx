@@ -122,9 +122,10 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
               <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} {sourceById(open.sourceId)?.status !== "verified" && <span className="text-xs text-muted">(assumed in sample)</span>}</dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>
-              <dt className="text-muted">gtPathways</dt><dd>{open.gtPathways?.join(", ") ?? "Not a gtPathways course"}</dd>
+              <dt className="text-muted">gtPathways</dt><dd>{open.gtPathways?.join(", ") ?? "No verified gtPathways designation loaded"}</dd>
+              {open.eligibilityNote && <><dt className="text-muted">Restrictions</dt><dd>{open.eligibilityNote}</dd></>}
               <dt className="text-muted">Offering</dt><dd>{open.notOffered ? "Marked not currently offered at FRCC" : "Offering by term unknown"}</dd>
-              <dt className="text-muted">Prerequisites</dt><dd>{prereqs.length ? prereqs.join(", ") : "Not loaded (check catalog)"}</dd>
+              <dt className="text-muted">Prerequisites</dt><dd>{prereqs.length ? `${prereqs.join(", ")} (illustrative; confirm with the course catalog)` : "Not loaded (check catalog)"}</dd>
               <dt className="text-muted">Satisfies</dt><dd>{satisfies.length ? satisfies.map((r) => r.label).join("; ") + " (FRCC AA 2026-27)" : "No mapped AA requirement"}</dd>
               <dt className="text-muted">Transfer</dt><dd>No equivalencies loaded; none assumed.</dd>
               <dt className="text-muted">Est. tuition</dt><dd className="tabular">{rate != null ? `~$${(rate * open.credits).toLocaleString()} (your rate, user-entered)` : "Add a rate in Settings"}</dd>

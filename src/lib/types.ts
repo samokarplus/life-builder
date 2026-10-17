@@ -31,6 +31,9 @@ export interface Course extends Provenance {
   gtPathways?: string[];
   /** The catalog marks this course as not currently offered. */
   notOffered?: boolean;
+  /** Additional catalog restrictions; not implied by a GT designation. */
+  eligibilityNote?: string;
+  prerequisiteSourceId?: string;
   id: string; // stable, e.g. "frcc:HIS-1120"
   institutionId: string;
   code: string;
@@ -58,7 +61,7 @@ export interface TransferEquivalency extends Provenance {
 
 export type RequirementRule =
   | { type: "course"; courseId: string; minGrade?: string }
-  | { type: "all"; rules: RequirementRule[] }
+  | { type: "all"; rules: RequirementRule[]; distinctCourses?: boolean }
   | { type: "any"; rules: RequirementRule[] }
   | { type: "credits"; min: number; from: RequirementRule }
   | { type: "group"; courseIds: string[]; minGrade?: string }

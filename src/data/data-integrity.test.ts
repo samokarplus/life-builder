@@ -28,7 +28,7 @@ describe("real FRCC AA requirements", () => {
   const status = (res: ReturnType<typeof evaluateRequirements>, id: string) => res.find((r) => r.requirementId === id)!.status;
   it("written and oral communication resolve from real courses", () => {
     const r = evaluateRequirements(requirements, { ...base, completed: [
-      { courseId: "frcc:ENG-1021", verified: true }, { courseId: "frcc:ENG-1022", verified: true }, { courseId: "frcc:COM-1150", verified: true },
+      { courseId: "frcc:ENG-1021", verified: true, grade: "B" }, { courseId: "frcc:ENG-1022", verified: true, grade: "B" }, { courseId: "frcc:COM-1150", verified: true, grade: "B" },
     ] });
     expect(status(r, "aa-written")).toBe("satisfied");
     expect(status(r, "aa-oral")).toBe("satisfied");
@@ -39,7 +39,7 @@ describe("real FRCC AA requirements", () => {
     expect(status(r, "aa-electives")).toBe("uncertain");
   });
   it("satisfies real gtPathways areas from official categories", () => {
-    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true, grade: "B" });
     const r = evaluateRequirements(requirements, { ...base, completed: [
       done("MAT-1260"), done("HIS-1120"), done("PHI-1014"), done("ART-1110"),
       done("PSY-1001"), done("SOC-1001"), done("GEY-1111"), done("GEY-1108"), done("LIT-1015"),
@@ -51,12 +51,12 @@ describe("real FRCC AA requirements", () => {
     expect(status(r, "aa-science")).toBe("satisfied"); // lab course + second science course
   });
   it("two arts & humanities courses from the SAME area do not satisfy the requirement", () => {
-    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true, grade: "B" });
     const r = evaluateRequirements(requirements, { ...base, completed: [done("ART-1110"), done("ART-1111")] });
     expect(status(r, "aa-arts-hum")).toBe("unsatisfied");
   });
   it("science needs a lab course", () => {
-    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true, grade: "B" });
     const r = evaluateRequirements(requirements, { ...base, completed: [done("GEY-1108"), done("AST-1140")] });
     expect(status(r, "aa-science")).toBe("unsatisfied");
   });
@@ -76,4 +76,23 @@ describe("FRCC gtPathways catalog data", () => {
     expect(new Set(ids).size).toBe(ids.length);
     expect(courses.filter((c) => c.gtPathways).length).toBeGreaterThan(200);
   });
+});
+
+describe('AA audit regressions from the official degree page', () => {
+ const earned=(...codes:string[])=>codes.map(code=>({courseId:`frcc:${code}`,verified:true,grade:'B'}));
+ const evaluate=(codes:string[])=>evaluateRequirements(requirements,{courses,completed:earned(...codes),projected:[]});
+ it('one lab course cannot meet the two-course science rule',()=>{
+  expect(evaluate(['GEY-1111']).find(r=>r.requirementId==='aa-science')?.status).toBe('unsatisfied');
+  expect(evaluate(['GEY-1111','BIO-1004']).find(r=>r.requirementId==='aa-science')?.status).toBe('satisfied');
+ });
+ it('accepts the published CO2 + CO3 writing alternative',()=>{
+  expect(evaluate(['ENG-1022','ENG-2001']).find(r=>r.requirementId==='aa-written')?.status).toBe('satisfied');
+ });
+ it('does not accept low or unknown grades as earned completion',()=>{
+  for(const grade of ['D',undefined]) expect(evaluateRequirements(requirements,{courses,projected:[],completed:[{courseId:'frcc:MAT-1260',verified:true,grade}]}).find(r=>r.requirementId==='aa-math')?.status).toBe(grade?'unsatisfied':'uncertain');
+ });
+ it('keeps restricted teacher-education sciences uncertain',()=>{
+  const result=evaluate(['SCI-1055','SCI-1056']).find(r=>r.requirementId==='aa-science');
+  expect(result?.status).toBe('uncertain');expect(result?.notes.join(' ')).toContain('Teacher Education');
+ });
 });
