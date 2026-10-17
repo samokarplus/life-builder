@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 const subject = (c: Course) => c.code.split(" ")[0];
 const subjects = [...new Set(courses.map(subject))].sort();
 import { ruleCourseIds as idsOf } from "@/lib/requirements";
+import { sourceById } from "@/data/sample";
 
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return <button aria-pressed={active} onClick={onClick} className={cn("rounded-full border px-3 py-1 text-xs", active ? "border-primary bg-soft text-primary" : "border-border bg-surface text-muted hover:text-foreground")}>{children}</button>;
@@ -112,14 +113,14 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
           <div className="space-y-4 text-sm">
             <dl className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-y-2">
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
-              <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} <span className="text-xs text-muted">(assumed in sample)</span></dd>
+              <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} {sourceById(open.sourceId)?.status !== "verified" && <span className="text-xs text-muted">(assumed in sample)</span>}</dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>
               <dt className="text-muted">Prerequisites</dt><dd>{prereqs.length ? prereqs.join(", ") : "None listed in sample"}</dd>
               <dt className="text-muted">Satisfies</dt><dd>{satisfies.length ? satisfies.map((r) => r.label).join("; ") + " (illustrative)" : "No sample requirement"}</dd>
               <dt className="text-muted">Transfer</dt><dd>No equivalencies loaded; none assumed.</dd>
               <dt className="text-muted">Est. tuition</dt><dd className="tabular">{rate != null ? `~$${(rate * open.credits).toLocaleString()} (your rate, user-entered)` : "Add a rate in Settings"}</dd>
-              <dt className="text-muted">Source</dt><dd>Illustrative sample. No official URL.</dd>
-              <dt className="text-muted">Last verified</dt><dd>Never</dd>
+              <dt className="text-muted">Source</dt><dd>{(() => { const src = sourceById(open.sourceId); return src?.url ? <a href={src.url} target="_blank" rel="noreferrer" className="text-primary underline">FRCC catalog {src.catalogYear}</a> : "Illustrative sample. No official URL."; })()}</dd>
+              <dt className="text-muted">Last verified</dt><dd>{sourceById(open.sourceId)?.lastVerified ?? "Never"}</dd>
             </dl>
             <label className="flex flex-col gap-1">Add to semester
               <select value={target || sorted[0]?.id || ""} onChange={(e) => setTarget(e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3">

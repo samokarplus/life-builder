@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { evaluateRequirements } from "./requirements";
-import { courses, requirements } from "@/data/sample";
+import { courses, illustrativeRequirements as requirements } from "@/data/sample";
 
 const base = { courses, projected: [] as string[] };
 const done = (id: string, grade?: string, verified = true) => ({ courseId: `frcc:${id}`, grade, verified });

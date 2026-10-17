@@ -72,7 +72,7 @@ export function generatePlan(
   start: { term: "fall" | "spring"; year: number }
 ): Semester[] {
   const done = new Set(profile.completed.map((c) => c.courseId));
-  const todo = catalog.filter((c) => c.institutionId === profile.currentInstitutionId && !done.has(c.id));
+  const todo = catalog.filter((c) => c.institutionId === profile.currentInstitutionId && c.planDefault !== false && !done.has(c.id));
   const placedIn = new Map<string, number>();
   const semesters: Semester[] = [];
   let term = start.term, year = start.year, idx = 0, n = 0;

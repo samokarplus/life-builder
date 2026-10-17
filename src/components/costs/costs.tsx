@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PublishedRate } from "@/components/ui/published-rate";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { courses } from "@/data/sample";
@@ -41,7 +42,9 @@ export function Costs() {
         <h2 className="font-medium">Your assumptions</h2>
         <p className="mb-4 mt-1 text-xs text-muted">Rates and expenses are <strong>user-entered</strong>. The destination load starts with illustrative defaults (4 semesters × 15 credits), editable below. No tuition rates are pre-filled.</p>
         <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><PublishedRate institutionId="frcc" /></div>
           <TuitionField label="FRCC tuition per credit ($)" value={tuitionPerCredit.frcc ?? null} onChange={(n) => setTuition("frcc", n)} />
+          <div className="sm:col-span-2"><PublishedRate institutionId="cub" /></div>
           <TuitionField label="CU Boulder tuition per credit ($)" value={tuitionPerCredit.cub ?? null} onChange={(n) => setTuition("cub", n)} />
           <label className="flex flex-col gap-1 text-sm">Residency
             <select value={x.residency} onChange={(e) => setCostInputs({ residency: e.target.value as CostInputs["residency"] })} className="h-10 rounded-xl border border-border bg-background px-3"><option value="in-state">In-state</option><option value="out-of-state">Out-of-state</option></select>

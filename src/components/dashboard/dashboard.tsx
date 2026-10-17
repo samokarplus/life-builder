@@ -96,7 +96,7 @@ export function Dashboard() {
               <div className="flex items-center justify-between"><dt className="flex items-center gap-2 text-muted"><span className="h-2.5 w-2.5 rounded-full bg-warm ring-1 ring-border" aria-hidden />Remaining</dt><dd>{prog.remaining}</dd></div>
             </dl>
           </div>
-          <p className="mt-4 text-xs text-muted">{prog.verifiedCompleted} credits marked verified; {prog.unverifiedCompleted} reported-completed credits need verification. Total of {requiredCredits} credits is a sample assumption (edit in Settings). Credit totals alone don&apos;t confirm degree completion.</p>
+          <p className="mt-4 text-xs text-muted">{prog.verifiedCompleted} credits marked verified; {prog.unverifiedCompleted} reported-completed credits need verification. Total of {requiredCredits} credits matches the FRCC Associate of Arts in the 2026-27 catalog (editable in Settings). Credit totals alone don&apos;t confirm degree completion.</p>
         </Card>
 
         <Card title="Next milestone" icon={Flag}>

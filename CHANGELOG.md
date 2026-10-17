@@ -36,3 +36,14 @@
 - Dashboard "Your route": a stop-by-stop route of your semesters with a "you are here" marker and destination.
 - Printable plan at `/print` (print or save as PDF), linked from the roadmap and palette.
 - 73 unit tests, 15 Playwright tests pass.
+
+## Real FRCC data (claude/real-frcc-data)
+
+First verified data, each with its source URL, catalog year and verification date (2026-10-16):
+
+- FRCC 2026-27 resident tuition: $299.75 per credit before fees, $183.75 after the $116 College Opportunity Fund stipend (frontrange.edu tuition page). Costs and Settings show it with "Use this rate" buttons; the rate you pick is still labeled user-entered.
+- FRCC Associate of Arts, 2026-27 catalog: 60 credits and the requirement structure. ENG 1021/1022 and COM 1150/1250/2300 titles and credits are verified; the written and oral communication requirements now use them.
+- The other AA areas (math, arts & humanities, history, social sciences, sciences, student choice, electives) depend on each course's gtPathways designation, which is not loaded. They report "needs a check" via a new `unmapped` rule type instead of guessing.
+- CU Boulder tuition is intentionally not loaded: published figures I found disagreed with each other. Confirm with the CU Boulder Bursar.
+- ENG 1022's prerequisite on ENG 1021 is still an unverified assumption. Plan generation skips the three COM options (a degree needs only one).
+- Illustrative requirements moved to `illustrativeRequirements` for engine tests. 79 unit tests and 15 Playwright tests pass.

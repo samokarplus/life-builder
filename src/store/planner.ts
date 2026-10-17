@@ -40,7 +40,7 @@ interface PlannerState {
   onboarded: boolean;
   profile: StudentProfile;
   semesters: Semester[];
-  requiredCredits: number; // sample assumption until program data is imported
+  requiredCredits: number; // FRCC AA = 60 per the 2026-27 catalog; user-editable
   tuitionPerCredit: Record<string, number | null>; // user-entered only
   scenarios: PlanningScenario[];
   costInputs: CostInputs;

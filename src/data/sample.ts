@@ -17,6 +17,38 @@ export const sources: DataSource[] = [
   },
 ];
 
+/** Official sources checked by hand on the verification date below. Only figures stated on these pages are loaded. */
+export const VERIFIED_ON = "2026-10-16";
+sources.push(
+  {
+    id: "src-frcc-aa-2627",
+    url: "https://frontrange.smartcatalogiq.com/en/current/catalog/program-information/degree-descriptions/aa-degree",
+    institutionId: "frcc",
+    catalogYear: "2026-2027",
+    lastVerified: VERIFIED_ON,
+    status: "verified",
+    note: "FRCC catalog, Associate of Arts degree page. Titles, credits and requirement structure as listed there.",
+  },
+  {
+    id: "src-frcc-tuition-2627",
+    url: "https://frontrange.edu/admissions-aid/paying-for-college/tuition-fees/tuition-rates.html",
+    institutionId: "frcc",
+    catalogYear: "2026-2027",
+    lastVerified: VERIFIED_ON,
+    status: "verified",
+    note: "FRCC published 2026-2027 tuition rates (excludes campus fees).",
+  },
+  {
+    id: "src-cub-tuition-unresolved",
+    url: "https://www.colorado.edu/bursar/",
+    institutionId: "cub",
+    catalogYear: null,
+    lastVerified: null,
+    status: "unverified",
+    note: "Search results for CU Boulder per-credit tuition disagreed with each other, so no figure is loaded. Confirm with the CU Boulder Bursar.",
+  },
+);
+
 export const institutions: Institution[] = [
   { id: "frcc", name: "Front Range Community College", shortName: "FRCC", kind: "community-college", state: "CO" },
   { id: "cub", name: "University of Colorado Boulder", shortName: "CU Boulder", kind: "university", state: "CO" },
@@ -38,17 +70,24 @@ export const courses: Course[] = [
   mk("HIS 1120", "World History 1500–Present", "Arts & Humanities (sample)"),
   mk("GEY 1108", "Geology of National Parks", "Natural Science (sample)"),
   mk("GEY 1111", "Geology course (title unverified)", "Natural Science (sample)"),
-  mk("ENG 1021", "English Composition I", "Written Communication (sample)"),
-  mk("ENG 1022", "English Composition II", "Written Communication (sample)", ["frcc:ENG-1021"]),
+  { ...mk("ENG 1021", "English Composition I", "Written Communication (GT-CO1)"), sourceId: "src-frcc-aa-2627" },
+  // Prerequisite below is NOT confirmed by the source above.
+  { ...mk("ENG 1022", "English Composition II", "Written Communication (GT-CO2)", ["frcc:ENG-1021"]), sourceId: "src-frcc-aa-2627" },
   mk("PHI 1014", "Comparative Religions", "Arts & Humanities (sample)"),
   mk("PHI 1030", "Philosophy of AI", "Major-related (sample)"),
   mk("ENP 1005", "Introduction to Entrepreneurship", "Elective (sample)"),
   mk("AIR 2001", "AIR 2001 (title unverified)", "Elective (sample)"),
+  // Oral communication options from the AA page; the degree needs only ONE, so none are auto-placed.
+  { ...mk("COM 1150", "Public Speaking", "Oral Communication"), sourceId: "src-frcc-aa-2627", planDefault: false },
+  { ...mk("COM 1250", "Interpersonal Communication", "Oral Communication (GT-SS3)"), sourceId: "src-frcc-aa-2627", planDefault: false },
+  { ...mk("COM 2300", "Intercultural Communication", "Oral Communication (GT-SS3)"), sourceId: "src-frcc-aa-2627", planDefault: false },
 ];
 
+export const sourceById = (id: string) => sources.find((x) => x.id === id);
+
 export const tuitionRates: TuitionRate[] = [
-  { id: "t-frcc", institutionId: "frcc", academicYear: "unsourced", perCredit: null, residency: "in-state", sourceId: "src-sample" },
-  { id: "t-cub", institutionId: "cub", academicYear: "unsourced", perCredit: null, residency: "in-state", sourceId: "src-sample" },
+  { id: "t-frcc", institutionId: "frcc", academicYear: "2026-2027", perCredit: 299.75, cofStipend: 116, residency: "in-state", sourceId: "src-frcc-tuition-2627", note: "Regular resident, excluding campus fees. $183.75 per credit after the College Opportunity Fund stipend, if eligible." },
+  { id: "t-cub", institutionId: "cub", academicYear: "unsourced", perCredit: null, residency: "in-state", sourceId: "src-cub-tuition-unresolved" },
 ];
 
 export const careers: Career[] = [
@@ -89,7 +128,7 @@ export const sampleSemesters: Semester[] = [
  * ILLUSTRATIVE requirement structure to exercise the engine. These are NOT the
  * official FRCC AA requirements; replace with imported catalog data.
  */
-export const requirements: DegreeRequirement[] = [
+export const illustrativeRequirements: DegreeRequirement[] = [
   { id: "req-written", programId: "frcc-aa-sample", label: "Written communication", sourceId: "src-sample",
     rule: { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021", minGrade: "C" }, { type: "course", courseId: "frcc:ENG-1022", minGrade: "C" }] } },
   { id: "req-science", programId: "frcc-aa-sample", label: "Natural science (one course)", sourceId: "src-sample",
@@ -99,3 +138,27 @@ export const requirements: DegreeRequirement[] = [
   { id: "req-electives", programId: "frcc-aa-sample", label: "Electives (6 credits)", sourceId: "src-sample",
     rule: { type: "credits", min: 6, from: { type: "group", courseIds: ["frcc:ENP-1005", "frcc:AIR-2001"] } } },
 ];
+
+/**
+ * FRCC Associate of Arts, 2026-2027 catalog (60 credits). Written and oral
+ * communication are mapped to specific courses from the page. The remaining
+ * areas depend on each course's gtPathways designation, which is not loaded yet,
+ * so they are reported as "needs a check" instead of guessed.
+ */
+const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
+const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs gtPathways course mapping, not loaded yet; check eWOLF DegreeCheck.` });
+
+export const requirements: DegreeRequirement[] = [
+  aa("aa-written", "Written communication (6 cr)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021" }, { type: "course", courseId: "frcc:ENG-1022" }] }),
+  aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150" }, { type: "course", courseId: "frcc:COM-1250" }, { type: "course", courseId: "frcc:COM-2300" }] }),
+  aa("aa-math", "Mathematics (3-5 cr, one gtPathways GT-MA1 course)", gt(3, "One GT-MA1 course")),
+  aa("aa-arts-hum", "Arts & humanities (6 cr, two GT-AH courses from different areas)", gt(6, "Two GT-AH courses")),
+  aa("aa-history", "History (3 cr, one GT-HI1 course)", gt(3, "One GT-HI1 course")),
+  aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", gt(6, "Two GT-SS courses")),
+  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", gt(7, "Two GT-SC courses, one with a lab")),
+  aa("aa-choice", "Student choice (3 cr, one GT-AH, GT-HI or GT-SS course)", gt(3, "One additional GT-AH, GT-HI or GT-SS course")),
+  aa("aa-electives", "Electives (18-23 cr from the approved electives list)", gt(18, "Approved electives list")),
+];
+
+/** Total credits for the FRCC AA degree per the 2026-2027 catalog. */
+export const FRCC_AA_CREDITS = 60;
