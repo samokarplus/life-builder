@@ -13,6 +13,7 @@ import { CareerPicker, type PickerState } from "./career-picker";
 import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
 import { careerMeta } from "@/data/career-meta";
 import { sourceById } from "@/data/sample";
+import { parseDreamParams, routeProgress } from "@/lib/dream-params";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
 import { cn } from "@/lib/utils";
@@ -136,16 +137,15 @@ export function DreamPaths() {
   const { profile, setProfile } = usePlanner();
   const today = useMemo(() => new Date(), []);
   const params = useSearchParams();
-  const qpPath = params.get("path");
-  const qpStage = params.get("stage") as Stage | null;
-  const [pathId, setPathId] = useState(pathways.some((p) => p.id === qpPath) ? (qpPath as string) : pathways[0].id);
-  const [stage, setStage] = useState<Stage>(qpStage && stageOrder.includes(qpStage) ? qpStage : "community-college");
-  const [picker, setPicker] = useState<PickerState>({ query: params.get("q") ?? "", category: "all", noDegree: false, highSchool: false });
+  const initial = parseDreamParams(params, profile);
+  const [pathId, setPathId] = useState(initial.pathId);
+  const [stage, setStage] = useState<Stage>(initial.stage);
+  const [picker, setPicker] = useState<PickerState>({ query: initial.query, category: "all", noDegree: false, highSchool: false });
   const [term, setTerm] = useState<EntryTerm>("fall");
   const [year, setYear] = useState(nextFallEntry(today));
   const path = pathways.find((p) => p.id === pathId)!;
   const key = `path:${path.id}`;
-  const done = profile.careerStageProgress?.[key] ?? [];
+  const done = routeProgress(path.id, profile.careerStageProgress?.[key]);
   const toggle = (id: string) => setProfile({ careerStageProgress: { ...profile.careerStageProgress, [key]: done.includes(id) ? done.filter((x) => x !== id) : [...done, id] } });
   const deadlines = cuTransferDeadlines(term, year);
   const pct = Math.round((done.length / path.steps.length) * 100);
@@ -255,7 +255,7 @@ export function DreamPaths() {
         {careerMeta[path.id] && <><IdealPath meta={careerMeta[path.id]} /><People meta={careerMeta[path.id]} /><Challenges meta={careerMeta[path.id]} /></>}
       </section>
       </div>
-      <WaysIn initial={stage === "high-school" ? "high-school" : "high-school"} />
+      <WaysIn />
     </div>
   );
 }
