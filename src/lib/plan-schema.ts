@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { actionsSchema } from "@/lib/journey/types";
 export const semesterSchema = z.object({
   id: z.string().min(1).max(200),
   term: z.enum(["fall", "spring", "summer"]),
@@ -31,6 +32,7 @@ export const exportSchema = z.object({
     id: z.string().min(1).max(200), name: z.string(), createdAt: z.string(),
     pathway: z.object({ id: z.string().min(1).max(200), name: z.string(), major: z.string().optional(), semesters: z.array(semesterSchema) }),
   })).optional(),
+  actions: actionsSchema.optional(),
   costInputs: z.object({
     residency: z.enum(["in-state", "out-of-state"]), feesPerSemester: z.number().min(0), booksPerSemester: z.number().min(0),
     housingPerSemester: z.number().min(0), livingPerSemester: z.number().min(0), aid: z.number().min(0),

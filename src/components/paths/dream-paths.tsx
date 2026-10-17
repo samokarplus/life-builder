@@ -3,12 +3,13 @@ import { BoulderPrograms } from "./boulder-programs";
 import { CampusPlanner } from "./campus-planner";
 
 import { useMemo, useState } from "react";
-import { CalendarClock, ExternalLink, GraduationCap, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
+import { ArrowRight, CalendarClock, ExternalLink, GraduationCap, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
 import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
 import { coloradoCounselingPrograms, cuDenverCmhc, specialties } from "@/data/programs";
 import { nextOccurrence } from "@/data/funding";
 import { bioastronauticsCourses, bioastronauticsFacilities, bioastronauticsFaculty } from "@/data/people";
 import Link from "next/link";
+import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { CareerBadge } from "@/components/brand/career-badge";
 import { CareerPicker, type PickerState } from "./career-picker";
@@ -190,6 +191,18 @@ export function DreamPaths() {
             <p className="eyebrow">{careerMeta[path.id]?.category ?? "Route"}</p>
             <h2 id="route-details" tabIndex={-1} className="scroll-mt-24 font-serif text-3xl">{path.title}</h2>
             <p className="mt-2 text-muted">{path.summary}</p>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                aria-pressed={profile.careerId === path.id}
+                onClick={() => {
+                  const isGoal = profile.careerId === path.id;
+                  setProfile({ careerId: isGoal ? undefined : path.id, ...(!isGoal && !profile.dream.trim() ? { dream: path.career } : {}) });
+                  toast(isGoal ? "Goal cleared" : `${path.career} is now your goal`, { description: isGoal ? undefined : "Your next steps, funding and progress now follow this route." });
+                }}
+                className={cn("h-10 rounded-full px-5 text-sm font-medium", profile.careerId === path.id ? "bg-soft text-primary ring-1 ring-primary" : "bg-primary text-primary-foreground")}
+              >{profile.careerId === path.id ? "This is your goal" : `Build my ${path.career} path`}</button>
+              {profile.careerId === path.id && <Link href="/next-steps" className="inline-flex items-center gap-1 text-sm font-medium text-primary">See your next steps <ArrowRight size={14} aria-hidden /></Link>}
+            </div>
           </div>
         </div>
         <div className="mt-4 flex items-center gap-3" role="img" aria-label={`${done.length} of ${path.steps.length} steps marked done by you`}>

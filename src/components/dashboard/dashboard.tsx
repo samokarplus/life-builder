@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { planHealth } from "@/lib/health";
 import { routeStops } from "@/lib/route";
+import { NextStepsCard } from "@/components/journey/next-steps-card";
 import { CareerBadge } from "@/components/brand/career-badge";
 import { careerMeta } from "@/data/career-meta";
 import { pathForDream } from "@/lib/dreams";
@@ -87,6 +88,8 @@ export function Dashboard() {
           </Link>
         );
       })()}
+
+      <NextStepsCard />
 
       <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Pathway">
         {milestones.map((m, i) => (

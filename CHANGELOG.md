@@ -148,3 +148,12 @@ Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright t
 - Combines Codex's stacked PRs (route review and fixes, source-reliability checks, six-campus planner, CU Boulder requirement previews and scoped tuition) with its finished-but-unsaved set of nine more Colorado career routes (PA, paramedic, software, PE, pharmacist, plumber, dental hygienist, LCSW social work, veterinarian). Firefighter and pilot were left out because no complete official pathway could be verified.
 - 16 Colorado routes now; the browser tests expect that count and the "psychologist" example for a profession that stays explicitly unmapped. Two save-then-reload tests now wait for the save to finish.
 - 184 unit tests, provenance check (657 records), lint, build and 35 browser tests pass on this build.
+
+## Strategic pivot, Phase 1: one connected journey and the Action Center (claude/action-center)
+
+- **Shared journey model** (`src/lib/journey/`): one goal resolved from the profile (a chosen route wins, then a match from the dream text), a deterministic suggestion engine over verified data, and a persistent action state (saved, in progress, waiting, completed, dismissed, with notes, due dates and a snapshot so saved items survive after their trigger changes).
+- **Next Steps page** (`/next-steps`): your goal and current position, recommended steps grouped by status, filters, notes and dates, add-your-own actions, and an Opportunities panel that uses only four transparent eligibility states (no scores). Dashboard shows your top three next steps. Colorado Dreams gets "Build my ... path" to set the goal. Sidebar regrouped as My Journey / Opportunities / Explore / Tools / Account.
+- **The counselor journey** (FRCC to CU Boulder, Philosophy, licensed professional counselor) is covered end to end in unit and browser tests: route step, the two nearest CU Boulder transfer dates, CU Boulder aid dates, an honest "ask which courses transfer" step (no equivalencies are assumed), unmet Associate of Arts areas, prerequisite order flagged as partly unverified, and CU Denver counseling dates as "looking ahead". Nothing is marked urgent unless a real date is within 30 days.
+- Actions are part of the export/import schema; no migration needed for existing plans.
+- `docs/PRODUCT_GAP_ANALYSIS.md` compares us with My Colorado Journey and explains the differentiation.
+- Verification: 210 unit tests, provenance check, lint, build, 38 browser tests (including accessibility checks on the new page at three sizes in both themes).
