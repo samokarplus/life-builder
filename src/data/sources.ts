@@ -106,6 +106,26 @@ v("src-cub-bio-equipment", "https://www.colorado.edu/bioastronautics/laboratory-
 v("src-cub-aes-apply", "https://www.colorado.edu/aerospace/admissions/graduates/how-apply", "Aerospace department application requirements, including degree-specific GRE policy.", "cub");
 v("src-cub-aes-deadlines", "https://www.colorado.edu/aerospace/admissions/graduates/deadlines-fees", "Aerospace department spring and fall application deadlines.", "cub");
 
+// Careers, access routes and real people (read 2026-10-16)
+v("src-frcc-hs", "https://www.frontrange.edu/programs-courses/concurrent-enrollment/index.html", "FRCC Concurrent Enrollment: college classes for public high school students in grades 9-12.", "frcc");
+v("src-frcc-wue", "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html", "FRCC Western Undergraduate Exchange page: eligibility, price rule and how to apply.", "frcc");
+v("src-frcc-b2b", "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html", "FRCC Bridge to Bachelor's page: guaranteed admission to participating four-year schools. Partner schools appear as logos; names were read from the image labels.", "frcc");
+v("src-frcc-transfer-guides", "https://www.frontrange.edu/student-experience/transfer-planning/transfer-guides.html", "FRCC transfer guides and agreements, including statewide and institution-specific agreements.", "frcc");
+v("src-dora-nursing-apps", "https://dpo.colorado.gov/Nursing/Applications", "Colorado DORA nursing applications and forms: RN by exam (two-part process), endorsement, certified nurse aide.");
+v("src-dora-nursing-faq", "https://dpo.colorado.gov/Nursing/FAQ", "Colorado DORA nursing FAQ: working before licensure, NCLEX attempts, approved programs.");
+v("src-frcc-adn", "https://www.frontrange.edu/programs-courses/program-list/nursing-program/larimer-campus-nursing/associate-degree-admissions.html", "FRCC Larimer Campus Associate Degree Nursing admissions page. Other campuses may differ.", "frcc");
+v("src-dora-electrical", "https://dpo.colorado.gov/Electrical/Applications", "Colorado DORA electrical applications and licensure requirements (residential wireman, journeyman, master, reciprocity).");
+v("src-cde-teacher", "https://ed.cde.state.co.us/cdeprof/teacherreqs", "Colorado Department of Education: teacher license requirements and routes.");
+v("src-dora-medical", "https://dpo.colorado.gov/Medical/DRLicenseRequirements", "Colorado Medical Board: physician licensing requirements.");
+v("src-cu-som-timeline", "https://medschool.cuanschutz.edu/education/md-admissions/requirements/timeline-dates-to-remember", "CU School of Medicine MD admissions timeline (2026-2027 cycle).");
+v("src-cu-som-req", "https://medschool.cuanschutz.edu/education/md-admissions/requirements", "CU School of Medicine MD admission requirements (MCAT, letters, degree).");
+v("src-cdphe-ems", "https://cdphe.colorado.gov/emergency-care/emergency-medical-services/ems-providers/ems-provider-certification", "Colorado CDPHE: EMS provider certification steps and requirements.");
+v("src-nasa-2025-class", "https://www.nasa.gov/news-release/nasa-selects-all-american-2025-class-of-astronaut-candidates/", "NASA release (Sept. 22, 2025): the 2025 astronaut candidate class and its backgrounds.");
+v("src-cu-aero-astronauts", "https://www.colorado.edu/aerospace/about-us/astronauts-affiliated-cu", "CU Boulder Aerospace: astronauts affiliated with CU, with degrees and flights (undated list).", "cub");
+v("src-frcc-story-bitler", "https://blog.frontrange.edu/2020/12/02/during-covid-alumnus-gets-creative-with-care-at-local-nursing-homes/", "FRCC blog (Dec. 2020): alumnus Joel Bitler. A college-published story; outcomes are as reported there.", "frcc");
+v("src-frcc-story-guida", "https://blog.frontrange.edu/2023/09/06/graduate-starts-paramedic-career-with-care-forward-colorado/", "FRCC blog (Sept. 2023): graduate Tom Guida and Care Forward Colorado. A college-published story.", "frcc");
+v("src-frcc-story-andrade", "https://blog.frontrange.edu/2026/05/12/first-generation-graduate-pursues-dream-of-becoming-a-flight-nurse/", "FRCC news (May 2026): graduate Alyssa Andrade's commencement story. A college-published story.", "frcc");
+
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));
 const byId = new Map(sources.map(s => [s.id, s]));

@@ -15,7 +15,7 @@ export const profileSchema = z.object({
   priorities: z.array(z.string()),
   startingSemester: z.string().regex(/^(fall|spring|summer)-20\d{2}$/).optional(), program: z.string().optional(), desiredDegree: z.string().optional(),
   budget: z.number().nonnegative().nullable().optional(), unverifiedExternalCredits: z.number().nonnegative().optional(),
-  careerId: z.string().optional(), careerStageProgress: z.record(z.string(), z.array(z.string())).optional(),
+  currentStage: z.enum(["high-school", "college"]).optional(), careerId: z.string().optional(), careerStageProgress: z.record(z.string(), z.array(z.string())).optional(),
   completed: z.array(z.object({ courseId: z.string().min(1).max(200), grade: z.string().optional(), kind: z.enum(["regular", "transfer", "ap-ib"]), verified: z.boolean(), earnedInstitutionId: z.string().optional() })),
 });
 export const exportSchema = z.object({

@@ -6,6 +6,10 @@ import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { planHealth } from "@/lib/health";
 import { routeStops } from "@/lib/route";
+import { CareerBadge } from "@/components/brand/career-badge";
+import { careerMeta } from "@/data/career-meta";
+import { pathForDream } from "@/lib/dreams";
+import { pathwayById } from "@/data/pathways";
 import { RouteMap } from "./route-map";
 import { courses, institutions } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
@@ -64,6 +68,25 @@ export function Dashboard() {
           <Link href="/onboarding" className="font-medium text-primary underline">Build your own roadmap</Link>
         </p>
       )}
+
+      {(() => {
+        const pid = pathForDream(profile.dream);
+        const path = pid ? pathwayById(pid) : null;
+        const meta = pid ? careerMeta[pid] : null;
+        const stage = profile.currentStage === "high-school" ? "high-school" : "community-college";
+        if (!path || !meta) return null;
+        return (
+          <Link href={`/paths?path=${path.id}&stage=${stage}`} className="lift mt-6 flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 shadow-card">
+            <CareerBadge icon={meta.icon} theme={meta.theme} size={56} />
+            <span className="min-w-0 flex-1">
+              <span className="eyebrow">{profile.currentStage === "high-school" ? "You're in high school, dreaming big" : "Your dream"}</span>
+              <span className="block font-serif text-xl">{path.career}</span>
+              <span className="block text-sm text-muted">{meta.headline}</span>
+            </span>
+            <span className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-primary">Open your route <ArrowRight size={14} aria-hidden /></span>
+          </Link>
+        );
+      })()}
 
       <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Pathway">
         {milestones.map((m, i) => (

@@ -30,7 +30,7 @@ for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${th
 
  await page.goto('/paths');
  await page.getByRole('button',{name:/^Graduate school/}).click();
- await page.getByRole('button',{name:/^Astronaut NASA astronaut/}).click();
+ await page.getByRole('button',{name:/^Astronaut Space & science/}).click();
  for(const tab of ['Professors','Courses','Labs and centers']) {
   await page.getByRole('button',{name:tab,exact:true}).click();
   const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();

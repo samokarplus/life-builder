@@ -149,6 +149,8 @@ export interface StudentProfile {
   desiredDegree?: string;
   budget?: number | null;
   unverifiedExternalCredits?: number;
+  /** Where the student is today. High school students plan to start at their college later. */
+  currentStage?: "high-school" | "college";
   careerId?: string;
   careerStageProgress?: Record<string, string[]>; // explicitly user-reported, never inferred eligibility
 }
