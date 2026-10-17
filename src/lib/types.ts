@@ -55,13 +55,22 @@ export type RequirementRule =
   | { type: "all"; rules: RequirementRule[] }
   | { type: "any"; rules: RequirementRule[] }
   | { type: "credits"; min: number; from: RequirementRule }
-  | { type: "group"; courseIds: string[] };
+  | { type: "group"; courseIds: string[]; minGrade?: string }
+  | { type: "residency"; institutionId: string; minCredits: number; sourceId: string }
+  | { type: "transfer"; from: RequirementRule; maxCredits: number; sourceId: string };
 
 export interface DegreeRequirement extends Provenance {
   id: string;
   programId: string;
   label: string;
+  institutionId?: string;
   rule: RequirementRule;
+}
+
+export interface InstitutionRequirementPolicy extends Provenance {
+  institutionId: string;
+  allowDoubleCount: boolean;
+  sharedRequirementPairs?: [string, string][];
 }
 
 export interface AcademicProgram extends Provenance {
@@ -96,6 +105,7 @@ export interface CompletedCourse {
   grade?: string;
   kind: "regular" | "transfer" | "ap-ib";
   verified: boolean;
+  earnedInstitutionId?: string;
 }
 
 export interface PlannedCourse {
@@ -120,6 +130,13 @@ export interface StudentProfile {
   maxCreditsPerSemester: number;
   priorities: string[];
   completed: CompletedCourse[];
+  startingSemester?: string;
+  program?: string;
+  desiredDegree?: string;
+  budget?: number | null;
+  unverifiedExternalCredits?: number;
+  careerId?: string;
+  careerStageProgress?: Record<string, string[]>; // explicitly user-reported, never inferred eligibility
 }
 
 export interface AcademicPathway {

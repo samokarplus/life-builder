@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { useMemo } from "react";
 import { Background, Controls, ReactFlow, type Edge, type Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -8,6 +9,7 @@ import { prereqIssues, sortSemesters } from "@/lib/schedule";
 import { usePlanner } from "@/store/planner";
 
 export function DependencyGraph() {
+  const { resolvedTheme } = useTheme();
   const { semesters, profile } = usePlanner();
   const { nodes, edges } = useMemo(() => {
     const byId = new Map(courses.map((c) => [c.id, c]));
@@ -16,7 +18,8 @@ export function DependencyGraph() {
     const planned = new Set<string>();
     const sorted = sortSemesters(semesters);
     sorted.forEach((s, col) => s.courses.forEach((p, row) => {
-      const c = byId.get(p.courseId)!;
+      const c = byId.get(p.courseId);
+      if (!c || planned.has(c.id)) return;
       planned.add(c.id);
       ns.push({
         id: c.id, position: { x: col * 240, y: row * 90 }, draggable: false,
@@ -26,8 +29,10 @@ export function DependencyGraph() {
     }));
     const es: Edge[] = [];
     let extra = 0;
+    const rendered = new Set(planned);
     for (const id of planned) for (const pre of byId.get(id)!.prerequisiteIds) {
-      if (!planned.has(pre)) {
+      if (!rendered.has(pre)) {
+        rendered.add(pre);
         const c = byId.get(pre);
         ns.push({ id: pre, position: { x: -240, y: extra++ * 90 }, draggable: false, data: { label: `${c?.code ?? pre} · not in plan` }, style: { width: 200, fontSize: 12, borderRadius: 12, border: "1px dashed var(--muted)", background: "transparent", color: "var(--muted)" } });
       }
@@ -38,8 +43,8 @@ export function DependencyGraph() {
 
   return (
     <div>
-      <div className="h-[480px] rounded-[14px] border border-border bg-surface" role="img" aria-label="Prerequisite graph. Columns are semesters, left to right.">
-        <ReactFlow nodes={nodes} edges={edges} fitView nodesConnectable={false} proOptions={{ hideAttribution: true }}>
+      <div className="h-[480px] rounded-[14px] border border-border bg-surface" role="region" aria-label="Prerequisite graph. Columns are semesters, left to right.">
+        <ReactFlow colorMode={resolvedTheme === "dark" ? "dark" : "light"} nodes={nodes} edges={edges} fitView nodesConnectable={false} proOptions={{ hideAttribution: true }}>
           <Background /><Controls showInteractive={false} />
         </ReactFlow>
       </div>

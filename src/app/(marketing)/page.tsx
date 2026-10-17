@@ -3,6 +3,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { RoadmapPreview } from "@/components/landing/roadmap-preview";
 import { Reveal } from "@/components/landing/reveal";
 
+import { PlannerDemo } from "@/components/landing/planner-demo";
+
 const steps = [
   { icon: Heart, title: "Start with your dream", body: "Tell us what you'd love to do someday, not just what degree you're chasing." },
   { icon: ListChecks, title: "Add your completed classes", body: "Search by code or title. Transfer, AP and IB credits are flagged until reviewed." },
@@ -20,6 +22,7 @@ export default function Landing() {
       </header>
 
       <section className="py-20 text-center md:py-28">
+        <p className="mb-6 text-xs font-semibold uppercase tracking-[.22em] text-primary">A clearer path. A future that feels like you.</p>
         <h1 className="font-serif text-5xl leading-tight tracking-tight md:text-7xl">Your future, mapped out.</h1>
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted">
           From your first college class to your dream career. Build a smarter, more affordable path to where you want to go.
@@ -31,19 +34,20 @@ export default function Landing() {
       </section>
 
       <Reveal><RoadmapPreview /></Reveal>
+      <PlannerDemo />
 
       <section className="py-24" aria-labelledby="how">
         <h2 id="how" className="font-serif text-3xl md:text-4xl">Five steps from dream to diploma</h2>
         <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {steps.map(({ icon: Icon, title, body }, i) => (
-            <Reveal key={title}>
-              <li className="h-full rounded-[14px] border border-border bg-surface p-6 shadow-card">
+            <li key={title}><Reveal>
+              <article className="h-full rounded-[14px] border border-border bg-surface p-6 shadow-card">
                 <span className="grid h-10 w-10 place-items-center rounded-full bg-soft text-primary"><Icon size={18} aria-hidden /></span>
                 <p className="tabular mt-4 text-xs text-muted">0{i + 1}</p>
                 <h3 className="mt-1 font-medium">{title}</h3>
                 <p className="mt-2 text-sm text-muted">{body}</p>
-              </li>
-            </Reveal>
+              </article>
+            </Reveal></li>
           ))}
         </ol>
       </section>

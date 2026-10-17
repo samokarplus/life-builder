@@ -21,9 +21,10 @@ export function RoadmapPreview() {
 
   return (
     <div className="rounded-[16px] border border-border bg-surface p-4 shadow-card md:p-6">
-      <div className="flex gap-4 overflow-x-auto pb-2">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-2"><div><p className="text-xs font-semibold uppercase tracking-widest text-primary">Your path, at a glance</p><h2 className="mt-1 font-serif text-2xl">Small steps. Real direction.</h2></div><span className="rounded-full bg-soft px-3 py-1 text-xs text-primary">Interactive sample</span></div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {semesters.map((s) => (
-          <section key={s.id} className="w-64 shrink-0 rounded-[14px] bg-background p-3" aria-label={`${s.term} ${s.year}`}>
+          <section key={s.id} className="min-w-0 rounded-[14px] bg-background p-3" aria-label={`${s.term} ${s.year}`}>
             <header className="mb-3 flex items-baseline justify-between px-1">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">{s.term} {s.year}</h3>
               <span className="tabular text-xs text-muted">{semesterCredits(s, courses)} cr</span>
