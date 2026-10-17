@@ -1,9 +1,5 @@
-import { sources, VERIFIED_ON } from "./sample";
 
-sources.push(
-  { id: "src-cacrep-co", url: "https://www.cacrep.org/directory/", institutionId: null, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CACREP directory, state = CO, statuses Accredited / 2 Year / 8 Year (22 program rows read on the verification date). Statuses and cycle end dates change, so re-check the directory." },
-  { id: "src-cub-grad-deadlines", url: "https://www.colorado.edu/graduateschool/admissions/where-begin/program-information-deadlines", institutionId: "cub", catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note: "CU Boulder Graduate School Program Information & Deadlines table." },
-);
+
 
 export interface CounselingProgram {
   institution: string;
@@ -48,8 +44,8 @@ export const specialties = [...new Set(coloradoCounselingPrograms.map((p) => p.s
 /** CU Boulder Aerospace Engineering Sciences row, from the Graduate School deadlines table. */
 export const cuAesGrad = {
   degrees: "MS, PhD, Professional MS",
-  gre: "GRE not required",
+  gre: "GRE optional for PhD; not accepted for MS or Professional MS",
   deadlines: [{ term: "Spring", date: "Oct. 1" }, { term: "Fall", date: "Dec. 1" }],
-  contact: "aerograd@colorado.edu",
-  sourceId: "src-cub-grad-deadlines",
+  sourceId: "src-cub-aes-apply",
+  deadlineSourceId: "src-cub-aes-deadlines",
 };

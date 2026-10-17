@@ -1,65 +1,13 @@
 import { parseGt } from "./frcc-gtpathways";
 import { GT_SOURCE_ID } from "./frcc-gtpathways-raw";
-import type { Course, DataSource, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
+import type { Course, DegreeRequirement, Institution, Career, TuitionRate, Semester, StudentProfile } from "@/lib/types";
 
 /**
- * SAMPLE DATA ONLY. Course codes/titles come from the product brief as
- * illustrations. Credits are assumed (3) and nothing here is verified against
- * an official catalog. Replace via future importers.
+ * Mixed catalog: official FRCC entries override the illustrative base below.
+ * Each record identifies its source; a verified catalog record does not verify
+ * offering, prerequisite, transfer or student-completion claims.
  */
-export const sources: DataSource[] = [
-  {
-    id: "src-sample",
-    url: null,
-    institutionId: null,
-    catalogYear: null,
-    lastVerified: null,
-    status: "illustrative",
-    note: "Illustrative sample entry; not verified against an official catalog.",
-  },
-];
-
-/** Official sources checked by hand on the verification date below. Only figures stated on these pages are loaded. */
-export const VERIFIED_ON = "2026-10-16";
-sources.push(
-  {
-    id: "src-frcc-aa-2627",
-    url: "https://frontrange.smartcatalogiq.com/en/current/catalog/program-information/degree-descriptions/aa-degree",
-    institutionId: "frcc",
-    catalogYear: "2026-2027",
-    lastVerified: VERIFIED_ON,
-    status: "verified",
-    note: "FRCC catalog, Associate of Arts degree page. Titles, credits and requirement structure as listed there.",
-  },
-  {
-    id: "src-frcc-tuition-2627",
-    url: "https://frontrange.edu/admissions-aid/paying-for-college/tuition-fees/tuition-rates.html",
-    institutionId: "frcc",
-    catalogYear: "2026-2027",
-    lastVerified: VERIFIED_ON,
-    status: "verified",
-    note: "FRCC published 2026-2027 tuition rates (excludes campus fees).",
-  },
-  {
-    id: "src-cub-tuition-unresolved",
-    url: "https://www.colorado.edu/bursar/",
-    institutionId: "cub",
-    catalogYear: null,
-    lastVerified: null,
-    status: "unverified",
-    note: "Search results for CU Boulder per-credit tuition disagreed with each other, so no figure is loaded. Confirm with the CU Boulder Bursar.",
-  },
-);
-
-sources.push({
-  id: GT_SOURCE_ID,
-  url: "https://frontrange.smartcatalogiq.com/current/catalog/elective-lists/gt-pathway-courses/",
-  institutionId: "frcc",
-  catalogYear: "2026-2027",
-  lastVerified: VERIFIED_ON,
-  status: "verified",
-  note: "FRCC catalog, GT Pathway Courses list. Titles, credits and gtPathways categories as listed there.",
-});
+export { sources, sourceById, VERIFIED_ON } from "./sources";
 
 export const institutions: Institution[] = [
   { id: "frcc", name: "Front Range Community College", shortName: "FRCC", kind: "community-college", state: "CO" },
@@ -84,7 +32,7 @@ const baseCourses: Course[] = [
   mk("GEY 1111", "Geology course (title unverified)", "Natural Science (sample)"),
   { ...mk("ENG 1021", "English Composition I", "Written Communication (GT-CO1)"), sourceId: "src-frcc-aa-2627" },
   // Prerequisite below is NOT confirmed by the source above.
-  { ...mk("ENG 1022", "English Composition II", "Written Communication (GT-CO2)", ["frcc:ENG-1021"]), sourceId: "src-frcc-aa-2627" },
+  { ...mk("ENG 1022", "English Composition II", "Written Communication (GT-CO2)", ["frcc:ENG-1021"]), prerequisiteSourceId: "src-sample", sourceId: "src-frcc-aa-2627" },
   mk("PHI 1014", "Comparative Religions", "Arts & Humanities (sample)"),
   mk("PHI 1030", "Philosophy of AI", "Major-related (sample)"),
   mk("ENP 1005", "Introduction to Entrepreneurship", "Elective (sample)"),
@@ -101,14 +49,13 @@ export const courses: Course[] = (() => {
   for (const g of parseGt()) {
     const id = `frcc:${g.code.replace(" ", "-")}`;
     const i = out.findIndex((c) => c.id === id);
-    const official = { title: g.title, credits: g.credits, gtPathways: g.categories, notOffered: g.notOffered || undefined, sourceId: GT_SOURCE_ID, category: g.categories.join(" / ") };
+    const official = { title: g.title, credits: g.credits, gtPathways: g.categories, eligibilityNote: ["SCI 1055", "SCI 1056"].includes(g.code) ? "Only guaranteed under the Early Childhood / Elementary Teacher Education agreements; both SCI 1055 and SCI 1056 need C or better. Confirm with both institutions before enrolling." : undefined, notOffered: g.notOffered || undefined, sourceId: GT_SOURCE_ID, category: g.categories.join(" / ") };
     if (i >= 0) out[i] = { ...out[i], ...official };
     else out.push({ id, institutionId: "frcc", code: g.code, level: Number(g.code.split(" ")[1]) >= 2000 ? 2000 : 1000, prerequisiteIds: [], planDefault: false, ...official });
   }
   return out;
 })();
 
-export const sourceById = (id: string) => sources.find((x) => x.id === id);
 
 export const tuitionRates: TuitionRate[] = [
   { id: "t-frcc", institutionId: "frcc", academicYear: "2026-2027", perCredit: 299.75, cofStipend: 116, residency: "in-state", sourceId: "src-frcc-tuition-2627", note: "Regular resident, excluding campus fees. $183.75 per credit after the College Opportunity Fund stipend, if eligible." },
@@ -166,29 +113,33 @@ export const illustrativeRequirements: DegreeRequirement[] = [
 
 /**
  * FRCC Associate of Arts, 2026-2027 catalog (60 credits). Written and oral
- * communication are mapped to specific courses from the page. The remaining
- * areas depend on each course's gtPathways designation, which is not loaded yet,
- * so they are reported as "needs a check" instead of guessed.
+ * communication and general education areas use the reviewed gtPathways list.
+ * Approved electives remain unmapped; GPA and residency need an official audit.
  */
 const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
 const gtIds = (...cats: string[]) => courses.filter((c) => c.gtPathways?.some((g) => cats.includes(g))).map((c) => c.id);
-const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats) } });
-const pair = (a: string, b: string) => ({ type: "all" as const, rules: [fromGt(3, a), fromGt(3, b)] });
+const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats), minGrade: "C" } });
+const pair = (a: string, b: string) => ({ type: "all" as const, distinctCourses: true, rules: [fromGt(3, a), fromGt(3, b)] });
 const AH = ["GT-AH1", "GT-AH2", "GT-AH3", "GT-AH4"];
 const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs the approved electives list, not loaded yet; check eWOLF DegreeCheck.` });
 
 export const requirements: DegreeRequirement[] = [
-  aa("aa-written", "Written communication (6 cr)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021" }, { type: "course", courseId: "frcc:ENG-1022" }] }),
-  aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150" }, { type: "course", courseId: "frcc:COM-1250" }, { type: "course", courseId: "frcc:COM-2300" }] }),
+  aa("aa-written", "Written communication (6 cr, ENG 1021 + 1022 or ENG 1022 + GT-CO3)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1022", minGrade: "C" }, { type: "any", rules: [{ type: "course", courseId: "frcc:ENG-1021", minGrade: "C" }, fromGt(3, "GT-CO3")] }] }),
+  aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150", minGrade: "C" }, { type: "course", courseId: "frcc:COM-1250", minGrade: "C" }, { type: "course", courseId: "frcc:COM-2300", minGrade: "C" }] }),
   aa("aa-math", "Mathematics (3-5 cr, one GT-MA1 course)", fromGt(3, "GT-MA1")),
   // Two GT-AH courses from two different areas: any of the six area pairings.
   aa("aa-arts-hum", "Arts & humanities (6 cr, two GT-AH courses from different areas)", { type: "any", rules: AH.flatMap((a, i) => AH.slice(i + 1).map((b) => pair(a, b))) }),
   aa("aa-history", "History (3 cr, one GT-HI1 course)", fromGt(3, "GT-HI1")),
   aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", fromGt(6, "GT-SS1", "GT-SS2", "GT-SS3")),
-  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
+  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", distinctCourses: true, rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
   aa("aa-choice", "Student choice (3 cr, one more GT-AH, GT-HI or GT-SS course)", fromGt(3, ...AH, "GT-HI1", "GT-SS1", "GT-SS2", "GT-SS3")),
   aa("aa-electives", "Electives (18-23 cr from the approved electives list)", gt(18, "Approved electives list")),
 ];
 
 /** Total credits for the FRCC AA degree per the 2026-2027 catalog. */
 export const FRCC_AA_CREDITS = 60;
+
+/** Loaded AA rules must never be presented as the rules for another selected program. */
+export function requirementsForProfile(profile: Pick<StudentProfile, "currentInstitutionId" | "program">): DegreeRequirement[] {
+  return profile.currentInstitutionId === "frcc" && (!profile.program || profile.program === "Associate of Arts") ? requirements : [];
+}

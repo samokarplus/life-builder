@@ -71,7 +71,7 @@ interface PlannerState {
 }
 
 export { profileSchema, exportSchema } from "@/lib/plan-schema";
-import { exportSchema } from "@/lib/plan-schema";
+import { validatedExportSchema as exportSchema } from "@/lib/plan-schema";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -177,7 +177,10 @@ export const usePlanner = create<PlannerState>()(
       name: "dream-helper:v1",
       version: 2,
       storage: createJSONStorage(() => plannerStorage),
-      migrate: (state) => migratePlan(state),
+      migrate: (state, version) => {
+        if (![0, 1, 2].includes(version)) throw new Error("Unsupported saved-plan version; preserve the original backup.");
+        return migratePlan(state);
+      },
       merge: (persisted, current) => ({ ...current, ...migratePlan(persisted) }),
       skipHydration: true,
       onRehydrateStorage: () => (_, error) => { if (error) hydrationFailed(); },
@@ -189,6 +192,7 @@ export const usePlanner = create<PlannerState>()(
 /** Validates v1/v2 persisted state and fills only new fields, preserving all user choices. */
 export function migratePlan(state: unknown): Partial<z.infer<typeof exportSchema>> {
   if (state == null) return {};
+  z.object({ app: z.literal("dream-helper").optional(), version: z.union([z.literal(1), z.literal(2)]).optional() }).parse(state);
   const d = exportSchema.parse({ ...(state as object), app: "dream-helper", version: 2 });
   return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs };
 }

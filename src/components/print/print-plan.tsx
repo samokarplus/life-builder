@@ -37,7 +37,7 @@ export function PrintPlan() {
           </section>
         ))}
       </div>
-      <p className="mt-10 border-t border-border pt-4 text-xs text-muted">Planning aid only. Course data is illustrative and unverified; this is not an official degree audit. Confirm every requirement and transfer equivalency with your institution.</p>
+      <p className="mt-10 border-t border-border pt-4 text-xs text-muted">Planning aid only. Course data mixes sourced FRCC catalog entries and illustrative records; this is not an official degree audit. Confirm every requirement and transfer equivalency with your institution.</p>
     </article>
   );
 }

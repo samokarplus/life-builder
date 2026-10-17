@@ -21,7 +21,7 @@ npm test        # vitest: credits, prerequisites, requirements, scenarios, costs
 
 ## Data honesty
 
-`src/data/sample.ts` is **illustrative sample data**: course codes come from the brief, credits are assumed, requirements are not the official FRCC/CU rules, and no tuition figures are included (users enter their own). Every record carries provenance (`DataSource`) so official catalog importers can replace it.
+`src/data/sample.ts` mixes **sourced FRCC catalog data and illustrative records**. The 2026–27 gtPathways list contains 233 courses; four additional courses remain outside that list (one sourced oral-communication option and three illustrative courses). AA area rules and published FRCC resident tuition carry official sources. CU tuition, equivalencies, offerings, approved electives, GPA and residency audit coverage remain incomplete. Every record carries provenance; a verified course listing does not verify student completion or admission eligibility. Review evidence and fixes are in [REVIEW.md](REVIEW.md).
 
 ## Architecture
 
@@ -64,7 +64,7 @@ OPENAI_API_KEY=your-own-key
 OPENAI_MODEL=your-enabled-model-id
 ```
 
-Restart the server after configuring them. No key is exposed in browser code. The assistant then shows a separate opt-in explaining that the current question and structured academic plan are sent to OpenAI; dream text, budget and prior chat messages are omitted. The endpoint accepts same-origin localhost requests only, validates/bounds input, supplies the trusted sample catalog and provenance, uses no web tools, and falls back to a built-in answer on failure. It cannot modify a plan. AI explanations are not verified academic advice. Live API behavior is not exercised by the test suite; tests mock the network.
+Restart the server after configuring them. No key is exposed in browser code. The assistant then shows a separate opt-in explaining that the current question and structured academic plan are sent to OpenAI; dream text, budget and prior chat messages are omitted. The endpoint accepts same-origin localhost requests only, validates/bounds input, supplies the mixed catalog and provenance, uses no web tools, and falls back to a built-in answer on failure. It cannot modify a plan. AI explanations are not verified academic advice. Live API behavior is not exercised by the test suite; tests mock the network.
 
 The implementation follows the official [Responses API documentation](https://developers.openai.com/api/docs/guides/migrate-to-responses), including separate instructions and `store: false`. No recurring cloud storage, login, or hosting migration is introduced.
 

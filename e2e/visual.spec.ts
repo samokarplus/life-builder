@@ -27,6 +27,17 @@ for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${th
  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-course-drawer.png`,animations:'disabled'});
  await page.keyboard.press('Escape');
+
+ await page.goto('/paths');
+ await page.getByRole('button',{name:/^Graduate school/}).click();
+ await page.getByRole('button',{name:/^Astronaut NASA astronaut/}).click();
+ for(const tab of ['Professors','Courses','Labs and centers']) {
+  await page.getByRole('button',{name:tab,exact:true}).click();
+  const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
+  expect(audit.violations,JSON.stringify(audit.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})))).toEqual([]);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-paths-${tab.replaceAll(' ','-').toLowerCase()}.png`,fullPage:true,animations:'disabled'});
+ }
  await page.goto('/settings');await page.getByRole('button',{name:'Reset',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('button',{name:'Cancel',exact:true})).toBeFocused();
  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);

@@ -1,16 +1,5 @@
-import { sources, VERIFIED_ON } from "./sample";
-import "./pathways"; // registers the CU transfer-timeline source used below
+import { civilDay } from "@/lib/calendar";
 import type { Stage } from "./pathways";
-
-const v = (id: string, url: string, note: string, institutionId: string | null = null) =>
-  sources.push({ id, url, institutionId, catalogYear: null, lastVerified: VERIFIED_ON, status: "verified", note });
-
-v("src-fafsa-fill", "https://studentaid.gov/apply-for-aid/fafsa/filling-out", "Federal Student Aid: Filling Out the FAFSA form.");
-v("src-fafsa-deadlines", "https://studentaid.gov/apply-for-aid/fafsa/fafsa-deadlines", "Federal Student Aid: FAFSA application deadlines (2027-28 listing). Colorado's entry says to contact the financial aid office of the school you plan to attend.");
-v("src-cub-fafsa", "https://www.colorado.edu/financialaid/apply-aid/fafsa", "CU Boulder Office of Financial Aid: Completing the FAFSA, with its annual timeline.", "cub");
-v("src-cub-firstgen", "https://www.colorado.edu/scholarships/first-generation", "CU Boulder Office of Scholarship Services: First Generation Scholarship.", "cub");
-v("src-cosgc", "https://www.colorado.edu/center/spacegrant/student-involvement-opportunities-space-grant", "NASA Colorado Space Grant Consortium: student involvement opportunities.", "cub");
-v("src-cub-bio-awards", "https://www.colorado.edu/bioastronautics/student-awards", "CU Boulder Bioastronautics: Student Awards page (2025 and 2026 entries).", "cub");
 
 /** Annual month/day dates from CU Boulder's published pages. Cycles change, so confirm each year. */
 export interface FundingDate { id: string; label: string; month: number; day: number; note?: string; sourceId: string }
@@ -42,7 +31,7 @@ export const fundingItems: FundingItem[] = [
   {
     id: "fafsa", title: "FAFSA (Free Application for Federal Student Aid)", kind: "federal",
     summary: "The one form that opens federal grants, work-study and loans, and that many states and colleges use for their own aid. It is free and only on a .gov website.",
-    eligibility: ["Dependent students need a parent's information on the form; independent students can complete it themselves.", "Everyone who adds information needs their own StudentAid.gov account."],
+    eligibility: ["Dependent students need a parent's information on the form; independent students may need spouse information if married and filing separately.", "Everyone who adds information needs their own StudentAid.gov account."],
     howToApply: ["Make a StudentAid.gov account (name as on your Social Security card, date of birth, email).", "Pick the 2027-28 form for aid from July 1, 2027 to June 30, 2028 (it asks for 2025 tax information). The 2026-27 form covers July 1, 2026 to June 30, 2027.", "Most people can transfer their tax information from the IRS instead of finding documents.", "If your finances changed a lot, submit anyway and then explain to the school's financial aid office."],
     stages: ["high-school", "community-college", "university", "graduate"], paths: ["all"], sourceId: "src-fafsa-fill", url: "https://studentaid.gov/apply-for-aid/fafsa/filling-out",
     caveat: "Never pay to file a FAFSA. If a site asks for payment, it is the wrong site.",
@@ -63,8 +52,8 @@ export const fundingItems: FundingItem[] = [
   {
     id: "cub-first-gen", title: "CU Boulder First Generation Scholarship", kind: "scholarship",
     summary: "For first-generation incoming and transfer students with significant financial need.",
-    amount: "Colorado residents: $4,000 per year for up to 10 semesters or 150 credit hours. Nonresidents: $8,000 per year for up to 4 years.",
-    eligibility: ["Neither parent has a bachelor's degree (the page explains the definition and how to describe unusual situations).", "Incoming first-year (resident or nonresident) or resident transfer student.", "Significant financial need as determined by the financial aid application.", "Recipients take part in the First Generation Scholarship Program."],
+    amount: "Colorado residents: $4,000 per year for up to 10 semesters or 150 credit hours, whichever comes first. Nonresidents: $8,000 per year for up to 4 years.",
+    eligibility: ["Neither parent has a bachelor's degree (the page explains the definition and how to describe unusual situations).", "Incoming first-year (resident or nonresident) or resident transfer student.", "Significant financial need as determined by the financial aid application.", "Recipients take part in the First Generation Scholarship Program.", "Nonresidents must also be offered the Presidential or Chancellor’s Achievement Scholarship.", "Transfer credits count toward the 150-credit limit; the award cannot fund summer courses."],
     howToApply: ["File the FAFSA (or apply as an undocumented student).", "Complete the CU Boulder Scholarship Application by June 15 if you're a transfer student (March 15 for first-year students).", "You'll be prompted to complete the First Generation application if eligible."],
     stages: ["community-college", "university"], paths: ["all"], sourceId: "src-cub-firstgen", url: "https://www.colorado.edu/scholarships/first-generation",
     caveat: "Not every eligible student is awarded it; applications are reviewed comprehensively.",
@@ -78,7 +67,7 @@ export const fundingItems: FundingItem[] = [
   },
   {
     id: "cosgc", title: "Colorado Space Grant Consortium (NASA)", kind: "program",
-    summary: "NASA-funded statewide program with 21 Colorado colleges and universities. Open to high school, undergraduate and graduate students, from community colleges or four-year schools, STEM majors or not. Includes hands-on projects, competitions and student positions that open every semester.",
+    summary: "Statewide Space Grant student opportunities. Open to high school, undergraduate and graduate students, from community colleges or four-year schools, STEM majors or not. Includes hands-on projects, competitions and student positions that open every semester.",
     eligibility: ["Statewide design challenges: Robotics Challenge, DemoSat High-Altitude Balloon Program, Wearables Quest, EONS Challenge, Rocketry Challenge.", "Some open student positions are for current CU Boulder students only."],
     stages: ["high-school", "community-college", "university", "graduate"], paths: ["astronaut-bioastronautics"], sourceId: "src-cosgc", url: "https://www.colorado.edu/center/spacegrant/student-involvement-opportunities-space-grant",
     caveat: "The page doesn't list award amounts or deadlines. Check the open positions listing each semester.",
@@ -98,14 +87,18 @@ export const fundingItems: FundingItem[] = [
 
 /** Next occurrence of a month/day on or after `from`. */
 export function nextOccurrence(month: number, day: number, from: Date): Date {
-  const thisYear = new Date(from.getFullYear(), month - 1, day);
-  const startOfToday = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  return thisYear >= startOfToday ? thisYear : new Date(from.getFullYear() + 1, month - 1, day);
+  const today = civilDay(from);
+  if (!Number.isInteger(month) || !Number.isInteger(day) || month < 1 || month > 12 || day < 1 || day > new Date(2000, month, 0).getDate()) throw new RangeError("Invalid month/day");
+  for (let year = from.getFullYear(); year <= from.getFullYear() + 8; year++) {
+    const date = new Date(year, month - 1, day);
+    if (date.getMonth() === month - 1 && date.getDate() === day && civilDay(date) >= today) return date;
+  }
+  throw new RangeError("No valid occurrence");
 }
 
 export function upcomingFundingDates(from: Date) {
   return fundingDates
     .map((d) => ({ ...d, date: nextOccurrence(d.month, d.day, from) }))
     .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map((d) => ({ ...d, days: Math.round((d.date.getTime() - new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime()) / 86_400_000) }));
+    .map((d) => ({ ...d, days: civilDay(d.date) - civilDay(from) }));
 }

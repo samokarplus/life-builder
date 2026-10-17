@@ -1,0 +1,570 @@
+{
+  "reviewDate": "2026-10-16",
+  "dimensions": [
+    1440,
+    768,
+    375
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "pageStates": [
+    {
+      "page": "landing",
+      "theme": "light",
+      "width": 1440,
+      "height": 3721,
+      "file": "artifacts/screenshots/light-1440-landing.png"
+    },
+    {
+      "page": "landing",
+      "theme": "light",
+      "width": 768,
+      "height": 4250,
+      "file": "artifacts/screenshots/light-768-landing.png"
+    },
+    {
+      "page": "landing",
+      "theme": "light",
+      "width": 375,
+      "height": 6281,
+      "file": "artifacts/screenshots/light-375-landing.png"
+    },
+    {
+      "page": "landing",
+      "theme": "dark",
+      "width": 1440,
+      "height": 3721,
+      "file": "artifacts/screenshots/dark-1440-landing.png"
+    },
+    {
+      "page": "landing",
+      "theme": "dark",
+      "width": 768,
+      "height": 4250,
+      "file": "artifacts/screenshots/dark-768-landing.png"
+    },
+    {
+      "page": "landing",
+      "theme": "dark",
+      "width": 375,
+      "height": 6281,
+      "file": "artifacts/screenshots/dark-375-landing.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "light",
+      "width": 1440,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-1440-onboarding.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "light",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-768-onboarding.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "light",
+      "width": 375,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-375-onboarding.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-1440-onboarding.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "dark",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-768-onboarding.png"
+    },
+    {
+      "page": "onboarding",
+      "theme": "dark",
+      "width": 375,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-375-onboarding.png"
+    },
+    {
+      "page": "overview",
+      "theme": "light",
+      "width": 1440,
+      "height": 2387,
+      "file": "artifacts/screenshots/light-1440-overview.png"
+    },
+    {
+      "page": "overview",
+      "theme": "light",
+      "width": 768,
+      "height": 2658,
+      "file": "artifacts/screenshots/light-768-overview.png"
+    },
+    {
+      "page": "overview",
+      "theme": "light",
+      "width": 375,
+      "height": 4461,
+      "file": "artifacts/screenshots/light-375-overview.png"
+    },
+    {
+      "page": "overview",
+      "theme": "dark",
+      "width": 1440,
+      "height": 2387,
+      "file": "artifacts/screenshots/dark-1440-overview.png"
+    },
+    {
+      "page": "overview",
+      "theme": "dark",
+      "width": 768,
+      "height": 2658,
+      "file": "artifacts/screenshots/dark-768-overview.png"
+    },
+    {
+      "page": "overview",
+      "theme": "dark",
+      "width": 375,
+      "height": 4461,
+      "file": "artifacts/screenshots/dark-375-overview.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "light",
+      "width": 1440,
+      "height": 2185,
+      "file": "artifacts/screenshots/light-1440-roadmap.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "light",
+      "width": 768,
+      "height": 2297,
+      "file": "artifacts/screenshots/light-768-roadmap.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "light",
+      "width": 375,
+      "height": 3683,
+      "file": "artifacts/screenshots/light-375-roadmap.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "dark",
+      "width": 1440,
+      "height": 2185,
+      "file": "artifacts/screenshots/dark-1440-roadmap.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "dark",
+      "width": 768,
+      "height": 2297,
+      "file": "artifacts/screenshots/dark-768-roadmap.png"
+    },
+    {
+      "page": "roadmap",
+      "theme": "dark",
+      "width": 375,
+      "height": 3683,
+      "file": "artifacts/screenshots/dark-375-roadmap.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "light",
+      "width": 1440,
+      "height": 2275,
+      "file": "artifacts/screenshots/light-1440-explorer.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "light",
+      "width": 768,
+      "height": 3189,
+      "file": "artifacts/screenshots/light-768-explorer.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "light",
+      "width": 375,
+      "height": 6102,
+      "file": "artifacts/screenshots/light-375-explorer.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "dark",
+      "width": 1440,
+      "height": 2275,
+      "file": "artifacts/screenshots/dark-1440-explorer.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "dark",
+      "width": 768,
+      "height": 3189,
+      "file": "artifacts/screenshots/dark-768-explorer.png"
+    },
+    {
+      "page": "explorer",
+      "theme": "dark",
+      "width": 375,
+      "height": 6102,
+      "file": "artifacts/screenshots/dark-375-explorer.png"
+    },
+    {
+      "page": "compare",
+      "theme": "light",
+      "width": 1440,
+      "height": 1353,
+      "file": "artifacts/screenshots/light-1440-compare.png"
+    },
+    {
+      "page": "compare",
+      "theme": "light",
+      "width": 768,
+      "height": 1337,
+      "file": "artifacts/screenshots/light-768-compare.png"
+    },
+    {
+      "page": "compare",
+      "theme": "light",
+      "width": 375,
+      "height": 1622,
+      "file": "artifacts/screenshots/light-375-compare.png"
+    },
+    {
+      "page": "compare",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1353,
+      "file": "artifacts/screenshots/dark-1440-compare.png"
+    },
+    {
+      "page": "compare",
+      "theme": "dark",
+      "width": 768,
+      "height": 1337,
+      "file": "artifacts/screenshots/dark-768-compare.png"
+    },
+    {
+      "page": "compare",
+      "theme": "dark",
+      "width": 375,
+      "height": 1622,
+      "file": "artifacts/screenshots/dark-375-compare.png"
+    },
+    {
+      "page": "careers",
+      "theme": "light",
+      "width": 1440,
+      "height": 1049,
+      "file": "artifacts/screenshots/light-1440-careers.png"
+    },
+    {
+      "page": "careers",
+      "theme": "light",
+      "width": 768,
+      "height": 1324,
+      "file": "artifacts/screenshots/light-768-careers.png"
+    },
+    {
+      "page": "careers",
+      "theme": "light",
+      "width": 375,
+      "height": 1641,
+      "file": "artifacts/screenshots/light-375-careers.png"
+    },
+    {
+      "page": "careers",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1049,
+      "file": "artifacts/screenshots/dark-1440-careers.png"
+    },
+    {
+      "page": "careers",
+      "theme": "dark",
+      "width": 768,
+      "height": 1324,
+      "file": "artifacts/screenshots/dark-768-careers.png"
+    },
+    {
+      "page": "careers",
+      "theme": "dark",
+      "width": 375,
+      "height": 1641,
+      "file": "artifacts/screenshots/dark-375-careers.png"
+    },
+    {
+      "page": "paths",
+      "theme": "light",
+      "width": 1440,
+      "height": 4464,
+      "file": "artifacts/screenshots/light-1440-paths.png"
+    },
+    {
+      "page": "paths",
+      "theme": "light",
+      "width": 768,
+      "height": 4992,
+      "file": "artifacts/screenshots/light-768-paths.png"
+    },
+    {
+      "page": "paths",
+      "theme": "light",
+      "width": 375,
+      "height": 8178,
+      "file": "artifacts/screenshots/light-375-paths.png"
+    },
+    {
+      "page": "paths",
+      "theme": "dark",
+      "width": 1440,
+      "height": 4464,
+      "file": "artifacts/screenshots/dark-1440-paths.png"
+    },
+    {
+      "page": "paths",
+      "theme": "dark",
+      "width": 768,
+      "height": 4992,
+      "file": "artifacts/screenshots/dark-768-paths.png"
+    },
+    {
+      "page": "paths",
+      "theme": "dark",
+      "width": 375,
+      "height": 8178,
+      "file": "artifacts/screenshots/dark-375-paths.png"
+    },
+    {
+      "page": "funding",
+      "theme": "light",
+      "width": 1440,
+      "height": 3699,
+      "file": "artifacts/screenshots/light-1440-funding.png"
+    },
+    {
+      "page": "funding",
+      "theme": "light",
+      "width": 768,
+      "height": 4610,
+      "file": "artifacts/screenshots/light-768-funding.png"
+    },
+    {
+      "page": "funding",
+      "theme": "light",
+      "width": 375,
+      "height": 7314,
+      "file": "artifacts/screenshots/light-375-funding.png"
+    },
+    {
+      "page": "funding",
+      "theme": "dark",
+      "width": 1440,
+      "height": 3699,
+      "file": "artifacts/screenshots/dark-1440-funding.png"
+    },
+    {
+      "page": "funding",
+      "theme": "dark",
+      "width": 768,
+      "height": 4610,
+      "file": "artifacts/screenshots/dark-768-funding.png"
+    },
+    {
+      "page": "funding",
+      "theme": "dark",
+      "width": 375,
+      "height": 7314,
+      "file": "artifacts/screenshots/dark-375-funding.png"
+    },
+    {
+      "page": "costs",
+      "theme": "light",
+      "width": 1440,
+      "height": 1134,
+      "file": "artifacts/screenshots/light-1440-costs.png"
+    },
+    {
+      "page": "costs",
+      "theme": "light",
+      "width": 768,
+      "height": 1835,
+      "file": "artifacts/screenshots/light-768-costs.png"
+    },
+    {
+      "page": "costs",
+      "theme": "light",
+      "width": 375,
+      "height": 2465,
+      "file": "artifacts/screenshots/light-375-costs.png"
+    },
+    {
+      "page": "costs",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1134,
+      "file": "artifacts/screenshots/dark-1440-costs.png"
+    },
+    {
+      "page": "costs",
+      "theme": "dark",
+      "width": 768,
+      "height": 1835,
+      "file": "artifacts/screenshots/dark-768-costs.png"
+    },
+    {
+      "page": "costs",
+      "theme": "dark",
+      "width": 375,
+      "height": 2465,
+      "file": "artifacts/screenshots/dark-375-costs.png"
+    },
+    {
+      "page": "profile",
+      "theme": "light",
+      "width": 1440,
+      "height": 1014,
+      "file": "artifacts/screenshots/light-1440-profile.png"
+    },
+    {
+      "page": "profile",
+      "theme": "light",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-768-profile.png"
+    },
+    {
+      "page": "profile",
+      "theme": "light",
+      "width": 375,
+      "height": 1494,
+      "file": "artifacts/screenshots/light-375-profile.png"
+    },
+    {
+      "page": "profile",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1014,
+      "file": "artifacts/screenshots/dark-1440-profile.png"
+    },
+    {
+      "page": "profile",
+      "theme": "dark",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-768-profile.png"
+    },
+    {
+      "page": "profile",
+      "theme": "dark",
+      "width": 375,
+      "height": 1494,
+      "file": "artifacts/screenshots/dark-375-profile.png"
+    },
+    {
+      "page": "settings",
+      "theme": "light",
+      "width": 1440,
+      "height": 1014,
+      "file": "artifacts/screenshots/light-1440-settings.png"
+    },
+    {
+      "page": "settings",
+      "theme": "light",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-768-settings.png"
+    },
+    {
+      "page": "settings",
+      "theme": "light",
+      "width": 375,
+      "height": 1258,
+      "file": "artifacts/screenshots/light-375-settings.png"
+    },
+    {
+      "page": "settings",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1014,
+      "file": "artifacts/screenshots/dark-1440-settings.png"
+    },
+    {
+      "page": "settings",
+      "theme": "dark",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-768-settings.png"
+    },
+    {
+      "page": "settings",
+      "theme": "dark",
+      "width": 375,
+      "height": 1258,
+      "file": "artifacts/screenshots/dark-375-settings.png"
+    },
+    {
+      "page": "print",
+      "theme": "light",
+      "width": 1440,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-1440-print.png"
+    },
+    {
+      "page": "print",
+      "theme": "light",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-768-print.png"
+    },
+    {
+      "page": "print",
+      "theme": "light",
+      "width": 375,
+      "height": 1000,
+      "file": "artifacts/screenshots/light-375-print.png"
+    },
+    {
+      "page": "print",
+      "theme": "dark",
+      "width": 1440,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-1440-print.png"
+    },
+    {
+      "page": "print",
+      "theme": "dark",
+      "width": 768,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-768-print.png"
+    },
+    {
+      "page": "print",
+      "theme": "dark",
+      "width": 375,
+      "height": 1000,
+      "file": "artifacts/screenshots/dark-375-print.png"
+    }
+  ],
+  "extraStates": [
+    "roadmap-timeline",
+    "roadmap-dependencies",
+    "course-drawer",
+    "confirmation",
+    "paths-professors",
+    "paths-courses",
+    "paths-labs-and-centers"
+  ],
+  "totalScreenshots": 120
+}

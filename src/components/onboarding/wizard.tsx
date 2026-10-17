@@ -52,10 +52,12 @@ export function Wizard() {
   const generate = () => {
     const [term, y] = semester.split("-");
     const profile = { ...defaultProfile, dream: unsure ? "Still exploring" : dream.trim(), major, priorities, maxCreditsPerSemester: maxCredits, completed, startingSemester: semester, program, desiredDegree: degree, budget: budget ? Number(budget) : null, unverifiedExternalCredits: otherCredits };
+    try {
     const semesters = generatePlan(profile, courses, { term: term as "fall" | "spring", year: Number(y) });
     finish(profile, semesters);
     toast.success("Your roadmap is ready", { description: "Generated from sample catalog data. Assumptions are listed on your dashboard." });
     router.push("/overview");
+    } catch (error) { setError(error instanceof Error ? error.message : "Could not generate your plan. Please review your credit limit and prerequisites."); }
   };
 
   const card = (selected: boolean) => cn("rounded-2xl border p-4 text-left text-sm transition", selected ? "border-primary bg-soft text-primary" : "border-border bg-surface hover:border-sage");

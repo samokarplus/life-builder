@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Send, X } from "lucide-react";
-import { courses, requirements } from "@/data/sample";
+import { courses, requirementsForProfile } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { evaluateRequirements } from "@/lib/requirements";
 import { planContext } from "@/lib/plan-context";
@@ -34,7 +34,7 @@ export function AssistantPanel() {
     const pc = planContext(s.semesters, s.profile.completed);
     const reply = await provider.answer(t, {
       profile: s.profile, semesters: s.semesters, courses,
-      requirements: evaluateRequirements(requirements, { courses, ...pc }),
+      requirements: evaluateRequirements(requirementsForProfile(s.profile), { courses, ...pc }),
       metrics: pathMetrics(s.semesters, courses, s.profile.completed, s.tuitionPerCredit),
       tuitionPerCredit: s.tuitionPerCredit,
       prereqIssueCount: prereqIssues(s.semesters, courses, s.profile.completed).length,

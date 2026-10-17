@@ -88,3 +88,13 @@ First verified data, each with its source URL, catalog year and verification dat
 - Sidebar regrouped into **Dream** (Colorado Dreams, Funding & FAFSA), **Plan**, **Explore** and **You**, so the vision comes first and the rest is easy to find.
 - Landing page: "Colorado dreams" section (LPC route, astronaut route, funding) with counts read from the data files, so they can't drift from the real content.
 - `docs/CODEX_REVIEW_PROMPT.md`: a ready-to-paste prompt for an independent review.
+
+## Review fixes — October 16, 2026
+
+- Audited all 233 official FRCC gtPathways rows and 22 Colorado CACREP records; added source ledger and REVIEW.md.
+- Removed route-dependent source registration; corrected AA alternatives, grades, science reuse and restricted-credit handling.
+- Protected migration/import identifiers and unsupported versions; added original-backup recovery.
+- Hardened assistant inputs, deadline intents and program coverage; fixed date validation, incomplete plan generation and later-stage contrast.
+- Expanded browser coverage; remaining academic, accessibility and deployment limitations are documented in REVIEW.md.
+
+Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright tests; ESLint and production build pass. The browser run captures 120 screenshots.

@@ -9,11 +9,13 @@ function report(next: Partial<SaveState>) { snapshot = { ...snapshot, ...next };
 export function useSaveState() { return useSyncExternalStore(fn=>{listeners.add(fn);return ()=>{listeners.delete(fn);};},()=>snapshot,()=>serverSnapshot); }
 export interface Database { get(key: string): Promise<string | undefined>; set(key: string, value: string): Promise<void>; del(key: string): Promise<void> }
 /** Serialized writes prevent slow earlier writes from replacing newer user choices. */
-export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "getItem"> | undefined): StateStorage {
+export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "getItem"> | undefined): StateStorage & { blockWrites(): void; readBackup(key: string): Promise<string | null> } {
   let queue = Promise.resolve();
   let revision = 0;
   let blocked = false;
   return {
+    blockWrites() { blocked = true; },
+    async readBackup(key) { return await db.get(key) ?? legacy()?.getItem("dream-helper:v1") ?? null; },
     async getItem(key) {
       report({phase:"loading",error:undefined,loadFailed:false});
       try {
@@ -38,6 +40,7 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
       if (typeof indexedDB === "undefined" && typeof window === "undefined") return;
       report({phase:"saving",error:undefined});
       queue = queue.then(async()=>{
+        if (blocked) return;
         try {
           const writtenAt=Date.now();
           let record=value;
@@ -55,4 +58,4 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
 let store: ReturnType<typeof createStore> | undefined;
 const database = () => store ??= createStore("dream-helper", "plans");
 export const plannerStorage = createPlannerStorage({ get:key=>get<string>(key,database()), set:(key,value)=>set(key,value,database()), del:key=>del(key,database()) }, ()=>typeof localStorage === "undefined" ? undefined : localStorage);
-export function hydrationFailed() { report({phase:"error",loadFailed:true,error:"The saved plan could not be validated or loaded. It has not been replaced. Export the original backup before resetting storage."}); }
+export function hydrationFailed() { plannerStorage.blockWrites(); report({phase:"error",loadFailed:true,error:"The saved plan could not be validated or loaded. It has not been replaced. Export the original backup before resetting storage."}); }

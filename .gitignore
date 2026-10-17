@@ -46,3 +46,5 @@ next-env.d.ts
 /artifacts/
 
 !.env.example
+
+/scripts/__pycache__/

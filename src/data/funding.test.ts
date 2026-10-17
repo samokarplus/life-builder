@@ -47,3 +47,13 @@ describe("bioastronautics people and courses", () => {
     expect(codes).toEqual(expect.arrayContaining(["ASEN 5158", "ASEN 5016", "ASEN 5226"]));
   });
 });
+it('skips non-leap years and rejects impossible recurring dates',()=>{
+ expect(nextOccurrence(2,29,new Date(2025,0,1))).toEqual(new Date(2028,1,29));
+ expect(()=>nextOccurrence(2,30,new Date())).toThrow(RangeError);
+ expect(()=>nextOccurrence(13,1,new Date())).toThrow(RangeError);
+});
+it('preserves material funding eligibility qualifications',()=>{
+ const first=fundingItems.find(f=>f.id==='cub-first-gen')!;
+ expect(first.eligibility?.join(' ')).toContain('Nonresidents');expect(first.eligibility?.join(' ')).toContain('summer');
+ expect(fundingItems.find(f=>f.id==='fafsa')?.eligibility?.join(' ')).toContain('spouse');
+});

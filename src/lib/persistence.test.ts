@@ -18,3 +18,31 @@ describe("versioned IndexedDB adapter",()=>{
  it("rejects malformed legacy state instead of silently replacing it",()=>{expect(()=>migratePlan({profile:{major:"only field"}})).toThrow();});
 });
 it("retains an actual write timestamp in the persisted envelope",async()=>{const {db,m}=memory();const adapter=createPlannerStorage(db,()=>undefined);await adapter.setItem("p",JSON.stringify({state:{value:1},version:2}));const envelope=JSON.parse(m.get("p")!);expect(envelope.savedAt).toBeTypeOf("number");expect(envelope.state).toEqual({value:1});expect(JSON.parse(await adapter.getItem("p") as string).savedAt).toBe(envelope.savedAt);});
+it('can block queued future writes after a validation failure',async()=>{
+ const {db,m}=memory();const adapter=createPlannerStorage(db,()=>undefined);
+ adapter.blockWrites();await adapter.setItem('p','replacement');expect(m.size).toBe(0);
+ await adapter.getItem('p');await adapter.setItem('p','validated retry');expect(m.get('p')).toBe('validated retry');
+});
+it('rejects ambiguous IDs on import without changing the current plan',()=>{
+ const original=usePlanner.getState().exportJson();const data=JSON.parse(original);
+ data.semesters[1].courses.push({...data.semesters[0].courses[0]});
+ expect(usePlanner.getState().importJson(JSON.stringify(data)).ok).toBe(false);
+ expect(usePlanner.getState().exportJson()).toBe(original);
+});
+it('round-trips plan settings and scenarios without losing choices',()=>{
+ const before=usePlanner.getState().exportJson();expect(usePlanner.getState().importJson(before).ok).toBe(true);
+ expect(usePlanner.getState().exportJson()).toBe(before);
+});
+it('refuses to migrate a future envelope version',()=>{
+ const migrate=usePlanner.persist.getOptions().migrate!;
+ expect(()=>migrate(JSON.parse(usePlanner.getState().exportJson()),999)).toThrow(/Unsupported/);
+});
+it('does not relabel a foreign or future state as a v2 Dream Helper plan',()=>{
+ const state=JSON.parse(usePlanner.getState().exportJson());
+ expect(()=>migratePlan({...state,app:'other-app'})).toThrow();
+ expect(()=>migratePlan({...state,version:999})).toThrow();
+});
+it('exports the exact invalid original without unblocking writes',async()=>{
+ const original='{invalid JSON';const {db,m}=memory();m.set('p',original);const adapter=createPlannerStorage(db,()=>undefined);adapter.blockWrites();
+ expect(await adapter.readBackup('p')).toBe(original);await adapter.setItem('p','replacement');expect(m.get('p')).toBe(original);
+});

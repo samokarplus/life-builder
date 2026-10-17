@@ -8,8 +8,8 @@ describe("cuTransferDeadlines", () => {
   it("spring entry deadline falls in October of the previous year", () => {
     expect(cuTransferDeadlines("spring", 2027)[0].date).toBe("2026-10-01");
   });
-  it("does not invent a summer final date", () => {
-    expect(cuTransferDeadlines("summer", 2027)).toHaveLength(1);
+  it("labels the published March 15 summer application deadline correctly", () => {
+    expect(cuTransferDeadlines("summer", 2027)).toMatchObject([{label:"Summer application deadline",date:"2027-03-15"}]);
   });
 });
 
@@ -30,4 +30,12 @@ describe("nextFallEntry", () => {
     expect(nextFallEntry(new Date(2026, 5, 1))).toBe(2026);
     expect(nextFallEntry(new Date(2026, 5, 2))).toBe(2027);
   });
+});
+it('handles leap days, local midnight, and daylight-saving boundaries',()=>{
+ const d={id:'x',label:'x',date:'2028-03-01'};
+ expect(describeDeadline(d,new Date(2028,1,29,23,59)).days).toBe(1);
+ expect(describeDeadline({...d,date:'2027-03-15'},new Date(2027,2,13)).days).toBe(2);
+ for(const date of ['2027-02-29','2026-02-30','2026-13-01','oops']) expect(()=>describeDeadline({...d,date},new Date())).toThrow(RangeError);
+ expect(()=>cuTransferDeadlines('fall',NaN)).toThrow();
+ expect(()=>nextFallEntry(new Date('invalid'))).toThrow();
 });

@@ -51,7 +51,7 @@ export function SettingsPanel() {
 
       <section className={box}>
         <h2 className="font-medium">Planning assumptions</h2>
-        <p className="mt-1 text-sm text-muted">Dream Helper doesn&apos;t include verified tuition figures yet. Enter your own; they&apos;re labeled user-entered everywhere.</p>
+        <p className="mt-1 text-sm text-muted">Published FRCC rates are available below. Estimates use only the rates you choose or enter; confirm fees and COF eligibility separately.</p>
         <label className="mt-4 flex flex-col gap-1 text-sm">Credits required for your degree (FRCC Associate of Arts: 60, 2026-27 catalog)
           <input type="number" min={1} max={200} value={s.requiredCredits} onChange={(e) => Number(e.target.value) > 0 && s.setRequiredCredits(Number(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3" />
         </label>
