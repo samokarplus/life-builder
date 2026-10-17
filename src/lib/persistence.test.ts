@@ -37,3 +37,12 @@ it('refuses to migrate a future envelope version',()=>{
  const migrate=usePlanner.persist.getOptions().migrate!;
  expect(()=>migrate(JSON.parse(usePlanner.getState().exportJson()),999)).toThrow(/Unsupported/);
 });
+it('does not relabel a foreign or future state as a v2 Dream Helper plan',()=>{
+ const state=JSON.parse(usePlanner.getState().exportJson());
+ expect(()=>migratePlan({...state,app:'other-app'})).toThrow();
+ expect(()=>migratePlan({...state,version:999})).toThrow();
+});
+it('exports the exact invalid original without unblocking writes',async()=>{
+ const original='{invalid JSON';const {db,m}=memory();m.set('p',original);const adapter=createPlannerStorage(db,()=>undefined);adapter.blockWrites();
+ expect(await adapter.readBackup('p')).toBe(original);await adapter.setItem('p','replacement');expect(m.get('p')).toBe(original);
+});

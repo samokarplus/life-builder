@@ -192,6 +192,7 @@ export const usePlanner = create<PlannerState>()(
 /** Validates v1/v2 persisted state and fills only new fields, preserving all user choices. */
 export function migratePlan(state: unknown): Partial<z.infer<typeof exportSchema>> {
   if (state == null) return {};
+  z.object({ app: z.literal("dream-helper").optional(), version: z.union([z.literal(1), z.literal(2)]).optional() }).parse(state);
   const d = exportSchema.parse({ ...(state as object), app: "dream-helper", version: 2 });
   return { ...d, roadmapView: d.roadmapView ?? "board", scenarios: d.scenarios ?? [], costInputs: d.costInputs ?? defaultCostInputs };
 }

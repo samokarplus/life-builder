@@ -9,12 +9,13 @@ function report(next: Partial<SaveState>) { snapshot = { ...snapshot, ...next };
 export function useSaveState() { return useSyncExternalStore(fn=>{listeners.add(fn);return ()=>{listeners.delete(fn);};},()=>snapshot,()=>serverSnapshot); }
 export interface Database { get(key: string): Promise<string | undefined>; set(key: string, value: string): Promise<void>; del(key: string): Promise<void> }
 /** Serialized writes prevent slow earlier writes from replacing newer user choices. */
-export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "getItem"> | undefined): StateStorage & { blockWrites(): void } {
+export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "getItem"> | undefined): StateStorage & { blockWrites(): void; readBackup(key: string): Promise<string | null> } {
   let queue = Promise.resolve();
   let revision = 0;
   let blocked = false;
   return {
     blockWrites() { blocked = true; },
+    async readBackup(key) { return await db.get(key) ?? legacy()?.getItem("dream-helper:v1") ?? null; },
     async getItem(key) {
       report({phase:"loading",error:undefined,loadFailed:false});
       try {
