@@ -1,5 +1,6 @@
 "use client";
 
+import { SourceStatus } from "./source-status";
 import { BadgeCheck } from "lucide-react";
 import { tuitionRates, sourceById } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
@@ -25,7 +26,7 @@ export function PublishedRate({ institutionId }: { institutionId: string }) {
         <button type="button" onClick={() => setTuition(institutionId, rate.perCredit)} className="rounded-full border border-border bg-surface px-3 py-1 hover:bg-background">Use ${rate.perCredit.toFixed(2)}</button>
         {withCof != null && <button type="button" onClick={() => setTuition(institutionId, withCof)} className="rounded-full border border-border bg-surface px-3 py-1 hover:bg-background">Use ${withCof.toFixed(2)}</button>}
         {src.url && <a href={src.url} target="_blank" rel="noreferrer" className="text-primary underline">Source</a>}
-        <span className="text-muted">verified {src.lastVerified}</span>
+        <SourceStatus sourceId={rate.sourceId} />
       </div>
     </div>
   );

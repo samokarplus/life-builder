@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BadgeCheck, CalendarClock, ExternalLink, HandCoins, Landmark, Rocket, Sparkles, Stethoscope } from "lucide-react";
+import { CalendarClock, ExternalLink, HandCoins, Landmark, Rocket, Sparkles, Stethoscope } from "lucide-react";
 import { fundingItems, upcomingFundingDates, type FundingItem } from "@/data/funding";
 import { stageLabels, stageOrder, type Stage } from "@/data/pathways";
-import { sourceById } from "@/data/sample";
+import { SourceStatus } from "@/components/ui/source-status";
 import { cn } from "@/lib/utils";
 
 type PathFilter = "all" | "lpc-colorado" | "astronaut-bioastronautics";
@@ -43,7 +43,7 @@ export function FundingHub() {
               <p className="tabular font-serif text-2xl">{d.date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</p>
               <p className={cn("tabular text-xs", d.days <= 30 ? "font-medium text-amber-700 dark:text-amber-400" : "text-primary")}>{d.days === 0 ? "today" : `in ${d.days} days`}</p>
               <p className="mt-2 text-sm font-medium">{d.label}</p>
-              {d.note && <p className="mt-1 text-xs text-muted">{d.note}</p>}
+              {d.note && <p className="mt-1 text-xs text-muted">{d.note}</p>}<SourceStatus sourceId={d.sourceId} />
             </li>
           ))}
           <li className="rounded-2xl border border-border p-4">
@@ -60,12 +60,11 @@ export function FundingHub() {
         <h2 id="items-h" className="mb-3 flex items-center gap-2 font-medium"><Landmark size={16} className="text-primary" aria-hidden /> Aid, scholarships and programs <span className="text-sm font-normal text-muted">({items.length})</span></h2>
         <ul className="grid gap-4 lg:grid-cols-2">
           {items.map((f) => {
-            const src = sourceById(f.sourceId);
             return (
               <li key={f.id} className="lift rounded-2xl border border-border bg-surface p-5 shadow-card">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="eyebrow">{kindLabel[f.kind]}</span>
-                  <a href={f.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full bg-soft px-2.5 py-0.5 text-xs font-medium text-primary"><BadgeCheck size={12} aria-hidden /> {src?.status === "verified" ? `Official page, checked ${src.lastVerified}` : "Confirm with the official source"}</a>
+                  <SourceStatus sourceId={f.sourceId} />
                 </div>
                 <h3 className="mt-2 font-medium">{f.title}</h3>
                 <p className="mt-1 text-sm text-muted">{f.summary}</p>

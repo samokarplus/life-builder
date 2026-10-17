@@ -1,4 +1,5 @@
 "use client";
+import { SourceOverview } from "@/components/ui/source-status";
 import { useConfirm } from "@/components/ui/confirmation";
 
 import { useRef, useState } from "react";
@@ -64,6 +65,7 @@ export function SettingsPanel() {
         ))}
       </section>
 
+      <SourceOverview />
       <section className={box}>
         <h2 className="font-medium">Your data</h2>
         <p className="mt-1 text-sm text-muted">Stored only in this browser. Export a JSON backup any time.</p>

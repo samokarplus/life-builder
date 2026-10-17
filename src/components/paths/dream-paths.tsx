@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
+import { CalendarClock, ExternalLink, GraduationCap, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout, Rocket } from "lucide-react";
 import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
 import { coloradoCounselingPrograms, cuDenverCmhc, specialties } from "@/data/programs";
 import { nextOccurrence } from "@/data/funding";
@@ -13,7 +13,7 @@ import { CareerPicker, type PickerState } from "./career-picker";
 import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
 import { glossary } from "@/data/glossary";
 import { careerMeta } from "@/data/career-meta";
-import { sourceById } from "@/data/sample";
+import { SourceStatus } from "@/components/ui/source-status";
 import { describeDatedEvent } from "@/lib/dated-event";
 import { parseDreamParams, routeProgress } from "@/lib/dream-params";
 import { usePlanner } from "@/store/planner";
@@ -129,10 +129,7 @@ function BioFinder() {
 }
 
 function Confidence({ sourceId }: { sourceId: string }) {
-  const src = sourceById(sourceId);
-  if (src?.status === "verified")
-    return <a href={src.url ?? undefined} target="_blank" rel="noreferrer" title={src.note} className="inline-flex items-center gap-1 rounded-full bg-soft px-2.5 py-0.5 text-xs font-medium text-primary"><BadgeCheck size={12} aria-hidden /> Official source, checked {src.lastVerified}</a>;
-  return <span title={src?.note} className="inline-flex items-center gap-1 rounded-full bg-warm px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-300"><HelpCircle size={12} aria-hidden /> Confirm with the official source</span>;
+  return <SourceStatus sourceId={sourceId} />;
 }
 
 export function DreamPaths() {

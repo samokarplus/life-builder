@@ -1,21 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, BadgeCheck, BookUser, ExternalLink, Flag, MapPin, Route } from "lucide-react";
+import { AlertTriangle, BookUser, Flag, MapPin, Route } from "lucide-react";
 import { accessOptions, audienceLabels, type Audience } from "@/data/access";
 import type { CareerMeta } from "@/data/career-meta";
-import { sourceById } from "@/data/sources";
+import { SourceStatus } from "@/components/ui/source-status";
 import { cn } from "@/lib/utils";
 
-function SourceLink({ sourceId, url, label }: { sourceId: string; url?: string; label?: string }) {
-  const src = sourceById(sourceId);
-  const href = url ?? src?.url ?? undefined;
-  return (
-    <a href={href} target="_blank" rel="noreferrer" title={src?.note} className="inline-flex items-center gap-1 text-xs text-primary underline">
-      <BadgeCheck size={12} aria-hidden /> {label ?? `${src?.status === "verified" ? `Official source, checked ${src.lastVerified ?? "unknown"}` : "Confirm with the official source"}`}
-      <ExternalLink size={11} aria-hidden />
-    </a>
-  );
+function SourceLink({ sourceId, label }: { sourceId: string; url?: string; label?: string }) {
+  return <SourceStatus sourceId={sourceId} label={label} />;
 }
 
 export function IdealPath({ meta }: { meta: CareerMeta }) {

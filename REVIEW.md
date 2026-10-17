@@ -171,3 +171,9 @@ Baseline before edits: `npm install`, **105 tests passing**, production build pa
 - `npm run test:e2e`: **18 tests pass**, including all six responsive/theme matrices; **120 screenshots**, no axe violations in tested states, no document overflow at 375px.
 
 The [screenshot manifest](review/screenshot-manifest.json) lists the page captures. Local logs: `/tmp/dream-helper-review-build.log` and `/tmp/dream-helper-review-e2e.log`. The course audit is deterministic against the saved official document; external facts can change after the review date. No live AI call, campus expansion or deployment was performed.
+
+## Theme H: source reliability follow-up
+
+The offline source checker inventories56 sources and436 cited factual records. It flags >90 days, invalid/future dates and missing/dangling citations; it never downloads pages or changes verification dates. A deterministic Jan15,2027 check correctly flags53 stale sources and exits1 with `--strict`. The CI-ready command checks provenance independently of age. A GitHub workflow wrapper was omitted because the connected token cannot create workflows; no permission expansion was requested. The inventory also refuses unregistered new data modules, so future campus/career work cannot silently bypass the check. Official durations, nested requirement policies and secondary citations are checked. Individual Bioastronautics summaries now have sourceIds.
+
+Settings and shared source badges expose last checks and stale warnings. A stale date does not turn an estimate into a verified claim or alter any student preference. Automated freshness is a reminder to manually re-read the authority, not evidence a fact is still current.

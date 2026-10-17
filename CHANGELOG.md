@@ -123,3 +123,10 @@ Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright t
 - **High school as a starting point** in onboarding (profile `currentStage`), and a dashboard "Your dream" card that maps what you typed (nurse, astronaut, doctor...) to your route.
 - **Colorful, searchable Colorado Dreams**: original career badges in their own colors, search by job, school or keyword, and filters for field, "can start without a degree" and "has a high school step". Careers are also in the command palette.
 - 149 unit tests and 20 browser tests pass on this build.
+
+## 2026-10-16 — Source reliability (theme H)
+
+- Added offline `verify-sources` with >90-day warnings, deterministic as-of dates and strict failure mode; no automatic fetching or false verification updates.
+- Added CI-ready `check-provenance` and explicit data inventory, catching missing/unknown/nested citations and unregistered data modules. Bioastronautics course summaries now carry sourceIds.
+- Reused accessible last-checked/stale/unverified badges on routes, funding, tuition and course details; added the Settings source inventory.
+- Tests cover the90/91-day boundary, invalid/future dates, missing citations, data registration and the stale mobile UI. Validation:165 Vitest tests, ESLint, production build, provenance check and22 Playwright tests pass. A strict Jan15,2027 audit correctly fails for53 sources older than90 days.

@@ -15,6 +15,7 @@ const subject = (c: Course) => c.code.split(" ")[0];
 const subjects = [...new Set(courses.map(subject))].sort();
 import { ruleCourseIds as idsOf } from "@/lib/requirements";
 import { sourceById } from "@/data/sample";
+import { SourceStatus } from "@/components/ui/source-status";
 import { approvedElectiveBasis, electiveBasisLabel } from "@/data/frcc-electives";
 
 function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
@@ -132,7 +133,7 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
               <dt className="text-muted">Transfer</dt><dd>No equivalencies loaded; none assumed.</dd>
               <dt className="text-muted">Est. tuition</dt><dd className="tabular">{rate != null ? `~$${(rate * open.credits).toLocaleString()} (your rate, user-entered)` : "Add a rate in Settings"}</dd>
               <dt className="text-muted">Source</dt><dd>{(() => { const src = sourceById(open.sourceId); return src?.url ? <a href={src.url} target="_blank" rel="noreferrer" className="text-primary underline">FRCC catalog {src.catalogYear}</a> : "Illustrative sample. No official URL."; })()}</dd>
-              <dt className="text-muted">Last verified</dt><dd>{sourceById(open.sourceId)?.lastVerified ?? "Never"}</dd>
+              <dt className="text-muted">Last checked</dt><dd><SourceStatus sourceId={open.sourceId} /></dd>
             </dl>
             <label className="flex flex-col gap-1">Add to semester
               <select value={target || sorted[0]?.id || ""} onChange={(e) => setTarget(e.target.value)} className="h-10 rounded-xl border border-border bg-background px-3">

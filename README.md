@@ -69,3 +69,9 @@ Restart the server after configuring them. No key is exposed in browser code. Th
 The implementation follows the official [Responses API documentation](https://developers.openai.com/api/docs/guides/migrate-to-responses), including separate instructions and `store: false`. No recurring cloud storage, login, or hosting migration is introduced.
 
 See [CHANGELOG.md](CHANGELOG.md) for scope and remaining data gaps.
+
+## Source freshness and provenance
+
+`npm run verify-sources` performs an offline audit: sources more than90 civil days old get warnings, without pretending to re-read or update them. `npm run verify-sources -- --strict` also exits nonzero for stale sources. Use `--as-of=YYYY-MM-DD` for reproducible date checks. Invalid/future check dates and missing/dangling citations always fail.
+
+`npm run check-provenance` is the CI check for every factual collection registered in `src/data/inventory.ts`, including nested and secondary citations. New data modules must be registered; estimates and presentation-only metadata are excluded, while official durations require citations. Adding a record without a sourceId fails. Course entries from the Bioastronautics curriculum now carry their own sourceId rather than relying on a comment. Source badges and Settings show last-check dates and explicit stale/unknown warnings; the original dates and student choices are never changed automatically.
