@@ -1,3 +1,5 @@
+import { parseGt } from "./frcc-gtpathways";
+import { GT_SOURCE_ID } from "./frcc-gtpathways-raw";
 import type { Course, DataSource, DegreeRequirement, Institution, Career, TuitionRate, Semester } from "@/lib/types";
 
 /**
@@ -49,6 +51,16 @@ sources.push(
   },
 );
 
+sources.push({
+  id: GT_SOURCE_ID,
+  url: "https://frontrange.smartcatalogiq.com/current/catalog/elective-lists/gt-pathway-courses/",
+  institutionId: "frcc",
+  catalogYear: "2026-2027",
+  lastVerified: VERIFIED_ON,
+  status: "verified",
+  note: "FRCC catalog, GT Pathway Courses list. Titles, credits and gtPathways categories as listed there.",
+});
+
 export const institutions: Institution[] = [
   { id: "frcc", name: "Front Range Community College", shortName: "FRCC", kind: "community-college", state: "CO" },
   { id: "cub", name: "University of Colorado Boulder", shortName: "CU Boulder", kind: "university", state: "CO" },
@@ -66,7 +78,7 @@ const mk = (code: string, title: string, category: string, prerequisiteIds: stri
   sourceId: "src-sample",
 });
 
-export const courses: Course[] = [
+const baseCourses: Course[] = [
   mk("HIS 1120", "World History 1500–Present", "Arts & Humanities (sample)"),
   mk("GEY 1108", "Geology of National Parks", "Natural Science (sample)"),
   mk("GEY 1111", "Geology course (title unverified)", "Natural Science (sample)"),
@@ -82,6 +94,19 @@ export const courses: Course[] = [
   { ...mk("COM 1250", "Interpersonal Communication", "Oral Communication (GT-SS3)"), sourceId: "src-frcc-aa-2627", planDefault: false },
   { ...mk("COM 2300", "Intercultural Communication", "Oral Communication (GT-SS3)"), sourceId: "src-frcc-aa-2627", planDefault: false },
 ];
+
+/** Official gtPathways entries override sample details; unlisted courses are added as non-default options. */
+export const courses: Course[] = (() => {
+  const out = [...baseCourses];
+  for (const g of parseGt()) {
+    const id = `frcc:${g.code.replace(" ", "-")}`;
+    const i = out.findIndex((c) => c.id === id);
+    const official = { title: g.title, credits: g.credits, gtPathways: g.categories, notOffered: g.notOffered || undefined, sourceId: GT_SOURCE_ID, category: g.categories.join(" / ") };
+    if (i >= 0) out[i] = { ...out[i], ...official };
+    else out.push({ id, institutionId: "frcc", code: g.code, level: Number(g.code.split(" ")[1]) >= 2000 ? 2000 : 1000, prerequisiteIds: [], planDefault: false, ...official });
+  }
+  return out;
+})();
 
 export const sourceById = (id: string) => sources.find((x) => x.id === id);
 
@@ -146,17 +171,22 @@ export const illustrativeRequirements: DegreeRequirement[] = [
  * so they are reported as "needs a check" instead of guessed.
  */
 const aa = (id: string, label: string, rule: DegreeRequirement["rule"]): DegreeRequirement => ({ id, programId: "frcc-aa", institutionId: "frcc", label, rule, sourceId: "src-frcc-aa-2627" });
-const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs gtPathways course mapping, not loaded yet; check eWOLF DegreeCheck.` });
+const gtIds = (...cats: string[]) => courses.filter((c) => c.gtPathways?.some((g) => cats.includes(g))).map((c) => c.id);
+const fromGt = (min: number, ...cats: string[]) => ({ type: "credits" as const, min, from: { type: "group" as const, courseIds: gtIds(...cats) } });
+const pair = (a: string, b: string) => ({ type: "all" as const, rules: [fromGt(3, a), fromGt(3, b)] });
+const AH = ["GT-AH1", "GT-AH2", "GT-AH3", "GT-AH4"];
+const gt = (credits: number, what: string) => ({ type: "unmapped" as const, credits, note: `${what}. Needs the approved electives list, not loaded yet; check eWOLF DegreeCheck.` });
 
 export const requirements: DegreeRequirement[] = [
   aa("aa-written", "Written communication (6 cr)", { type: "all", rules: [{ type: "course", courseId: "frcc:ENG-1021" }, { type: "course", courseId: "frcc:ENG-1022" }] }),
   aa("aa-oral", "Oral communication (3 cr, one of COM 1150 / 1250 / 2300)", { type: "any", rules: [{ type: "course", courseId: "frcc:COM-1150" }, { type: "course", courseId: "frcc:COM-1250" }, { type: "course", courseId: "frcc:COM-2300" }] }),
-  aa("aa-math", "Mathematics (3-5 cr, one gtPathways GT-MA1 course)", gt(3, "One GT-MA1 course")),
-  aa("aa-arts-hum", "Arts & humanities (6 cr, two GT-AH courses from different areas)", gt(6, "Two GT-AH courses")),
-  aa("aa-history", "History (3 cr, one GT-HI1 course)", gt(3, "One GT-HI1 course")),
-  aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", gt(6, "Two GT-SS courses")),
-  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", gt(7, "Two GT-SC courses, one with a lab")),
-  aa("aa-choice", "Student choice (3 cr, one GT-AH, GT-HI or GT-SS course)", gt(3, "One additional GT-AH, GT-HI or GT-SS course")),
+  aa("aa-math", "Mathematics (3-5 cr, one GT-MA1 course)", fromGt(3, "GT-MA1")),
+  // Two GT-AH courses from two different areas: any of the six area pairings.
+  aa("aa-arts-hum", "Arts & humanities (6 cr, two GT-AH courses from different areas)", { type: "any", rules: AH.flatMap((a, i) => AH.slice(i + 1).map((b) => pair(a, b))) }),
+  aa("aa-history", "History (3 cr, one GT-HI1 course)", fromGt(3, "GT-HI1")),
+  aa("aa-social", "Social & behavioral sciences (6 cr, two GT-SS courses)", fromGt(6, "GT-SS1", "GT-SS2", "GT-SS3")),
+  aa("aa-science", "Natural & physical sciences (7-10 cr, two courses, one with a lab)", { type: "all", rules: [fromGt(4, "GT-SC1"), fromGt(3, "GT-SC1", "GT-SC2")] }),
+  aa("aa-choice", "Student choice (3 cr, one more GT-AH, GT-HI or GT-SS course)", fromGt(3, ...AH, "GT-HI1", "GT-SS1", "GT-SS2", "GT-SS3")),
   aa("aa-electives", "Electives (18-23 cr from the approved electives list)", gt(18, "Approved electives list")),
 ];
 

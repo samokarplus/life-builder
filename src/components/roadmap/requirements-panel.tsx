@@ -21,7 +21,7 @@ export function RequirementsPanel() {
   return (
     <section className="mt-10 rounded-[14px] border border-border bg-surface p-5 shadow-card" aria-labelledby="req-h">
       <h2 id="req-h" className="font-medium">Requirement tracker</h2>
-      <p className="mt-1 text-xs text-muted">Illustrative sample requirements, not the official FRCC degree requirements. Completed and planned coursework are kept separate.</p>
+      <p className="mt-1 text-xs text-muted">Based on the FRCC Associate of Arts 2026-27 catalog and its gtPathways course list. The approved electives list is not loaded yet. Planning aid, not an official degree audit; completed and planned coursework are kept separate.</p>
       <ul className="mt-4 divide-y divide-border">
         {results.map((r) => {
           const m = meta[r.status];

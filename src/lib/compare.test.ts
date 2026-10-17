@@ -9,11 +9,11 @@ const profile = { currentInstitutionId: "frcc", destinationInstitutionId: "cub",
 describe("pathMetrics", () => {
   it("computes load, summer credits and tuition", () => {
     const m = pathMetrics(sampleSemesters, courses, [], rates);
-    expect(m.remainingCredits).toBe(24);
+    expect(m.remainingCredits).toBe(25);
     expect(m.semesterCount).toBe(2);
-    expect(m.avgLoad).toBe(12);
+    expect(m.avgLoad).toBe(12.5);
     expect(m.summerCredits).toBe(0);
-    expect(m.tuition).toBe(2400);
+    expect(m.tuition).toBe(2500);
   });
   it("returns null tuition when a rate is missing", () => {
     expect(pathMetrics(sampleSemesters, courses, [], { frcc: null, cub: null }).tuition).toBeNull();

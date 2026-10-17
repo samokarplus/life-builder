@@ -27,6 +27,10 @@ export interface Institution {
 export interface Course extends Provenance {
   /** false = real catalog course that is an option, not auto-placed by plan generation. */
   planDefault?: boolean;
+  /** Colorado gtPathways categories (e.g. GT-HI1) as listed in the institution catalog. */
+  gtPathways?: string[];
+  /** The catalog marks this course as not currently offered. */
+  notOffered?: boolean;
   id: string; // stable, e.g. "frcc:HIS-1120"
   institutionId: string;
   code: string;

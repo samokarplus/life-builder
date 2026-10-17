@@ -47,3 +47,11 @@ First verified data, each with its source URL, catalog year and verification dat
 - CU Boulder tuition is intentionally not loaded: published figures I found disagreed with each other. Confirm with the CU Boulder Bursar.
 - ENG 1022's prerequisite on ENG 1021 is still an unverified assumption. Plan generation skips the three COM options (a degree needs only one).
 - Illustrative requirements moved to `illustrativeRequirements` for engine tests. 79 unit tests and 15 Playwright tests pass.
+
+## gtPathways mapping (claude/gtpathways-mapping)
+
+- Loaded FRCC's official 2026-27 GT Pathway Courses list (about 240 courses with title, credits, category, and the catalog's "not currently offered" marks) from the FRCC catalog, verified 2026-10-16. Official details now override sample ones: GEY 1111 is Physical Geology w/Lab at 4 credits and HIS 1120 is "The World: 1500-Present".
+- AA requirements for math, arts & humanities (two courses from different areas), history, social sciences, sciences (one lab course) and student choice are now evaluated from the real categories. Only the approved electives list is still "needs a check".
+- Course Explorer: gtPathways filter, per-course category and offering status, "Show more" paging.
+- PHI 1030, ENP 1005 and AIR 2001 are not on the gtPathways list and remain unverified sample courses.
+- 84 unit tests pass, including new tests for same-area arts rejection and the lab-science rule.

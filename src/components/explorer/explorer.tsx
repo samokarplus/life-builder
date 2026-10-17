@@ -36,6 +36,8 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
   const [req, setReq] = useState("all");
   const [prereq, setPrereq] = useState("all");
   const [status, setStatus] = useState("all");
+  const [gt, setGt] = useState("all");
+  const [shown, setShown] = useState(48);
   const [open, setOpen] = useState<Course | null>(null);
   const [target, setTarget] = useState("");
 
@@ -51,8 +53,10 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
     (level === "all" || c.level === Number(level)) &&
     (req === "all" || idsOf(requirements.find((r) => r.id === req)!.rule).includes(c.id)) &&
     (prereq === "all" || (prereq === "has" ? c.prerequisiteIds.length > 0 : c.prerequisiteIds.length === 0)) &&
+    (gt === "all" || c.gtPathways?.includes(gt)) &&
     (status === "all" || stateOf(c) === status)
   );
+  const gtCategories = [...new Set(courses.flatMap((c) => c.gtPathways ?? []))].sort();
 
   const sorted = sortSemesters(semesters);
   const add = () => {
@@ -81,6 +85,7 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
         <select aria-label="Institution" className={sel} value={inst} onChange={(e) => setInst(e.target.value)}><option value="all">All institutions</option>{institutions.map((i) => <option key={i.id} value={i.id}>{i.shortName}</option>)}</select>
         <select aria-label="Subject" className={sel} value={subj} onChange={(e) => setSubj(e.target.value)}><option value="all">All subjects</option>{subjects.map((s) => <option key={s}>{s}</option>)}</select>
         <select aria-label="Credit hours" className={sel} value={credits} onChange={(e) => setCredits(e.target.value)}><option value="all">Any credits</option>{[...new Set(courses.map((c) => c.credits))].map((n) => <option key={n} value={n}>{n} credits</option>)}</select>
+        <select aria-label="gtPathways category" className={sel} value={gt} onChange={(e) => { setGt(e.target.value); setShown(48); }}><option value="all">Any gtPathways</option>{gtCategories.map((g) => <option key={g} value={g}>{g}</option>)}</select>
         <select aria-label="Level" className={sel} value={level} onChange={(e) => setLevel(e.target.value)}><option value="all">Any level</option><option value="1000">1000-level</option><option value="2000">2000-level</option></select>
         <select aria-label="Degree requirement" className={sel} value={req} onChange={(e) => setReq(e.target.value)}><option value="all">Any requirement</option>{requirements.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}</select>
         <select aria-label="Prerequisites" className={sel} value={prereq} onChange={(e) => setPrereq(e.target.value)}><option value="all">Prereqs: any</option><option value="has">Has prerequisites</option><option value="none">No prerequisites</option></select>
@@ -88,23 +93,25 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
           {[["all", "All"], ["not-planned", "Not in plan"], ["planned", "Planned"], ["in-progress", "In progress"], ["completed", "Completed"]].map(([v, l]) => <Pill key={v} active={status === v} onClick={() => setStatus(v)}>{l}</Pill>)}
         </div>
       </div>
-      <p className="mt-3 text-xs text-muted" role="status">{results.length} course{results.length === 1 ? "" : "s"} · sample catalog. Term availability (online/in-person) isn&apos;t verified, so it can&apos;t be filtered yet.</p>
+      <p className="mt-3 text-xs text-muted" role="status">{results.length} course{results.length === 1 ? "" : "s"} · FRCC 2026-27 gtPathways list plus a few unverified sample courses. Term availability (online/in-person) isn&apos;t verified, so it can&apos;t be filtered yet.</p>
 
       <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {results.map((c) => (
+        {results.slice(0, shown).map((c) => (
           <li key={c.id}>
             <button onClick={() => { setOpen(c); setTarget(""); }} className="h-full w-full rounded-[14px] border border-border bg-surface p-4 text-left shadow-card transition hover:border-sage">
               <div className="flex justify-between"><span className="tabular text-xs font-semibold text-primary">{c.code}</span><span className="tabular text-xs text-muted">{c.credits} cr</span></div>
               <p className="mt-1 text-sm">{c.title}</p>
+              {c.notOffered && <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">Not currently offered at FRCC</p>}
               <p className="mt-2 text-xs text-muted">{c.category}{stateOf(c) !== "not-planned" ? ` · ${stateOf(c)}` : ""}</p>
             </button>
           </li>
         ))}
       </ul>
+      {results.length > shown && <button onClick={() => setShown(shown + 48)} className="mx-auto mt-6 block rounded-full border border-border px-6 py-2 text-sm hover:bg-soft">Show 48 more ({results.length - shown} left)</button>}
       {results.length === 0 && (
         <div className="py-16 text-center text-muted">
           <p>No courses match those filters.</p>
-          <button onClick={() => { setQ(""); setInst("all"); setSubj("all"); setCredits("all"); setLevel("all"); setReq("all"); setPrereq("all"); setStatus("all"); }} className="mt-3 text-sm text-primary underline">Clear filters</button>
+          <button onClick={() => { setQ(""); setInst("all"); setSubj("all"); setCredits("all"); setLevel("all"); setReq("all"); setPrereq("all"); setStatus("all"); setGt("all"); }} className="mt-3 text-sm text-primary underline">Clear filters</button>
         </div>
       )}
 
@@ -115,8 +122,10 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
               <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} {sourceById(open.sourceId)?.status !== "verified" && <span className="text-xs text-muted">(assumed in sample)</span>}</dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>
-              <dt className="text-muted">Prerequisites</dt><dd>{prereqs.length ? prereqs.join(", ") : "None listed in sample"}</dd>
-              <dt className="text-muted">Satisfies</dt><dd>{satisfies.length ? satisfies.map((r) => r.label).join("; ") + " (illustrative)" : "No sample requirement"}</dd>
+              <dt className="text-muted">gtPathways</dt><dd>{open.gtPathways?.join(", ") ?? "Not a gtPathways course"}</dd>
+              <dt className="text-muted">Offering</dt><dd>{open.notOffered ? "Marked not currently offered at FRCC" : "Offering by term unknown"}</dd>
+              <dt className="text-muted">Prerequisites</dt><dd>{prereqs.length ? prereqs.join(", ") : "Not loaded (check catalog)"}</dd>
+              <dt className="text-muted">Satisfies</dt><dd>{satisfies.length ? satisfies.map((r) => r.label).join("; ") + " (FRCC AA 2026-27)" : "No mapped AA requirement"}</dd>
               <dt className="text-muted">Transfer</dt><dd>No equivalencies loaded; none assumed.</dd>
               <dt className="text-muted">Est. tuition</dt><dd className="tabular">{rate != null ? `~$${(rate * open.credits).toLocaleString()} (your rate, user-entered)` : "Add a rate in Settings"}</dd>
               <dt className="text-muted">Source</dt><dd>{(() => { const src = sourceById(open.sourceId); return src?.url ? <a href={src.url} target="_blank" rel="noreferrer" className="text-primary underline">FRCC catalog {src.catalogYear}</a> : "Illustrative sample. No official URL."; })()}</dd>

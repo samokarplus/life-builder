@@ -34,9 +34,47 @@ describe("real FRCC AA requirements", () => {
     expect(status(r, "aa-written")).toBe("satisfied");
     expect(status(r, "aa-oral")).toBe("satisfied");
   });
-  it("areas needing gtPathways mapping are uncertain, never satisfied or invented", () => {
+  it("with nothing completed, mapped areas are unsatisfied and only electives need a check", () => {
     const r = evaluateRequirements(requirements, { ...base, completed: [] });
-    for (const id of ["aa-math", "aa-arts-hum", "aa-history", "aa-social", "aa-science", "aa-choice", "aa-electives"]) expect(status(r, id)).toBe("uncertain");
-    expect(status(r, "aa-written")).toBe("unsatisfied");
+    for (const id of ["aa-written", "aa-oral", "aa-math", "aa-arts-hum", "aa-history", "aa-social", "aa-science", "aa-choice"]) expect(status(r, id), id).toBe("unsatisfied");
+    expect(status(r, "aa-electives")).toBe("uncertain");
+  });
+  it("satisfies real gtPathways areas from official categories", () => {
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const r = evaluateRequirements(requirements, { ...base, completed: [
+      done("MAT-1260"), done("HIS-1120"), done("PHI-1014"), done("ART-1110"),
+      done("PSY-1001"), done("SOC-1001"), done("GEY-1111"), done("GEY-1108"), done("LIT-1015"),
+    ] });
+    expect(status(r, "aa-math")).toBe("satisfied");
+    expect(status(r, "aa-history")).toBe("satisfied");
+    expect(status(r, "aa-arts-hum")).toBe("satisfied"); // PHI 1014 (AH3) + ART 1110 (AH1)
+    expect(status(r, "aa-social")).toBe("satisfied");
+    expect(status(r, "aa-science")).toBe("satisfied"); // lab course + second science course
+  });
+  it("two arts & humanities courses from the SAME area do not satisfy the requirement", () => {
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const r = evaluateRequirements(requirements, { ...base, completed: [done("ART-1110"), done("ART-1111")] });
+    expect(status(r, "aa-arts-hum")).toBe("unsatisfied");
+  });
+  it("science needs a lab course", () => {
+    const done = (code: string) => ({ courseId: `frcc:${code}`, verified: true });
+    const r = evaluateRequirements(requirements, { ...base, completed: [done("GEY-1108"), done("AST-1140")] });
+    expect(status(r, "aa-science")).toBe("unsatisfied");
+  });
+});
+
+describe("FRCC gtPathways catalog data", () => {
+  it("official data overrides sample details and flags not-offered courses", () => {
+    const geo = courses.find((c) => c.id === "frcc:GEY-1111")!;
+    expect(geo.credits).toBe(4);
+    expect(geo.gtPathways).toEqual(["GT-SC1"]);
+    expect(courses.find((c) => c.id === "frcc:HIS-1120")!.title).toBe("The World: 1500-Present");
+    expect(courses.find((c) => c.id === "frcc:PHI-1041")!.notOffered).toBe(true);
+    expect(courses.find((c) => c.id === "frcc:PHI-1030")!.gtPathways).toBeUndefined();
+  });
+  it("loads every listed course exactly once", () => {
+    const ids = courses.map((c) => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(courses.filter((c) => c.gtPathways).length).toBeGreaterThan(200);
   });
 });
