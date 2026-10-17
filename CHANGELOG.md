@@ -63,3 +63,11 @@ First verified data, each with its source URL, catalog year and verification dat
 - Source labels: NASA requirements (incl. three years of experience, 1,000 pilot-in-command hours, citizenship, physical), CU Boulder transfer timeline and AES graduate degrees were read from official pages. Colorado LPC figures (2,000 supervised hours, 1,500 direct contact, 50 supervision hours per 1,000) come only from search excerpts of C.R.S. 12-245-604 because DORA and the statute mirror blocked automated reading, so they are marked "Confirm with the official source".
 - Not found: CU Boulder graduate application deadlines and GRE policy, a Colorado counseling program list, and scholarship amounts. None are guessed.
 - Assistant answers deadline, LPC and astronaut questions with the same hedging. 94 unit tests pass.
+
+## Colorado Dreams (claude/colorado-dreams)
+
+- Dream Paths is now **Colorado Dreams**: pick your stage (high school to licensure) and dream, get a "your next step" card, dimmed earlier steps, and a friendlier tone.
+- Colorado LPC route upgraded from "confirm" to **verified** using the official Colorado rules (4 CCR 737-1, effective 2025-09-14, read from the Secretary of State PDF) and DORA's applications and FAQ pages: CACREP-approved master's (60+ semester credits if enrolled after Aug 31, 2014), NBCC exam (results valid 5 years), jurisprudence exam (valid 1 year), candidate registration before counting hours, 2,000 supervised hours with 1,500 direct client contact over at least 24 months, 50 supervision hours per 1,000 (25 individual), hours older than 5 years not accepted, no reciprocity, license expiry rules. The earlier unverified "SB24-115" claim was removed because the official pages did not state it.
+- **Colorado counseling program finder**: all 22 Colorado rows in the CACREP directory (Adams State, CCU, CSU, Denver Seminary, Regis, UCCS, CU Denver, DU, UNC) with specialty, degree, status and accreditation cycle end.
+- CU Boulder Aerospace Engineering Sciences graduate details verified from the Graduate School table: MS/PhD/Professional MS, GRE not required, spring Oct. 1, fall Dec. 1.
+- 97 unit tests pass. Still not loaded: scholarship amounts, program costs and deadlines for counseling programs, other Colorado campuses' course data.
