@@ -21,6 +21,13 @@ describe("career search", () => {
   it("requires every typed word to match", () => {
     expect(searchCareers(cards, { query: "nurse astronaut" })).toEqual([]);
   });
+  it("handles abbreviations, accents, partial typing and the advertised no-degree query", () => {
+    expect(searchCareers(cards, { query: "RN" }).map(c => c.id)).toEqual(["rn-colorado"]);
+    expect(searchCareers(cards, { query: "électric" })[0].id).toBe("electrician-colorado");
+    expect(searchCareers(cards, { query: "counsellor" })[0].id).toBe("lpc-colorado");
+    expect(searchCareers(cards, { query: "no degree" }).map(c => c.id).sort()).toEqual(searchCareers(cards, { noDegree: true }).map(c => c.id).sort());
+    expect(searchCareers(cards, { query: "nurse" })[0].id).toBe("rn-colorado");
+  });
   it("filters by category, no-degree start and high-school step", () => {
     expect(ids(searchCareers(cards, { category: "Skilled trades" }))).toEqual(["electrician-colorado"]);
     for (const c of searchCareers(cards, { noDegree: true })) expect(c.meta.startsWithoutDegree).toBe(true);
