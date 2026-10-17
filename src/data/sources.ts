@@ -134,6 +134,30 @@ v("src-cccs-b2b", "https://cccs.edu/our-colleges/colleges/transfer-programs/brid
 v("src-frcc-nursing-overview", "https://frontrange.edu/programs-courses/program-list/nursing-program/index.html", "Live browser read 2026-10-16: AAS nursing offered at Larimer and Westminster; Boulder County is not listed.", "frcc");
 v("src-frcc-west-adn", "https://www.frontrange.edu/programs-courses/program-list/nursing-program/westminster-campus-nursing/associate-degree-admissions.html", "Read 2026-10-16: top-40 ranking, five HESI subjects and campus-specific in-progress transcript instructions and 30-business-day notification wording.", "frcc");
 
+
+// Campus evidence: individual official pages reviewed 2026-10-16; terms in review/colorado-campus-sources.md.
+v("src-cud-ug-admissions", "https://www.cudenver.edu/undergraduate-admissions", "2027 undergraduate priority dates.", "cud");
+v("src-cud-transfer", "https://www.cudenver.edu/transfer-admissions", "2027 transfer application deadlines.", "cud");
+v("src-cud-ug-tuition", "https://www.cudenver.edu/student-finances/tuition-fees/undergraduate-tuition/2026-2027-undergraduate-tuition-and-fees", "2026–27 live table: standard resident base533, COF116. Fees and differentiated courses separate.", "cud");
+v("src-cud-transfer-maps", "https://www.cudenver.edu/advising/transfer-planning/transfer-degree-maps", "Official undergraduate transfer degree maps index; not individual credit equivalencies.", "cud");
+v("src-csu-first", "https://admissions.colostate.edu/apply/freshmen/", "First-year application annual date patterns; confirm entry cycle.", "csu");
+v("src-csu-transfer", "https://admissions.colostate.edu/apply/transfer/", "Transfer application annual patterns and scholarship consideration distinctions.", "csu");
+v("src-csu-tuition", "https://thehub.colostate.edu/billing/tuition-and-fees/", "Expanded Fall2026/Spring2027 resident undergraduate table: one-credit base632.61, COF116. Full-time and differential rules separate.", "csu");
+v("src-mines-first", "https://undergraduate-admissions.mines.edu/first-year/", "First-year priority, regular and general scholarship date patterns.", "mines");
+v("src-mines-transfer", "https://undergraduate-admissions.mines.edu/transfer-students/", "Fall2027 domestic/international transfer, FAFSA and scholarship dates; FRCC Mines Academy partner.", "mines");
+v("src-mines-tuition", "https://bursar.mines.edu/wp-content/uploads/sites/340/2022/04/Tuition-Schedule.pdf", "Rendered PDF page1, 2026–27 Golden undergraduate, updatedSept1,2026; base776/credit, COF116, student15–19credit band9900. URL directory is not academic year.", "mines");
+v("src-cmu-admissions", "https://catalog.coloradomesa.edu/undergraduate-admission-information/undergraduate-admission-information-procedures-degree-seeking-students/", "Explicit2027 admission dates, separate from new-student enrollment form.", "cmu");
+v("src-cmu-transfer", "https://www.coloradomesa.edu/admissions/requirements/transfer/index.html", "Transfer admissions requirements; no program admission guarantee imported.", "cmu");
+v("src-cmu-tuition", "https://www.coloradomesa.edu/student-accounts/documents/undergraduate-in-state-fall.pdf", "Single-page PDF under Fall2026/Spring2027 expenses: resident classroom452.90, COF116; fees and online separate. Rendered and visually checked.", "cmu");
+v("src-cmu-agreements", "https://www.coloradomesa.edu/transfer/articulation-agreements.html", "Statewide articulation and CCCS Bridge to Bachelor resources.", "cmu");
+v("src-unc-first", "https://www.unco.edu/admissions-aid/undergraduate/first-year/", "First-year annual priority and last-chance application dates.", "unc");
+v("src-unc-transfer", "https://www.unco.edu/admissions-aid/undergraduate/transfer/", "Rolling admission, annual term table and community-college transfer guidance. Current Transfer Guides link resolved to Aims2UNC; no FRCC-specific map verified.", "unc");
+v("src-unc-tuition", "https://www.unco.edu/admissions-aid/tuition-fees/i-am-a/resident-undergraduate/", "2026–27 resident one-credit505.75, COF116. 13–16 discount window. Multi-credit table arithmetic anomalies quarantined; no inferred corrected totals.", "unc");
+v("src-uccs-first", "https://www.uccs.edu/admissions-aid/details/first-year", "First-year application guidance read; no precise current-cycle application deadline verified.", "uccs");
+v("src-uccs-transfer", "https://transfer.uccs.edu/contact/faq", "Transfer rolling-admission FAQ; review requires official transcripts. Not a review or acceptance timing guarantee.", "uccs");
+v("src-uccs-tuition", "https://bursar.uccs.edu/sites/default/files/2026-08/UCCS_TuitionFees_Fall_2026_0.pdf", "Fall2026 PDF page12 rendered: new undergraduate/continuing junior-senior resident traditional LAS/PublicService base498, COF116. Rounded figures, fees and other programs separate.", "uccs");
+v("src-cccs-campus-agreements", "https://cccs.edu/academic-student-affairs/academic-affairs/curriculum-management/transfer-and-articulation/transfer-agreements-with-other-colleges/", "Linked by FRCC transfer guides. CSU, Mines and UCCS engineering agreements; not blanket all-major articulation.", null);
+
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));
 const byId = new Map(sources.map(s => [s.id, s]));
