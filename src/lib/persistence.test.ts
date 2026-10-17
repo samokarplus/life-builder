@@ -33,3 +33,7 @@ it('round-trips plan settings and scenarios without losing choices',()=>{
  const before=usePlanner.getState().exportJson();expect(usePlanner.getState().importJson(before).ok).toBe(true);
  expect(usePlanner.getState().exportJson()).toBe(before);
 });
+it('refuses to migrate a future envelope version',()=>{
+ const migrate=usePlanner.persist.getOptions().migrate!;
+ expect(()=>migrate(JSON.parse(usePlanner.getState().exportJson()),999)).toThrow(/Unsupported/);
+});

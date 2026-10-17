@@ -39,6 +39,7 @@ export function createPlannerStorage(db: Database, legacy: () => Pick<Storage, "
       if (typeof indexedDB === "undefined" && typeof window === "undefined") return;
       report({phase:"saving",error:undefined});
       queue = queue.then(async()=>{
+        if (blocked) return;
         try {
           const writtenAt=Date.now();
           let record=value;
