@@ -13,10 +13,10 @@ describe("career search", () => {
     for (const p of pathways) expect(careerMeta[p.id], p.id).toBeDefined();
   });
   it("finds by plain words and synonyms", () => {
-    expect(ids(searchCareers(cards, { query: "doctor" }))).toEqual(["physician-colorado"]);
+    expect(searchCareers(cards, { query: "doctor" })[0].id).toBe("physician-colorado");
     expect(ids(searchCareers(cards, { query: "therapist" }))).toEqual(["lpc-colorado"]);
     expect(ids(searchCareers(cards, { query: "space" }))).toContain("astronaut-bioastronautics");
-    expect(ids(searchCareers(cards, { query: "ambulance" }))).toEqual(["ems-colorado"]);
+    expect(ids(searchCareers(cards, { query: "ambulance" }))).toEqual(["ems-colorado","paramedic-colorado"]);
   });
   it("requires every typed word to match", () => {
     expect(searchCareers(cards, { query: "nurse astronaut" })).toEqual([]);
@@ -29,7 +29,7 @@ describe("career search", () => {
     expect(searchCareers(cards, { query: "nurse" })[0].id).toBe("rn-colorado");
   });
   it("filters by category, no-degree start and high-school step", () => {
-    expect(ids(searchCareers(cards, { category: "Skilled trades" }))).toEqual(["electrician-colorado"]);
+    expect(ids(searchCareers(cards, { category: "Skilled trades" }))).toEqual(["electrician-colorado","plumber-colorado"]);
     for (const c of searchCareers(cards, { noDegree: true })) expect(c.meta.startsWithoutDegree).toBe(true);
     expect(ids(searchCareers(cards, { noDegree: true }))).toEqual(expect.arrayContaining(["rn-colorado", "ems-colorado", "electrician-colorado"]));
     expect(ids(searchCareers(cards, { highSchool: true })).length).toBe(cards.length);
@@ -50,4 +50,11 @@ describe("career data provenance", () => {
       if (/about.*years|right away/.test(s.duration)) expect(s.basis).toBe("estimate");
     }
   });
+});
+
+
+it('keeps short credential searches exact and new careers discoverable',()=>{
+ expect(searchCareers(cards,{query:'PA'}).map(c=>c.id)).toEqual(['pa-colorado']);
+ expect(searchCareers(cards,{query:'PE'})[0].id).toBe('pe-colorado');
+ for(const query of ['software developer','plumber','dental hygienist','social worker','paramedic','veterinarian','pharmacist'])expect(searchCareers(cards,{query}).length,query).toBeGreaterThan(0);
 });

@@ -16,6 +16,7 @@ export function IdealPath({ meta }: { meta: CareerMeta }) {
     <section aria-labelledby="ideal-h" className="mt-10">
       <h3 id="ideal-h" className="flex items-center gap-2 font-serif text-2xl"><Route size={20} className="text-primary" aria-hidden /> The ideal path</h3>
       <p className="mt-1 text-sm text-muted">{meta.headline}</p>
+      {!meta.ideal.length && <p className="mt-3 rounded-xl border border-dashed border-border p-4 text-sm text-muted">No verified end-to-end duration is loaded for this route. Check the official program and licensing requirements for your pathway.</p>}
       <ol className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {meta.ideal.map((s, i) => (
           <li key={s.label} className="relative rounded-2xl border border-border bg-surface p-4 shadow-card">

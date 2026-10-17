@@ -11,7 +11,7 @@ import { boulderPrograms,boulderRequirements,boulderTuitionExample } from "./bou
 import { coloradoCampuses } from "./campuses";
 import { glossary } from "./glossary";
 
-export const inventoryModules = ["boulder", "campuses", "access", "career-meta", "frcc-electives", "frcc-gtpathways", "frcc-gtpathways-raw", "funding", "glossary", "inventory", "pathways", "people", "programs", "sample", "sources"];
+export const inventoryModules = ["career-expansion", "boulder", "campuses", "access", "career-meta", "frcc-electives", "frcc-gtpathways", "frcc-gtpathways-raw", "funding", "glossary", "inventory", "pathways", "people", "programs", "sample", "sources"];
 const collection = (name: string, records: readonly unknown[]) => records.map((record, i) => ({ location:`${name}[${i}]`,record }));
 export const sourceRecords = [
  ...collection('boulderPrograms',boulderPrograms),...collection('boulderRequirements',boulderRequirements),...collection('boulderTuition',[boulderTuitionExample]),

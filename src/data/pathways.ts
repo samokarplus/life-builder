@@ -1,3 +1,4 @@
+import { coloradoCareerRoutes } from "./career-expansion";
 
 /**
  * Dream Paths: multi-step routes from where you are to a specific career. Each step carries the
@@ -108,7 +109,7 @@ export const newPathways: Pathway[] = [
     caution: "Colorado doesn't accept other states' EMS certifications automatically. Read from CDPHE pages on 2026-10-16.",
     steps: [
       { id: "ems-1", additionalSourceIds: ["src-frcc-story-guida"], stage: "high-school", kind: "degree", title: "Take a full EMS provider course at the level you want", detail: "Colorado's list of approved initial EMS education programs is on CDPHE's site. FRCC runs an EMS program, and a state program called Care Forward Colorado has covered tuition, fees and materials for entry-level health care training.", facts: ["Care Forward Colorado: zero-cost pathways for entry-level health care jobs (per a 2023 FRCC story; confirm current eligibility)"], sourceId: "src-cdphe-ems", links: [{ label: "CDPHE EMS provider certification", url: "https://cdphe.colorado.gov/emergency-care/emergency-medical-services/ems-providers/ems-provider-certification" }] },
-      { id: "ems-2", stage: "community-college", kind: "exam", title: "Pass both NREMT exams", detail: "You must hold a current National Registry of Emergency Medical Technicians (NREMT) registration at your level, which you get by passing the written and the psychomotor exams.", sourceId: "src-cdphe-ems" },
+      { id: "ems-2", stage: "community-college", kind: "exam", title: "Meet the current NREMT requirements for EMT", detail: "You must hold current National Registry of Emergency Medical Technicians (NREMT) registration at the level you intend to practice. Confirm the current level-specific examination and skills process with NREMT; the state page uses generic older exam-format wording.", sourceId: "src-cdphe-ems" },
       { id: "ems-3", stage: "community-college", kind: "requirement", title: "Background check and CPR card", detail: "Fingerprints must go to the Colorado Bureau of Investigation within 60 days before or after you submit your application, and both CBI and FBI results must be requested. If you wait longer than 60 days you may have to be fingerprinted again.", facts: ["Valid professional BLS/CPR card", "The certification page lists ACLS for paramedic applicants; the reciprocity page also names intermediate applicants. Confirm your level with CDPHE."], sourceId: "src-cdphe-ems" },
       { id: "ems-4", additionalSourceIds: ["src-cdphe-ems-reciprocity"], stage: "career", kind: "license", title: "Apply for Colorado EMS certification", detail: "Create an account on the Online Application Tracking Hub (OATH) and submit the initial application. Colorado issues a 3-year certificate to first-time providers who meet all requirements.", facts: ["Renew every three years; applying opens within 6 months of expiration", "Colorado does not have a reciprocity process for EMS providers"], sourceId: "src-cdphe-ems" },
       { id: "ems-5", additionalSourceIds: ["src-frcc-story-guida"], stage: "career", kind: "experience", title: "Next levels", detail: "CDPHE lists routes to become a paramedic, a critical care paramedic and a community paramedic. One FRCC graduate started as an EMT with an ambulance company and planned to earn his paramedic degree while working.", sourceId: "src-cdphe-ems" },
@@ -166,6 +167,6 @@ export const newPathways: Pathway[] = [
   },
 ];
 
-pathways.push(...newPathways);
+pathways.push(...newPathways,...coloradoCareerRoutes);
 
 export const pathwayById = (id: string) => pathways.find((p) => p.id === id);

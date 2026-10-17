@@ -2,9 +2,11 @@
  * Presentation and context for each Colorado Dreams route: category, search tags, color theme, badge art,
  * the realistic "ideal path", what makes it hard, and real people who did it. Everything factual cites a source.
  */
+import { coloradoCareerMeta } from "./career-expansion";
+
 export type ThemeKey = "indigo" | "teal" | "rose" | "blue" | "red" | "amber" | "green";
-export type IconKey = "astronaut" | "counselor" | "nurse" | "doctor" | "ems" | "electrician" | "teacher";
-export type Category = "Space & science" | "Mental health" | "Health care" | "Skilled trades" | "Education";
+export type IconKey = "astronaut" | "counselor" | "nurse" | "doctor" | "ems" | "electrician" | "teacher" | "software" | "engineer" | "pharmacist" | "plumber" | "dental" | "vet";
+export type Category = "Space & science" | "Mental health" | "Health care" | "Skilled trades" | "Education" | "Technology" | "Engineering";
 
 export interface Challenge { title: string; detail: string; sourceId: string }
 export interface Person { name: string; role: string; background: string[]; sourceId: string; url: string; lesson?: string }
@@ -19,9 +21,9 @@ export interface CareerMeta {
   icon: IconKey;
   tags: string[];
   /** Can you begin without a college degree? */
-  startsWithoutDegree: boolean;
+  startsWithoutDegree: boolean | null;
   /** Does a bachelor's degree (or more) sit on the standard route? */
-  needsBachelors: boolean;
+  needsBachelors: boolean | null;
   headline: string;
   ideal: IdealStage[];
   idealNote: string;
@@ -30,6 +32,7 @@ export interface CareerMeta {
 }
 
 export const careerMeta: Record<string, CareerMeta> = {
+  ...coloradoCareerMeta,
   "astronaut-bioastronautics": {
     category: "Space & science", theme: "indigo", icon: "astronaut", startsWithoutDegree: false, needsBachelors: true,
     tags: ["astronaut", "nasa", "space", "bioastronautics", "aerospace", "engineering", "stem", "cu boulder", "pilot"],

@@ -7,7 +7,7 @@ import { buildCards, searchCareers } from "@/lib/career-search";
 import type { Category } from "@/data/career-meta";
 import { cn } from "@/lib/utils";
 
-const categories: Category[] = ["Space & science", "Mental health", "Health care", "Skilled trades", "Education"];
+const categories: Category[] = ["Space & science", "Mental health", "Health care", "Skilled trades", "Education", "Technology", "Engineering"];
 
 export interface PickerState { query: string; category: Category | "all"; noDegree: boolean; highSchool: boolean }
 
@@ -60,7 +60,7 @@ export function CareerPicker({ state, onState, selected, onSelect }: { state: Pi
           <button onClick={clear} className="mt-2 text-primary underline">Clear search</button>
         </div>
       )}
-      <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Coming next, each added only with an official source: engineer, software developer, entrepreneur and more Colorado campuses (CU Denver, CSU, Colorado School of Mines, Colorado Mesa, UNC).</p>
+      <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Each route is added only with official sources. A college pathway is one option; licensed professions have separate state requirements.</p>
     </section>
   );
 }

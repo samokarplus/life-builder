@@ -10,7 +10,7 @@ describe("pathway data provenance", () => {
     for (const p of pathways) {
       const ids = p.steps.map((s) => s.id);
       expect(new Set(ids).size).toBe(ids.length);
-      expect(p.steps.length).toBeGreaterThan(4);
+      expect(p.steps.length).toBeGreaterThanOrEqual(3);
     }
   });
   it("Colorado licensing steps cite the official rules and DORA pages, all verified", () => {

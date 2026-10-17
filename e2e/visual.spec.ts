@@ -57,14 +57,14 @@ for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${th
  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-glossary.png`,fullPage:true,animations:'disabled'});
  await page.getByRole('button',{name:'Can start without a degree',exact:true}).click();
  await page.getByRole('button',{name:'Skilled trades',exact:true}).click();
- await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(1);
+ await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(2);
  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-career-filters.png`,fullPage:true,animations:'disabled'});
  await page.getByRole('searchbox',{name:'Search careers, schools, programs and requirements'}).fill('zzzzzz');
  await expect(page.getByRole('button',{name:'Clear search',exact:true})).toBeVisible();
  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
  await page.screenshot({path:`artifacts/screenshots/${theme}-${width}-career-empty.png`,fullPage:true,animations:'disabled'});
  await page.getByRole('button',{name:'Clear search',exact:true}).press('Enter');
- await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(7);
+ await expect(page.getByRole('list',{name:'Career routes'}).getByRole('button')).toHaveCount(16);
  await page.goto('/settings');await page.getByRole('button',{name:'Reset',exact:true}).click();
  await expect(page.getByRole('dialog')).toBeVisible();await expect(page.getByRole('button',{name:'Cancel',exact:true})).toBeFocused();
  expect((await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);

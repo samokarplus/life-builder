@@ -28,7 +28,8 @@ export function searchCareers(cards: CareerCard[], f: CareerFilters): CareerCard
   const aliases: Record<string, string[]> = { rn: ["nurse"], nursing: ["nurse"], counselling: ["counseling", "counselor"], counsellor: ["counselor"], educator: ["teacher"], physician: ["doctor"], medic: ["emt"], registered: ["registered", "nurse"] };
   return cards.map((card, index) => {
     const tokens = card.haystack.split(" ");
-    const match = words.every(word => [word, ...(aliases[word] ?? [])].some(term => tokens.some(token => token.startsWith(term))));
+    const exactAcronyms=new Set(["rn","pa","pe","dh","lsw","lcsw","emt"]);
+    const match = words.every(word => [word, ...(aliases[word] ?? [])].some(term => tokens.some(token => exactAcronyms.has(word)&&term===word?token===term:token.startsWith(term))));
     const title = norm(card.career);
     const score = title === query ? 3 : title.startsWith(query) ? 2 : words.every(w => title.includes(w)) ? 1 : 0;
     return { card, index, match, score };

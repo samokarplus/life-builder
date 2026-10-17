@@ -142,3 +142,9 @@ Review validation: 132 Vitest tests, 5 offline-comparator tests, 18 Playwright t
 - Added CI-ready `check-provenance` and explicit data inventory, catching missing/unknown/nested citations and unregistered data modules. Bioastronautics course summaries now carry sourceIds.
 - Reused accessible last-checked/stale/unverified badges on routes, funding, tuition and course details; added the Settings source inventory.
 - Tests cover the90/91-day boundary, invalid/future dates, missing citations, data registration and the stale mobile UI. Validation:165 Vitest tests, ESLint, production build, provenance check and22 Playwright tests pass. A strict Jan15,2027 audit correctly fails for53 sources older than90 days.
+
+## Integration of Codex's review and expansion stack (claude/integrate-codex-stack)
+
+- Combines Codex's stacked PRs (route review and fixes, source-reliability checks, six-campus planner, CU Boulder requirement previews and scoped tuition) with its finished-but-unsaved set of nine more Colorado career routes (PA, paramedic, software, PE, pharmacist, plumber, dental hygienist, LCSW social work, veterinarian). Firefighter and pilot were left out because no complete official pathway could be verified.
+- 16 Colorado routes now; the browser tests expect that count and the "psychologist" example for a profession that stays explicitly unmapped. Two save-then-reload tests now wait for the save to finish.
+- 184 unit tests, provenance check (657 records), lint, build and 35 browser tests pass on this build.
