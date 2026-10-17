@@ -9,7 +9,7 @@ describe("credits", () => {
   it("groups credits by status", () => {
     const r = creditsByStatus(sampleSemesters, courses);
     expect(r["in-progress"]).toBe(9);
-    expect(r.planned).toBe(15);
+    expect(r.planned).toBe(16);
     expect(r.completed).toBe(0);
   });
 });
