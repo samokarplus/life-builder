@@ -108,7 +108,7 @@ v("src-cub-aes-deadlines", "https://www.colorado.edu/aerospace/admissions/gradua
 
 // Careers, access routes and real people (read 2026-10-16)
 v("src-frcc-hs", "https://www.frontrange.edu/programs-courses/concurrent-enrollment/index.html", "FRCC Concurrent Enrollment: college classes for public high school students in grades 9-12.", "frcc");
-v("src-frcc-wue", "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html", "FRCC Western Undergraduate Exchange page: eligibility, price rule and how to apply.", "frcc");
+v("src-frcc-wue", "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html", "FRCC Western Undergraduate Exchange page: eligibility, price rule and how to apply. Dollar figures belong to src-frcc-tuition-2627, with separate rates for online/nursing.", "frcc");
 v("src-frcc-b2b", "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html", "FRCC Bridge to Bachelor's page: guaranteed admission to participating four-year schools. Partner schools appear as logos; names were read from the image labels.", "frcc");
 v("src-frcc-transfer-guides", "https://www.frontrange.edu/student-experience/transfer-planning/transfer-guides.html", "FRCC transfer guides and agreements, including statewide and institution-specific agreements.", "frcc");
 v("src-dora-nursing-apps", "https://dpo.colorado.gov/Nursing/Applications", "Colorado DORA nursing applications and forms: RN by exam (two-part process), endorsement, certified nurse aide.");
@@ -125,6 +125,11 @@ v("src-cu-aero-astronauts", "https://www.colorado.edu/aerospace/about-us/astrona
 v("src-frcc-story-bitler", "https://blog.frontrange.edu/2020/12/02/during-covid-alumnus-gets-creative-with-care-at-local-nursing-homes/", "FRCC blog (Dec. 2020): alumnus Joel Bitler. A college-published story; outcomes are as reported there.", "frcc");
 v("src-frcc-story-guida", "https://blog.frontrange.edu/2023/09/06/graduate-starts-paramedic-career-with-care-forward-colorado/", "FRCC blog (Sept. 2023): graduate Tom Guida and Care Forward Colorado. A college-published story.", "frcc");
 v("src-frcc-story-andrade", "https://blog.frontrange.edu/2026/05/12/first-generation-graduate-pursues-dream-of-becoming-a-flight-nurse/", "FRCC news (May 2026): graduate Alyssa Andrade's commencement story. A college-published story.", "frcc");
+
+v("src-cdphe-ems-reciprocity", "https://cdphe.colorado.gov/emergency-care/emergency-medical-services/ems-providers/ems-provider-reciprocity", "CDPHE reciprocity page, read live 2026-10-16: no automatic practice from another state’s credential. ACLS wording differs from the initial-certification page; confirm level-specific rules.");
+v("src-frcc-general-admission", "https://www.frontrange.edu/", "FRCC homepage advertises automatic admission for applicants over 17; selective programs and younger applicants have separate conditions.", "frcc");
+
+v("src-cccs-b2b", "https://cccs.edu/our-colleges/colleges/transfer-programs/bridge-to-bachelors/", "Read 2026-10-16: 13 partner destination URLs in University Partners (12 Colorado plus WGU); Special Programs text names Texas Southern and Coppin State. Does not corroborate FRCC’s Saint Augustine’s logo.");
 
 /** Complete at module evaluation, independent of route import order. */
 export const sources: readonly Readonly<DataSource>[] = Object.freeze(registry.map(s => Object.freeze(s)));

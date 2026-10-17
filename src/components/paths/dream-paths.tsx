@@ -13,6 +13,7 @@ import { CareerPicker, type PickerState } from "./career-picker";
 import { Challenges, IdealPath, People, WaysIn } from "./path-extras";
 import { careerMeta } from "@/data/career-meta";
 import { sourceById } from "@/data/sample";
+import { describeDatedEvent } from "@/lib/dated-event";
 import { parseDreamParams, routeProgress } from "@/lib/dream-params";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
@@ -205,9 +206,10 @@ export function DreamPaths() {
                   {i < path.steps.length - 1 && <span className="w-px flex-1 bg-sage" aria-hidden />}
                 </div>
                 <article className={cn("mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card")}>
-                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} /></div>
+                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} />{s.additionalSourceIds?.map(id => <Confidence key={id} sourceId={id} />)}</div>
                   <h3 className={cn("mt-2 font-medium", isDone && "text-muted line-through")}>{s.title}</h3>
                   <p className="mt-1 text-sm text-muted">{s.detail}</p>
+                  {s.datedEvents && <ul className="mt-3 space-y-2 text-sm">{s.datedEvents.map(event => <li key={event.label}>{event.label}: {event.date} — {describeDatedEvent(event.date, today)}. <Confidence sourceId={event.sourceId} /></li>)}</ul>}
                   {s.facts && <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{s.facts.map((f) => <li key={f}>{f}</li>)}</ul>}
 
                   {s.deadlines === "cu-transfer" && (

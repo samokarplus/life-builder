@@ -12,6 +12,7 @@ export interface AccessOption {
   facts: string[];
   sourceId: string;
   url: string;
+  additionalSourceIds?: string[];
   caveat?: string;
 }
 
@@ -25,53 +26,53 @@ export const accessOptions: AccessOption[] = [
   {
     id: "concurrent-enrollment", audience: "high-school", title: "Take FRCC classes while in high school (concurrent enrollment)",
     summary: "Public high school students in grades 9-12 can take college classes for high school and college credit. Tuition is paid by the school district or charter school and the College Opportunity Fund.",
-    facts: ["Programs listed: ASCENT, High School Select, Campus Select, P-TECH and TREP.", "Programs vary by campus: Boulder County, Larimer and Westminster each list their own.", "Contacts on the page: Boulder County Campus 303-678-3820, Larimer Campus 970-204-8370, Westminster Campus 303-404-5089."],
+    facts: ["Current options listed: High School Select, Campus Select, P-TECH and TREP. ASCENT ended June 30, 2026, according to FRCC; it is not a current option.", "Programs vary by campus: Boulder County, Larimer and Westminster each list their own.", "Contacts on the page: Boulder County Campus 303-678-3820, Larimer Campus 970-204-8370, Westminster Campus 303-404-5089."],
     sourceId: "src-frcc-hs", url: "https://www.frontrange.edu/programs-courses/concurrent-enrollment/index.html",
     caveat: "Which program fits you depends on your school district. Start with your high school counselor.",
   },
   {
     id: "b2b-from-hs", audience: "high-school", title: "Bridge to Bachelor's: a guaranteed seat at a four-year school",
-    summary: "If you start at a Colorado Community College System college (FRCC is one) and finish an associate degree, you're guaranteed admission to a participating four-year college or university.",
-    facts: ["Opt in when you apply, or within your first semester.", "Keep a 2.0 minimum GPA.", "Finish an Associate of Arts or Associate of Science degree.", "CCCS colleges accept anyone who applies; entrance exams like the ACT or SAT aren't required for admission or for this program."],
+    summary: "New, first-time CCCS students who opt in, meet the GPA and eligible AA/AS conditions are guaranteed admission to a participating four-year college or university.",
+    facts: ["Opt in when you apply, or within your first semester.", "Keep a 2.0 minimum GPA.", "Finish an Associate of Arts or Associate of Science degree.", "First-time students should confirm intended degree/program eligibility with an advisor; entrance exams are not required for general admission. Admission to a university does not guarantee admission to a selective major."],
     sourceId: "src-frcc-b2b", url: "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html",
   },
   {
     id: "wue", audience: "out-of-state", title: "Western Undergraduate Exchange (WUE) at FRCC",
     summary: "A \"guest pass\" for students who keep residency in another Western state. You pay less than regular non-resident tuition, but you're declaring that you are not a Colorado resident.",
-    facts: ["FRCC's 2026-27 listed rate: Western Undergraduate Exchange $275.60 per credit, versus regular non-resident $754.25 per credit (tuition only, excluding fees).", "The WUE page says eligible students pay 50 percent more than in-state tuition.", "Apply to the Registrar's Office no later than 30 days after your earliest course starts, and apply again every semester.", "If you're under 23, include your parent's documentation.", "If you plan to become a Colorado resident and petition for in-state rates, the page recommends not claiming another state as your residence."],
-    sourceId: "src-frcc-wue", url: "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html",
+    facts: ["FRCC's 2026-27 listed rate: Western Undergraduate Exchange $275.60 per credit, versus regular non-resident $754.25 per credit (regular tuition only, excluding fees; online and nursing rates differ).", "The WUE page says eligible students pay 50 percent more than in-state tuition.", "Apply to the Registrar's Office no later than 30 days after your earliest course starts, and apply again every semester.", "If you're under 23, include your parent's documentation.", "If you plan to become a Colorado resident and petition for in-state rates, the page recommends not claiming another state as your residence."],
+    sourceId: "src-frcc-wue", additionalSourceIds: ["src-frcc-tuition-2627"], url: "https://www.frontrange.edu/admissions-aid/paying-for-college/tuition-discount-programs/wue.html",
     caveat: "Which states qualify comes from the WUE program's own list, which we didn't load. Check it before planning around WUE.",
   },
   {
-    id: "b2b-partners", audience: "out-of-state", title: "Bridge to Bachelor's partner schools, including out of state",
+    id: "b2b-partners", additionalSourceIds: ["src-cccs-b2b"], audience: "out-of-state", title: "Bridge to Bachelor's partner schools, including out of state",
     summary: "The partner list shows Colorado four-year schools and some schools outside Colorado or online.",
-    facts: ["Colorado: Colorado State University, CU Denver, UCCS, CU Boulder, Metropolitan State University, Fort Lewis College, Colorado Mesa University, Regis University, CSU Pueblo, Western Colorado University, University of Northern Colorado, Adams State University.", "Also listed: Western Governors University, Texas Southern University and Saint Augustine's University.", "The page says more partners are coming."],
+    facts: ["Colorado: Colorado State University, CU Denver, UCCS, CU Boulder, Metropolitan State University, Fort Lewis College, Colorado Mesa University, Regis University, CSU Pueblo, Western Colorado University, University of Northern Colorado, Adams State University.", "CCCS also lists Western Governors University. Its current Bridge to HBCU text names Texas Southern University and Coppin State University.", "FRCC still displays Saint Augustine’s University in an image label, but the current CCCS partner page does not corroborate it. Confirm with an advisor before choosing that destination."],
     sourceId: "src-frcc-b2b", url: "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html",
-    caveat: "Partner names were read from the logo labels on the page. Each school sets its own program rules, so confirm with that school.",
+    caveat: "Colorado partners and WGU were corroborated by destination links in the CCCS University Partners panel, not image labels. University admission is not admission to every major.",
   },
   {
     id: "transfer-agreements", audience: "out-of-state", title: "FRCC transfer agreements, in and out of state",
-    summary: "FRCC's statewide agreements get you to a public Colorado university as a junior with no more than 60 additional credits. For other schools, the page points to a list of four-year colleges, both in Colorado and out of state.",
+    summary: "FRCC says following an applicable statewide transfer agreement in the same major lets you enter a participating public Colorado university as a junior with no more than 60 additional credits. For other schools, the page points to a list of four-year colleges, both in Colorado and out of state.",
     facts: ["Institution-specific agreements listed include American Sign Language to UNC, Architectural Studies and Recording Arts to the University of Colorado, Health Promotion, Hospitality and Nutrition to CSU, Integrated Health Professionals to Metropolitan State, and Pharmaceutical Science to Regis (Pharm.D.).", "Because colleges set their own degree requirements, agreements vary by school and program."],
     sourceId: "src-frcc-transfer-guides", url: "https://www.frontrange.edu/student-experience/transfer-planning/transfer-guides.html",
   },
   {
-    id: "moving-licenses", audience: "out-of-state", title: "Moving to Colorado with a license or certification",
+    id: "moving-licenses", additionalSourceIds: ["src-dora-faq", "src-dora-medical", "src-cdphe-ems-reciprocity"], audience: "out-of-state", title: "Moving to Colorado with a license or certification",
     summary: "Colorado handles out-of-state credentials differently by profession.",
     facts: ["Electricians: journeyman reciprocity with Alaska, Arkansas, Idaho, Iowa, Minnesota, Montana, Nebraska, New Hampshire, New Mexico, North Dakota, Oklahoma, South Dakota, Utah and Wyoming, if you held the license at least 1 year and passed a state exam. Endorsement is available for other active licenses earned on the current NEC.", "Counselors (LPC): Colorado has no reciprocity; licensed counselors from elsewhere apply by endorsement.", "Physicians: no automatic reciprocity; the Board licenses on the basis of examination.", "EMS providers: Colorado does not have a reciprocity process."],
     sourceId: "src-dora-electrical", url: "https://dpo.colorado.gov/Electrical/Applications",
     caveat: "Counselor, physician and EMS statements come from DORA, DORA and CDPHE pages cited on those career routes.",
   },
   {
-    id: "open-admission", audience: "no-degree", title: "FRCC accepts anyone who applies",
-    summary: "The Colorado Community College System says its colleges accept anyone who applies, with no entrance exams like the ACT or SAT required for admission.",
+    id: "open-admission", additionalSourceIds: ["src-frcc-general-admission"], audience: "no-degree", title: "FRCC general admission: check age and program conditions",
+    summary: "FRCC advertises automatic general admission for applicants over 17. Younger students need to check the applicable enrollment process. Entrance exams are not required for general admission; selective programs have separate rules.",
     facts: ["Some programs, like nursing, are selective and have their own application windows."],
     sourceId: "src-frcc-b2b", url: "https://www.frontrange.edu/student-experience/transfer-planning/bridge-to-bachelor.html",
   },
   {
-    id: "care-forward", audience: "no-degree", title: "Care Forward Colorado: zero-cost entry-level health care training",
-    summary: "A state program that provides zero-cost pathways for entry-level health care jobs. One FRCC student's tuition, fees and materials for the EMS program were covered, saving about $3,000.",
-    facts: ["FRCC's story says more than 1,000 Colorado Community College System students have graduated with this support.", "The student went from the EMS program to a job offer at an ambulance company before finishing."],
+    id: "care-forward", audience: "no-degree", title: "Care Forward Colorado: a student’s 2023 funding story",
+    summary: "FRCC’s September 2023 account describes funding that covered one student’s training. It does not establish current funding availability. That student’s tuition, fees and materials for the EMS program were covered, saving about $3,000.",
+    facts: ["FRCC's story says more than 1,000 Colorado Community College System students have graduated with this support.", "FRCC reported a job offer near the end of the EMS program, not a current employment guarantee."],
     sourceId: "src-frcc-story-guida", url: "https://blog.frontrange.edu/2023/09/06/graduate-starts-paramedic-career-with-care-forward-colorado/",
     caveat: "This comes from a 2023 college story. Eligibility and covered programs change, so ask FRCC or CCCS what applies now.",
   },
@@ -79,7 +80,7 @@ export const accessOptions: AccessOption[] = [
     id: "cna", audience: "no-degree", title: "Certified Nurse Aide: a first step into nursing",
     summary: "Colorado's Board of Nursing has authorized an outside testing company to process the nurse aide exam, and it keeps a list of approved nurse aide training programs.",
     facts: ["The certification exam is the NNAAP Nurse Aide Exam.", "Training programs give graduates a certificate; keep your original, because programs only keep records for two years."],
-    sourceId: "src-dora-nursing-apps", url: "https://dpo.colorado.gov/Nursing/Applications",
+    sourceId: "src-dora-nursing-apps", additionalSourceIds: ["src-dora-nursing-faq"], url: "https://dpo.colorado.gov/Nursing/Applications",
   },
   {
     id: "electrician-apprentice", audience: "no-degree", title: "Electrician: start as a registered apprentice",

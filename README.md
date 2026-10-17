@@ -40,10 +40,10 @@ npm test
 npx eslint src
 npx next build
 npx playwright install chromium
-npm run test:e2e
+PW_PORT=3100 npx playwright test
 ```
 
-Playwright starts the production build on port 3000. `npm run test:smoke` runs the interaction suite only. The full suite also runs axe and captures every page at 1440px, 768px and 375px, in both themes, under `artifacts/screenshots/`. Screenshots are review artifacts, not pixel-baseline assertions. The HTML report is in `playwright-report/` (both folders are ignored by Git).
+Playwright starts its own production server on port 3100 and never reuses a running server. `npm run test:smoke` runs the interaction suite only. The full suite also runs axe and captures every page at 1440px, 768px and 375px, in both themes, under `artifacts/screenshots/`. Screenshots are review artifacts, not pixel-baseline assertions. The HTML report is in `playwright-report/` (both folders are ignored by Git).
 
 ## Storage and migration
 

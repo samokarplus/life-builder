@@ -40,3 +40,26 @@ describe("Colorado counseling program list", () => {
     expect(names).toEqual(expect.arrayContaining(["Regis University", "University of Colorado at Denver", "Colorado State University"]));
   });
 });
+
+import { accessOptions } from "./access";
+import { careerMeta } from "./career-meta";
+it("resolves additional sources on mixed-authority steps and access cards", () => {
+ for (const entry of [...accessOptions, ...pathways.flatMap(p => p.steps)]) {
+  expect(sourceById(entry.sourceId), entry.id).toBeDefined();
+  for (const id of entry.additionalSourceIds ?? []) expect(sourceById(id), id).toBeDefined();
+ }
+});
+it("does not advertise sunset ASCENT or historical Care Forward as current funding", () => {
+ const hs=JSON.stringify(pathways.flatMap(p=>p.steps).filter(s=>s.stage==='high-school'));
+ expect(hs).not.toContain('Programs listed: ASCENT');
+ expect(accessOptions.find(o=>o.id==='concurrent-enrollment')?.facts.join(' ')).toContain('ended June 30, 2026');
+ expect(accessOptions.find(o=>o.id==='care-forward')?.summary).toContain('does not establish current funding');
+});
+it("scopes nursing admissions to Larimer and preserves source-backed fixed-cycle dates",()=>{
+ const rn=pathways.find(p=>p.id==='rn-colorado')!;
+ expect(rn.steps.find(s=>s.id==='rn-3')?.detail).toContain('At Larimer');
+ expect(careerMeta['rn-colorado'].challenges[0].detail).toContain('Larimer');
+ const md=pathways.find(p=>p.id==='physician-colorado')!.steps.find(s=>s.id==='md-3')!;
+ expect(md.datedEvents?.map(d=>d.date)).toEqual(['2026-10-15','2026-11-30']);
+ expect(md.facts?.join(' ')).not.toContain('(passed)');
+});

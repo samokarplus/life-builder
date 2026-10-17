@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AlertTriangle, BadgeCheck, BookUser, ExternalLink, Flag, MapPin, Route } from "lucide-react";
 import { accessOptions, audienceLabels, type Audience } from "@/data/access";
 import type { CareerMeta } from "@/data/career-meta";
-import { sourceById } from "@/data/sample";
+import { sourceById } from "@/data/sources";
 import { cn } from "@/lib/utils";
 
 function SourceLink({ sourceId, url, label }: { sourceId: string; url?: string; label?: string }) {
@@ -12,7 +12,7 @@ function SourceLink({ sourceId, url, label }: { sourceId: string; url?: string; 
   const href = url ?? src?.url ?? undefined;
   return (
     <a href={href} target="_blank" rel="noreferrer" title={src?.note} className="inline-flex items-center gap-1 text-xs text-primary underline">
-      <BadgeCheck size={12} aria-hidden /> {label ?? `Official source, checked ${src?.lastVerified ?? "n/a"}`}
+      <BadgeCheck size={12} aria-hidden /> {label ?? `${src?.status === "verified" ? `Official source, checked ${src.lastVerified ?? "unknown"}` : "Confirm with the official source"}`}
       <ExternalLink size={11} aria-hidden />
     </a>
   );
@@ -30,6 +30,7 @@ export function IdealPath({ meta }: { meta: CareerMeta }) {
             <p className="mt-3 text-sm font-medium">{s.label}</p>
             <p className="tabular mt-1 font-serif text-lg">{s.duration}</p>
             <p className="mt-2 text-xs"><span className={cn("rounded-full px-2 py-0.5", s.basis === "official" ? "bg-soft text-primary" : "bg-warm text-muted")}>{s.basis === "official" ? "From an official source" : "Our estimate"}</span></p>
+            {s.basis === "official" && <div className="mt-2"><SourceLink sourceId={s.sourceId} /></div>}
             {s.note && <p className="mt-2 text-xs text-muted">{s.note}</p>}
           </li>
         ))}
@@ -70,7 +71,7 @@ export function People({ meta }: { meta: CareerMeta }) {
               <p className="font-serif text-xl">{p.name}</p>
               <p className="text-xs text-muted">{p.role}</p>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{p.background.map((b) => <li key={b}>{b}</li>)}</ul>
-              {p.lesson && <p className="mt-3 rounded-xl bg-gold-soft px-3 py-2 text-sm"><Flag size={13} className="mr-1 inline" aria-hidden /><span className="font-medium">Takeaway: </span>{p.lesson}</p>}
+              {p.lesson && <p className="mt-3 rounded-xl bg-gold-soft px-3 py-2 text-sm"><Flag size={13} className="mr-1 inline" aria-hidden /><span className="font-medium">Our interpretation: </span>{p.lesson}</p>}
               <div className="mt-3"><SourceLink sourceId={p.sourceId} url={p.url} /></div>
             </li>
           ))}
@@ -100,7 +101,7 @@ export function WaysIn({ initial = "high-school" }: { initial?: Audience }) {
             <p className="mt-1 text-sm text-muted">{o.summary}</p>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{o.facts.map((f) => <li key={f}>{f}</li>)}</ul>
             {o.caveat && <p className="mt-3 text-xs text-muted">{o.caveat}</p>}
-            <div className="mt-3"><SourceLink sourceId={o.sourceId} url={o.url} /></div>
+            <div className="mt-3"><SourceLink sourceId={o.sourceId} url={o.url} />{o.additionalSourceIds?.map(id => <span key={id} className="ml-2"><SourceLink sourceId={id} /></span>)}</div>
           </li>
         ))}
       </ul>

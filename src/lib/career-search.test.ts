@@ -44,6 +44,10 @@ describe("career data provenance", () => {
     }
   });
   it("official durations carry a source-backed note or fact", () => {
-    for (const m of Object.values(careerMeta)) for (const s of m.ideal) expect(["official", "estimate"]).toContain(s.basis);
+    for (const m of Object.values(careerMeta)) for (const s of m.ideal) {
+      expect(["official", "estimate"]).toContain(s.basis);
+      if (s.basis === "official") expect(sourceById(s.sourceId)?.url, s.label).toMatch(/^https:\/\//);
+      if (/about.*years|right away/.test(s.duration)) expect(s.basis).toBe("estimate");
+    }
   });
 });

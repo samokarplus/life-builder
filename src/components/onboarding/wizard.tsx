@@ -12,7 +12,7 @@ import { generatePlan } from "@/lib/schedule";
 import type { CompletedCourse } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const dreams = ["Therapist / Counselor", "Astronaut", "Nurse", "Doctor", "Teacher", "EMT / Paramedic", "Electrician", "Engineer", "Entrepreneur", "Software Developer", "Still Exploring"];
+const dreams = ["Therapist / Counselor", "Astronaut", "Nurse", "Doctor", "Teacher", "EMT", "Electrician", "Engineer", "Entrepreneur", "Software Developer", "Still Exploring"];
 const priorityOptions = ["Lowest total cost", "Fastest graduation", "Balanced workload", "Mostly online", "Fewest campus days", "Career preparation"];
 const majors = ["Philosophy", "Psychology", "Sociology", "Undecided"];
 const titles = ["What would you love to do someday?", "Where are you starting?", "Where do you want to go?", "What have you completed?", "What matters most?", "Ready to map it out?"];
