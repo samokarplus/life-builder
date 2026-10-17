@@ -46,7 +46,7 @@ Source IDs below resolve to exact URLs and dates in `src/data/sources.ts`. Wordi
 | Teacher content proof | Praxis or approved multiple measures | CDE lists these, endorsement-specific | Confirmed overview; not every endorsement is interchangeable. |
 | Teacher professional advancement | Induction certificate | CDE agrees; expired holders may have extra endorsement requirements | Confirmed overview. No guaranteed processing duration. |
 | Alternative teacher | 1/2 years; district-specific, degree, content, job, approved program | CDE agrees | Confirmed. |
-| Teacher of Record | Colorado BA preparation with ≤36 hours left | CDE also requires content proof, joint TOR plan and teaching position | Original summary was partial; full conditions remain in official link, not an eligibility finding. |
+| Teacher of Record | Colorado BA preparation with ≤36 hours left | CDE also requires content proof, joint TOR plan and teaching position | Added omitted TOR plan, content and teaching-position conditions to the summary; not an eligibility finding. |
 | Physician minimums | Medical graduation, national exams, postgraduate education | Medical Board Initial tab agrees | Confirmed `src-dora-medical`. |
 | Physician exams | USMLE, COMLEX | Examination Verification tab names these plus historical examinations | Confirmed as examples, not exhaustive. |
 | Physician reciprocity / processing | No automatic reciprocity; most 60 days; 800–1,000/year | Board page still says all three | Confirmed as page wording, not a promised processing time or current annual statistic. |
@@ -101,3 +101,7 @@ Source IDs below resolve to exact URLs and dates in `src/data/sources.ts`. Wordi
 - NASA’s June2025 alternatives are cycle-specific; no future eligibility date or selection opening inferred.
 - CU MD timeline and requirements pages disagree about generic primary opening (May vs June); exact cycle deadline is explicit, next cycle remains unloaded.
 - The six new campus datasets, three CU bachelor audits, Bioastronautics MS degree audit and eleven additional careers are expansion work, not verified by this Part1 ledger.
+
+## Electives merge follow-up
+
+The official2026–27 Approved Elective List was read as one public catalog page after the FRCC legal-notice review (catalog index exposes no separate terms link). The transcribed named entries and starting numbers match its category rows, including HLT2008 exclusion and the upper-level/specialized exclusions. The list cannot establish existence, title, credit value or eligibility of an illustrative course whose number happens to fit a range. Found and fixed that adapter bug: only verified catalog records enter the official AA elective rule. Its provenance now points to the elective-list source. The current verified non-GT elective candidate is COM1150; no unresearched range courses, specialized courses or PED/OUT/DAN cap assumptions are added.

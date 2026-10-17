@@ -73,7 +73,7 @@ export const careerMeta: Record<string, CareerMeta> = {
     ideal: [
       { label: "Associate degree at FRCC", duration: "about 2 years", basis: "estimate" },
       { label: "Bachelor's degree", duration: "about 2 more years", basis: "estimate", note: "about 60 more credits after an associate degree" },
-      { label: "CACREP-approved counseling master's", duration: "3 to 4 years at CU Denver's pace", basis: "official", sourceId: "src-cud-cmhc", note: "CU Denver lists 63 credits and a recommended completion time of 3 to 4 years" },
+      { label: "CACREP-accredited counseling master's", duration: "3 to 4 years at CU Denver's pace", basis: "official", sourceId: "src-cud-cmhc", note: "CU Denver lists 63 credits and a recommended completion time of 3 to 4 years" },
       { label: "Supervised post-master's practice", duration: "at least 24 months", basis: "official", sourceId: "src-co-lpc-rules", note: "2,000 hours, 1,500 with clients" },
     ],
     idealNote: "Built from Colorado's rules and CU Denver's published program length. Part-time study makes it longer.",

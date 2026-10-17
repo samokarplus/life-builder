@@ -1,3 +1,13 @@
+## 2026-10-16 — Independent Colorado route review
+
+- Re-read official route/access/story pages and checked site notices; claim-by-claim evidence and unresolved discrepancies in `review/colorado-route-claims.md` and `REVIEW.md`.
+- Prevented illustrative course numbers from satisfying official AA electives; corrected the elective source and Explorer label.
+- Fixed sunset ASCENT/current-funding claims, campus-specific ADN guidance, Bridge partner discrepancy, mixed-source citations and official-versus-estimated duration labels.
+- Safer dream matching/search, invalid-link recovery, bounded queries, valid progress counts and fixed-cycle AMCAS date labels; high-school profile migration/import/export regression coverage.
+- Career search comes first; keyboard selection focuses the route; starting point is editable; added sourced plain-language glossary and historical story attribution.
+- Expanded responsive axe/screenshot coverage to new routes, starting points, filters and empty states. Port3000 untouched; browser tests use3100.
+- Validation: 161 Vitest tests, ESLint, production build and all21 Playwright tests pass; six size/theme combinations have zero axe violations and no document overflow. Runtime dependency audit: zero vulnerabilities.
+
 # Changelog
 
 ## Dream Helper refinement — October 16, 2026

@@ -1,3 +1,53 @@
+# Colorado routes: independent follow-up review (2026-10-16)
+
+Reviewed `origin/main` at `7f1d4ef` (the five-route and electives merges), on `codex/colorado-route-review`. The earlier review below remains historical evidence; this addendum supersedes its source counts and expansion deferrals. Baseline: 149 Vitest tests, ESLint and production build passed before edits.
+
+Detailed claim / original value / official-page findings and terms checks: [Colorado route claim ledger](review/colorado-route-claims.md). Official facts were read one public page at a time, with a live browser for DORA/CDPHE/CCCS panels. No bulk scraping or paid AI calls.
+
+## Findings by severity
+
+| Priority | Reproduction / impact | Fix status and regression evidence |
+| --- | --- | --- |
+| P1 | Mark five real three-credit electives and illustrative PHI1030 complete: the broad elective range accepted the sample course and falsely satisfied18 official elective credits. | Fixed official elective candidates to require verified catalog provenance; Explorer no longer labels illustrative course numbers approved. Adversarial18-credit regression remains unsatisfied and excludes the sample ID. Corrected requirement citation to the elective list. |
+| P1 | Open any high-school route or starting-point card: ASCENT advertised among current options despite FRCC’s June30,2026 sunset notice. | Fixed across routes/access cards; historical notice retained. Data regression test rejects the old list. |
+| P1 | Profile dream “physician assistant”, “electrical engineer”, “psychologist”, “CNA” or “paramedic”: broad substring matcher silently selected a different credential. “workspace” matched astronaut; multiple dreams chose the first regex. | Fixed whole-word normalization and explicit ambiguity/unsupported-credential guards. Dashboard offers an explicit route choice. Unit tests cover accented/messy input, distinct professions, negation and multiple dreams. |
+| P1 | Ideal paths labeled “about two more years” official because an associate might leave ~60 credits; apprentice “right away” was also official. Summing electrician milestones implied consecutive durations. | Fixed estimates; official durations now require a sourceId in the type and show its link. Electrician milestones clearly overlap/have alternatives; removed unsupported NASA earliest-decade claim. |
+| P1 | Read the Care Forward access card: a 2023 alumni story presented as current available zero-cost training. | Fixed historical tense/title and explicit unknown current funding. Unit regression. |
+| P2 | RN route generalized Larimer admission details. Campus selection could send a Boulder County student looking for an ADN there. | Fixed: FRCC lists AAS nursing at Larimer/Westminster, not Boulder County. Independent Westminster page reviewed; specific transcript and notification differences recorded. Source links rendered. |
+| P2 | RN exam two-part application cited FAQ; mixed-profession interstate card cited only electrical; WUE dollars cited a page without the dollars. | Fixed primary/additional citations, rendered all authorities; tuition rates scoped to regular classes, excluding fees/online/nursing differences. Source-resolution tests. |
+| P2 | Bridge partner names from image labels included Saint Augustine’s; current CCCS text names Coppin State. | Current text corrected; 12 Colorado schools +WGU corroborated through CCCS partner destination links. Saint Augustine’s disagreement visibly flagged, not promised. |
+| P2 | AMCAS deadline baked “passed” into facts regardless of date; recurring-date helper would be unsafe for this fixed cycle. | Fixed dated-event records and civil-day before/on/after UI. Never recurs implicitly. Unit tests include next year, DST and invalid dates. |
+| P2 | Invalid URL stage ignored saved high-school stage; query unbounded; client navigation retained initial route state; imported unknown/duplicate progress IDs inflated progress. | Fixed bounded query parser and profile-aware fallback, page key on query navigation, filtered/deduplicated progress. Pure tests and browser regression. |
+| P2 | Search “RN” matched substrings inside unrelated words; advertised “no degree” query had no filter semantics; no exact-name ranking. | Fixed token-prefix matching, synonyms/diacritics, query bound, no-degree semantics and stable exact-name ranking. Unit tests. |
+| P2 | Profile could retain a high-school stage but offered no way to edit it. | Added labeled starting-point selector. Migration/import/export tests preserve high-school data and reject invalid stages without replacing the plan; browser reload test. |
+| P2 | On375px, career search appeared below a tall stage selector, making route discovery slow. Selecting a card left keyboard users at the picker. | Moved search first; selection focuses the route heading. Browser test selects with Enter and checks focus. This is a heuristic first-year review, not a measured study with students. |
+| P3 | Abbreviations were unexplained; alumni “now” employment could imply a current verified job; Menon “not a pilot” was an unsupported inference. | Added sourced plain-language glossary for all eight requested terms. Dated historical roles/plans, labeled takeaways as our interpretation, removed negative inference. |
+| P3 | README still said Playwright uses3000. | Corrected documentation to3100; existing config already refuses server reuse. Port3000 left untouched. |
+
+## Bug/security audit disposition
+
+The central immutable source registry still resolves without feature-import order; new additionalSourceIds and duration source links are covered by tests. Existing requirement-engine, migration, import/export, deterministic-assistant and server-security regressions were rerun. The elective candidate adapter now excludes illustrative catalog records; the generic requirement engine and storage implementation remain unchanged. Unknown program requirements, external-credit uncertainty and completed/planned separation remain intact.
+
+Reviewed the optional AI route’s same-origin/local-host guard, bounded streaming request body, Zod projection, omission of private dream/budget/history, provider timeout, no-store responses and generic failures. Provider behavior is mocked in tests; no paid request was sent. Imported text renders as React text, not HTML; unknown route/query strings do not become arbitrary navigation targets. This is a code review, not a penetration test or a guarantee against model hallucination. Multiple-tab concurrent plan editing still has no conflict merge; keep the existing documented limitation.
+
+Runtime dependency audit (`npm audit --omit=dev`): zero vulnerabilities. The five baseline high findings remain in development tooling; no forced dependency downgrade.
+
+## Visual/accessibility review
+
+The full browser suite captures13 pages at1440/768/375 in both themes, alternate roadmap views, the course drawer, confirmation dialog, five new route states, three starting-point choices, filters and empty results. Axe checks WCAG2A/AA and2.1AA; explicit document-width assertions catch horizontal overflow. Keyboard smoke covers drag announcements, focus return, route selection and reset cancel focus. Screenshots live under ignored `artifacts/screenshots/`; contact sheets are review aids, not pixel-baseline tests.
+
+Cheap friction fixes: search above stage choices; explicit recovery for unsupported dreams; editable starting point; source links on official durations; glossary. Badge color is accompanied by icon, career title and category text. Empty story lists remain honest empty states. Screen-reader usability beyond automated axe and focus checks still deserves testing with actual users.
+
+## Remaining source questions
+
+CDPHE’s initial and reciprocity pages disagree about intermediate-level ACLS wording; the app surfaces the difference. Its generic exam wording may lag level-specific NREMT changes. NASA still carries June2025 alternatives, so no future-cycle guarantee is inferred. CU’s MD requirements page says primary applications usually open early June while its2026–27 timeline says May; cycle-specific facts are used. Current Care Forward availability and Saint Augustine’s Bridge participation remain unconfirmed. More campus/course/career datasets are separate expansion work, not silently filled with estimates.
+
+## Validation
+
+Final results:161 Vitest tests passed; `npx eslint src` and `npx next build` passed; `PW_PORT=3100 npx playwright test` passed all21 tests, including six complete responsive/theme matrices with zero axe violations. The attached ledger is the factual review record; the original review below is retained for traceability.
+
+---
+
 # Dream Helper review
 
 Reviewed October 16, 2026 (America/Los_Angeles). Base: `origin/main` at `cbbf4da`. Fix branch: `codex/review-fixes`.
