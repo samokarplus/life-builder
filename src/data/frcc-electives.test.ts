@@ -41,3 +41,12 @@ describe("AA electives requirement", () => {
     expect(r.find((x) => x.requirementId === "aa-electives")!.status).not.toBe("satisfied");
   });
 });
+
+it("illustrative course numbers cannot verify an official AA elective requirement", () => {
+ const elective = requirements.find(r=>r.id==='aa-electives')!;
+ const completed=['ART-1110','ART-1111','ART-1112','ART-1113','MUS-1020','PHI-1030'].map(code=>({courseId:`frcc:${code}`,verified:true,grade:'B'}));
+ const result=evaluateRequirements([elective],{courses,completed,projected:[]})[0];
+ expect(result.status).toBe('unsatisfied');
+ expect(result.usedCourseIds).not.toContain('frcc:PHI-1030');
+ expect(elective.sourceId).toBe('src-frcc-electives-2627');
+});

@@ -123,7 +123,7 @@ function CourseExplorer({ initialQuery }: { initialQuery: string }) {
               <dt className="text-muted">Institution</dt><dd>{institutions.find((i) => i.id === open.institutionId)?.name}</dd>
               <dt className="text-muted">Credits</dt><dd className="tabular">{open.credits} {sourceById(open.sourceId)?.status !== "verified" && <span className="text-xs text-muted">(assumed in sample)</span>}</dd>
               <dt className="text-muted">Description</dt><dd className="text-muted">Not loaded. Check the official catalog.</dd>
-              <dt className="text-muted">Elective</dt><dd>{(() => { const b = open.institutionId === "frcc" ? approvedElectiveBasis(open.code, open.gtPathways) : null; return b ? electiveBasisLabel[b] : "Not on the loaded approved elective list (unverified sample or unlisted course)"; })()}</dd>
+              <dt className="text-muted">Elective</dt><dd>{(() => { const b = open.institutionId === "frcc" && sourceById(open.sourceId)?.status === "verified" ? approvedElectiveBasis(open.code, open.gtPathways) : null; return b ? electiveBasisLabel[b] : "Not on the loaded approved elective list (unverified sample or unlisted course)"; })()}</dd>
               <dt className="text-muted">gtPathways</dt><dd>{open.gtPathways?.join(", ") ?? "No verified gtPathways designation loaded"}</dd>
               {open.eligibilityNote && <><dt className="text-muted">Restrictions</dt><dd>{open.eligibilityNote}</dd></>}
               <dt className="text-muted">Offering</dt><dd>{open.notOffered ? "Marked not currently offered at FRCC" : "Offering by term unknown"}</dd>
