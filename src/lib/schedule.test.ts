@@ -39,7 +39,7 @@ describe("generatePlan", () => {
     expect(prereqIssues(plan, courses)).toHaveLength(0);
   });
   it("places every course and ends at the destination", () => {
-    expect(plan.flatMap((s) => s.courses)).toHaveLength(courses.length);
+    expect(plan.flatMap((s) => s.courses)).toHaveLength(courses.filter((c) => c.planDefault !== false).length);
     expect(sortSemesters(plan).at(-1)!.institutionId).toBe("cub");
   });
 });

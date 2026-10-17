@@ -2,6 +2,7 @@
 import { useConfirm } from "@/components/ui/confirmation";
 
 import { useRef, useState } from "react";
+import { PublishedRate } from "@/components/ui/published-rate";
 import { Download, RotateCcw, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
@@ -51,14 +52,15 @@ export function SettingsPanel() {
       <section className={box}>
         <h2 className="font-medium">Planning assumptions</h2>
         <p className="mt-1 text-sm text-muted">Dream Helper doesn&apos;t include verified tuition figures yet. Enter your own; they&apos;re labeled user-entered everywhere.</p>
-        <label className="mt-4 flex flex-col gap-1 text-sm">Credits required for your degree (sample assumption)
+        <label className="mt-4 flex flex-col gap-1 text-sm">Credits required for your degree (FRCC Associate of Arts: 60, 2026-27 catalog)
           <input type="number" min={1} max={200} value={s.requiredCredits} onChange={(e) => Number(e.target.value) > 0 && s.setRequiredCredits(Number(e.target.value))} className="h-10 rounded-xl border border-border bg-background px-3" />
         </label>
         {institutions.map((i) => (
-          <label key={i.id} className="mt-4 flex flex-col gap-1 text-sm">{i.shortName} tuition per credit ($)
-            <input type="number" inputMode="decimal" defaultValue={s.tuitionPerCredit[i.id] ?? ""} onChange={(e) => setRate(i.id, e.target.value)} placeholder="Not set" className="h-10 rounded-xl border border-border bg-background px-3" />
+          <div key={i.id} className="mt-4 space-y-2"><PublishedRate institutionId={i.id} />
+          <label className="flex flex-col gap-1 text-sm">{i.shortName} tuition per credit ($)
+            <input key={String(s.tuitionPerCredit[i.id] ?? "none")} type="number" inputMode="decimal" defaultValue={s.tuitionPerCredit[i.id] ?? ""} onChange={(e) => setRate(i.id, e.target.value)} placeholder="Not set" className="h-10 rounded-xl border border-border bg-background px-3" />
             {errors[i.id] && <span role="alert" className="text-amber-700 dark:text-amber-400">{errors[i.id]}</span>}
-          </label>
+          </label></div>
         ))}
       </section>
 

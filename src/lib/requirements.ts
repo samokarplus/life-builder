@@ -27,7 +27,7 @@ export function ruleCourseIds(rule: RequirementRule): string[] {
   if(rule.type==="course") return [rule.courseId];
   if(rule.type==="group") return unique(rule.courseIds);
   if(rule.type==="credits"||rule.type==="transfer") return ruleCourseIds(rule.from);
-  if(rule.type==="residency") return [];
+  if(rule.type==="residency"||rule.type==="unmapped") return [];
   return unique(rule.rules.flatMap(ruleCourseIds));
 }
 function credits(ids:string[],ctx:EvalContext) {return unique(ids).reduce((n,id)=>n+(ctx.courses.find(c=>c.id===id)?.credits??0),0);}
@@ -63,6 +63,7 @@ function candidates(rule:RequirementRule,ctx:EvalContext,taken:Set<string>):Eval
     }
     case "any": return rule.rules.length?rule.rules.flatMap(r=>candidates(r,ctx,taken)):[empty(["No alternatives loaded; check official sources"])];
     case "group": return [empty(["Course group needs a credit threshold"])];
+    case "unmapped": return [{...empty([rule.note]),status:"uncertain"}];
     case "credits": {
       if(rule.min<=0) return [{status:"satisfied",used:[],notes:[],missing:[]}];
       // Enumerate group subsets with a bounded dynamic frontier. Nested AND/OR uses its actual branches.

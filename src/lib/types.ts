@@ -25,6 +25,8 @@ export interface Institution {
 }
 
 export interface Course extends Provenance {
+  /** false = real catalog course that is an option, not auto-placed by plan generation. */
+  planDefault?: boolean;
   id: string; // stable, e.g. "frcc:HIS-1120"
   institutionId: string;
   code: string;
@@ -56,6 +58,8 @@ export type RequirementRule =
   | { type: "any"; rules: RequirementRule[] }
   | { type: "credits"; min: number; from: RequirementRule }
   | { type: "group"; courseIds: string[]; minGrade?: string }
+  /** A real requirement whose course mapping (e.g. gtPathways attributes) is not loaded yet. Always "uncertain". */
+  | { type: "unmapped"; credits: number; note: string }
   | { type: "residency"; institutionId: string; minCredits: number; sourceId: string }
   | { type: "transfer"; from: RequirementRule; maxCredits: number; sourceId: string };
 
@@ -95,6 +99,9 @@ export interface TuitionRate extends Provenance {
   institutionId: string;
   academicYear: string;
   perCredit: number | null; // null = not yet sourced
+  /** College Opportunity Fund stipend applied for eligible Colorado residents, when published. */
+  cofStipend?: number;
+  note?: string;
   residency: "in-state" | "out-of-state";
 }
 
