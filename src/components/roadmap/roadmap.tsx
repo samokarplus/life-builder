@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { Columns3, ListTree, Network, Plus, Printer, Redo2, Undo2, Sun, Flag } from "lucide-react";
 import { courses } from "@/data/sample";
-import { creditWarnings, prerequisiteFix, nextSummer } from "@/lib/roadmap";
+import { institutionWarnings, creditWarnings, prerequisiteFix, nextSummer } from "@/lib/roadmap";
 import { prereqIssues, semesterLabel, sortSemesters } from "@/lib/schedule";
 import type { Semester } from "@/lib/types";
 import { usePlanner } from "@/store/planner";
@@ -19,6 +19,7 @@ import { SemesterColumn } from "./semester-column";
 import { institutions } from "@/data/sample";
 import { cn } from "@/lib/utils";
 import { DependencyGraph } from "./dependency-graph";
+import { BoulderPrograms } from "@/components/paths/boulder-programs";
 import { RequirementsPanel } from "./requirements-panel";
 
 type SemForm = { id?: string; term: Semester["term"]; year: number; institutionId: string };
@@ -50,6 +51,7 @@ export function Roadmap() {
   const catalog = useMemo(() => new Map(courses.map((c) => [c.id, c])), []);
   const sorted = sortSemesters(semesters);
   const issues = prereqIssues(semesters, courses, profile.completed);
+  const campusWarnings=institutionWarnings(semesters,courses);
   const warnings = creditWarnings(semesters, courses, profile.maxCreditsPerSemester);
   const describeDrag = (id: string | number) => {
     const sem = semesters.find(s=>s.id===id || s.courses.some(p=>p.id===id));
@@ -138,8 +140,9 @@ export function Roadmap() {
         </div>
       </div>
 
-      {(issues.length>0 || warnings.length>0) && <section aria-label="Plan conflicts" className="mb-6 space-y-3 rounded-2xl border border-amber-500/30 bg-surface p-4">
-        <h2 className="text-sm font-semibold">A few things to work through</h2><p className="text-xs text-muted">Your choices are kept as-is. These checks use illustrative data.</p>
+      {(issues.length>0 || warnings.length>0 || campusWarnings.length>0) && <section aria-label="Plan conflicts" className="mb-6 space-y-3 rounded-2xl border border-amber-500/30 bg-surface p-4">
+        <h2 className="text-sm font-semibold">A few things to work through</h2><p className="text-xs text-muted">Your choices are kept as-is. Prerequisites and equivalencies may be incomplete; review each source.</p>
+        {campusWarnings.map(w=><div key={`${w.semesterId}:${w.courseId}`} className="text-sm"><p>{w.code} is a {institutions.find(i=>i.id===w.institutionId)?.shortName} catalog course in a different institution’s semester. No transfer equivalency is assumed. Move it to the appropriate semester or confirm the offering with your adviser.</p><button className="mt-2 rounded-full border border-border px-3 py-1 text-xs" onClick={()=>{const s=semesters.find(s=>s.id===w.semesterId)!;setForm({id:s.id,term:s.term,year:s.year,institutionId:s.institutionId});}}>Review semester institution</button></div>)}
         {warnings.map(w=><p key={w.semesterId} role="status" className="text-sm text-amber-800 dark:text-amber-300">{semesterLabel(semesters.find(s=>s.id===w.semesterId)!)}: {w.credits} credits exceeds your {w.maximum}-credit maximum by {w.excess}. Move a course or update your limit in Profile.</p>)}
         {issues.map(issue=><div key={issue.plannedId} className="border-t border-border pt-3 text-sm"><p><strong>{catalog.get(issue.courseId)?.code}</strong> needs {issue.missing.map(id=>catalog.get(id)?.code ?? id).join(", ")} in an earlier semester.</p><div className="mt-2 flex flex-wrap gap-2">{issue.missing.map(id=>{const fix=prerequisiteFix(id,issue.semesterId,semesters);return fix ? <button key={id} className="rounded-full border border-border px-3 py-1.5 text-xs hover:bg-soft" onClick={()=>{if(fix.plannedId) store.moveCourse(fix.plannedId,fix.targetId,0);else store.addCourse(fix.targetId,id);toast("Prerequisite moved earlier",{description:"Review any remaining prerequisite and credit-load warnings.",action:{label:"Undo",onClick:()=>usePlanner.getState().undo()}});}}>{fix.plannedId?"Move":"Add"} {catalog.get(id)?.code} earlier → {semesterLabel(semesters.find(s=>s.id===fix.targetId)!)}</button> : <span key={id} className="text-xs text-muted">Add an earlier semester to place {catalog.get(id)?.code}.</span>;})}</div></div>)}
       </section>}
@@ -164,6 +167,7 @@ export function Roadmap() {
       )}
 
       <RequirementsPanel />
+      <BoulderPrograms />
 
       {sorted.length === 0 && <p className="py-16 text-center text-muted">No semesters yet. Add one to start planning.</p>}
 

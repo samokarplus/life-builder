@@ -21,7 +21,7 @@ npm test        # vitest: credits, prerequisites, requirements, scenarios, costs
 
 ## Data honesty
 
-`src/data/sample.ts` mixes **sourced FRCC catalog data and illustrative records**. The 2026–27 gtPathways list contains 233 courses; four additional courses remain outside that list (one sourced oral-communication option and three illustrative courses). AA area rules and published FRCC resident tuition carry official sources. CU tuition, equivalencies, offerings, approved electives, GPA and residency audit coverage remain incomplete. Every record carries provenance; a verified course listing does not verify student completion or admission eligibility. Review evidence and fixes are in [REVIEW.md](REVIEW.md).
+`src/data/sample.ts` mixes **sourced FRCC/CU Boulder catalog subsets and illustrative records**. The 2026–27 gtPathways list contains 233 courses; four additional courses remain outside that list (one sourced oral-communication option and three illustrative courses). AA area rules and published FRCC resident tuition carry official sources. CU tuition, equivalencies, offerings, approved electives, GPA and residency audit coverage remain incomplete. Every record carries provenance; a verified course listing does not verify student completion or admission eligibility. Review evidence and fixes are in [REVIEW.md](REVIEW.md).
 
 ## Architecture
 
@@ -30,7 +30,7 @@ npm test        # vitest: credits, prerequisites, requirements, scenarios, costs
 
 ## Not yet built
 
-Official catalog adapter activation, real transfer equivalencies, CU Boulder major requirements, and verified course-offering availability. The local JSON importer contract and illustrative fixture are in `src/lib/importers/`.
+Official catalog adapter activation, real transfer equivalencies, full CU Boulder graduation audits, and verified course-offering availability. The local JSON importer contract and illustrative fixture are in `src/lib/importers/`.
 
 
 ## Validation and visual review
@@ -75,3 +75,5 @@ See [CHANGELOG.md](CHANGELOG.md) for scope and remaining data gaps.
 `npm run verify-sources` performs an offline audit: sources more than90 civil days old get warnings, without pretending to re-read or update them. `npm run verify-sources -- --strict` also exits nonzero for stale sources. Use `--as-of=YYYY-MM-DD` for reproducible date checks. Invalid/future check dates and missing/dangling citations always fail.
 
 `npm run check-provenance` is the CI check for every factual collection registered in `src/data/inventory.ts`, including nested and secondary citations. New data modules must be registered; estimates and presentation-only metadata are excluded, while official durations require citations. Adding a record without a sourceId fails. Course entries from the Bioastronautics curriculum now carry their own sourceId rather than relying on a comment. Source badges and Settings show last-check dates and explicit stale/unknown warnings; the original dates and student choices are never changed automatically.
+
+CU Boulder program previews cover Philosophy general-track BA, Psychology BA, Aerospace BSAE and the traditional MS Bioastronautics focus. Category rules use the existing engine; unmapped electives, GPA, credit caps and full graduation rules remain explicit manual checks. A scoped Group V12-credit tuition example is shown separately from automatic per-credit estimates. Evidence: `review/boulder-program-sources.md`.

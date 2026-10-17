@@ -23,3 +23,12 @@ export function nextSummer(semesters: Semester[], institutionId: string) {
   while (semesters.some(s=>s.year===year && s.term==="summer")) year++;
   return {term:"summer" as const,year,institutionId};
 }
+
+/** Preserve choices while flagging cross-campus placement; never infer a transfer equivalency. */
+export function institutionWarnings(semesters:Semester[],catalog:Course[]){
+ const byId=new Map(catalog.map(c=>[c.id,c]));
+ return semesters.flatMap(s=>s.courses.flatMap(p=>{
+  const c=byId.get(p.courseId);
+  return c&&c.institutionId!==s.institutionId?[{semesterId:s.id,courseId:c.id,code:c.code,institutionId:c.institutionId}]:[];
+ }));
+}

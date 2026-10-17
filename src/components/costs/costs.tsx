@@ -1,5 +1,6 @@
 "use client";
 
+import { BoulderTuition } from "@/components/paths/boulder-programs";
 import Link from "next/link";
 import { PublishedRate } from "@/components/ui/published-rate";
 import { useState } from "react";
@@ -105,6 +106,7 @@ export function Costs() {
           </div>
         </section>
       </div>
+      <BoulderTuition />
     </div>
   );
 }

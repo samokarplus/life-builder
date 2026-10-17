@@ -1,3 +1,9 @@
+## CU Boulder requirement previews (2026-10-16)
+
+- Added four sourced program structures and65 reviewed course records: Philosophy general-track BA, Psychology BA, Aerospace BSAE and traditional MS Bioastronautics. Explicit manual checks prevent partial mappings from certifying graduation; FRCC equivalencies are never inferred.
+- Added scoped residency rules, exact BIA/math overlap, graduate catalog levels and importer support for unmapped conditions. Memoized requirement alternatives and removed equivalent frontier states to avoid repeated work and false safety-limit warnings.
+- Added program previews to Colorado Dreams/Roadmap and a separately scoped Group V tuition example to Costs. Cross-campus course placement preserves choices and offers an institution-review action. Updated Explorer metadata and level filters.
+
 ## Colorado campuses (2026-10-16)
 
 - Added six sourced destination planners to Colorado Dreams and Funding: CU Denver, CSU, Mines, Colorado Mesa, UNC and UCCS. Applicant type, term and year controls distinguish published cycles from annual planning patterns; missing dates remain explicit.

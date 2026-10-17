@@ -193,3 +193,20 @@ Evidence: [campus sources and terms](review/colorado-campus-sources.md). Six des
 Remaining A gaps: UCCS precise current-cycle first-year/transfer deadline not verified; no FRCC-specific every-major maps verified for CSU/UNC/UCCS. Some summer first-year dates are unloaded. Official advisers and current campus pages remain the authority. Importer parses reviewed local JSON only and does not fetch or activate data. No judgment call is required to preserve these unknowns.
 
 Validation for A: 170 Vitest tests, ESLint, production build, provenance check and all28 Playwright tests passed. The six campus states were exercised at1440/768/375 in both themes with axe and overflow checks; all six captured campus layouts were visually inspected. Full-site screenshot matrix also passed. Port3000 untouched.
+
+
+## CU Boulder expansion B (2026-10-16)
+
+[Program/source evidence and scope](review/boulder-program-sources.md). Added65 fixed-credit course records, four program structures, a scoped tuition example and explicit manual conditions.599 factual records /85 sources in the inventory.
+
+| Priority | Reproduction / impact | Disposition |
+| --- | --- | --- |
+| P1 | A full program contains many equivalent missing-course branches and overlapping aggregate categories. Evaluator repeatedly recalculates the same candidate sets and exhausts bounds even when distinct allocations are small. | Memoized candidate sets by requirement and allocated courses; deduplicated equivalent AND frontier states before safety cap. Regression includes mixed aerospace focus tracks and a fully populated catalog. Existing bounds/warnings retained. |
+| P1 | Use a generic residency rule for PHIL residency: unrelated Boulder ASEN credits could count. | Added optional scoped `from` rule and source-preserving importer support. Tests reject unrelated campus credits and FRCC-earned transfer credit while preserving legacy unscoped rules. |
+| P2 | Treat BIA5137 or5044 as mutually exclusive math/elective credit, or treat the Professional MS as the traditional BIA focus. | Encoded current handbook's exact category overlap and degree scope. Credits remain unique. B− / planned / unverified-credit tests; MS-wide graduation conditions stay manual. |
+| P2 | Place a CU catalog course in an FRCC semester and mistake catalog identity for equivalency. | Choices preserved; Roadmap explains the mismatch and offers a working semester-institution review action. No inferred equivalencies. |
+| P2 | Apply a single CU tuition figure to every entering cohort, program and credit load. | Published Group V12-credit base/engineering examples shown with period, cohort, campus, tentative COF assumption and fees exclusions. Automatic universal rate remains unloaded. |
+
+B gaps: full elective/ancillary course metadata, approved degree-audit lists, GPA, independent-study/internship caps, precise prerequisite/corequisite handling and complete college/MS graduation audits are not loaded. PHIL4040 has an unlinked/untitled row in the requirement page, so no invented Course record was added. Named special-topic math is not treated as every offering of ASEN5519. Preview controls do not alter the student's chosen program. These are disclosed limits, not guessed requirements.
+
+B validation:179 Vitest tests, ESLint src, production build and provenance passed; all35 Playwright tests passed on3100. Four program states at1440/768/375 in both themes passed axe/overflow checks, plus explicit course planning/conflict action. All six program screenshots visually inspected; full-site matrix passed. No port3000 or paid AI calls.
