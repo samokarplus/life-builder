@@ -60,7 +60,7 @@ export default function Landing() {
                 <article className="lift h-full rounded-[16px] border border-border bg-surface p-6 shadow-card">
                   <div className="flex items-center justify-between">
                     <span className="grid h-11 w-11 place-items-center rounded-2xl bg-soft text-primary"><Icon size={19} aria-hidden /></span>
-                    <span className="tabular font-serif text-3xl text-sage">0{i + 1}</span>
+                    <span className="tabular font-serif text-3xl text-primary/70">0{i + 1}</span>
                   </div>
                   <h3 className="mt-5 font-medium">{title}</h3>
                   <p className="mt-2 text-sm text-muted">{body}</p>

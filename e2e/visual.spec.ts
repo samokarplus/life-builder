@@ -1,7 +1,7 @@
 import {test,expect} from "@playwright/test";
 import AxeBuilder from '@axe-core/playwright';
 import {mkdir} from 'node:fs/promises';
-const paths=['/','/onboarding','/overview','/roadmap','/explorer','/compare','/careers','/costs','/profile','/settings'];
+const paths=['/','/onboarding','/overview','/roadmap','/explorer','/compare','/careers','/paths','/funding','/costs','/profile','/settings','/print'];
 for(const width of [1440,768,375])for(const theme of ['light','dark'])test(`${theme} ${width}: all pages, screenshots, contrast and overflow`,async({page})=>{
  test.setTimeout(120000);
  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>{localStorage.setItem('theme',theme);},theme);
