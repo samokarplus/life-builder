@@ -71,7 +71,7 @@ interface PlannerState {
 }
 
 export { profileSchema, exportSchema } from "@/lib/plan-schema";
-import { exportSchema } from "@/lib/plan-schema";
+import { validatedExportSchema as exportSchema } from "@/lib/plan-schema";
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -177,7 +177,10 @@ export const usePlanner = create<PlannerState>()(
       name: "dream-helper:v1",
       version: 2,
       storage: createJSONStorage(() => plannerStorage),
-      migrate: (state) => migratePlan(state),
+      migrate: (state, version) => {
+        if (![0, 1, 2].includes(version)) throw new Error("Unsupported saved-plan version; preserve the original backup.");
+        return migratePlan(state);
+      },
       merge: (persisted, current) => ({ ...current, ...migratePlan(persisted) }),
       skipHydration: true,
       onRehydrateStorage: () => (_, error) => { if (error) hydrationFailed(); },
