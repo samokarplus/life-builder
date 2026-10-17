@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BadgeCheck, CalendarClock, ExternalLink, HelpCircle, PiggyBank } from "lucide-react";
-import { pathways, type PathwayStep } from "@/data/pathways";
+import { BadgeCheck, CalendarClock, ExternalLink, GraduationCap, HelpCircle, MapPin, PiggyBank, School, Sparkles, Briefcase, BookOpen, Sprout } from "lucide-react";
+import { pathways, stageLabels, stageOrder, type PathwayStep, type Stage } from "@/data/pathways";
+import { coloradoCounselingPrograms, specialties } from "@/data/programs";
 import { sourceById } from "@/data/sample";
 import { usePlanner } from "@/store/planner";
 import { cuTransferDeadlines, describeDeadline, nextFallEntry, type EntryTerm } from "@/lib/deadlines";
@@ -11,6 +12,38 @@ import { cn } from "@/lib/utils";
 const kindLabel: Record<PathwayStep["kind"], string> = {
   degree: "Degree", transfer: "Transfer", application: "Application", exam: "Exam", experience: "Experience", license: "License", selection: "Selection", requirement: "Requirement",
 };
+
+const stageIcon: Record<Stage, React.ElementType> = { "high-school": Sprout, "community-college": School, university: BookOpen, graduate: GraduationCap, career: Briefcase };
+const stageBlurb: Record<Stage, string> = {
+  "high-school": "Dreaming ahead. We'll start from the beginning.",
+  "community-college": "A smart, affordable start. Let's line up your transfer.",
+  university: "Building your bachelor's. Let's look at what's next.",
+  graduate: "Grad school time. Programs, exams and registration.",
+  career: "Logging hours and heading for the finish line.",
+};
+
+function CounselingFinder() {
+  const [spec, setSpec] = useState("Clinical Mental Health Counseling");
+  const rows = coloradoCounselingPrograms.filter((p) => p.specialty === spec);
+  return (
+    <div className="mt-4 rounded-xl bg-soft p-4">
+      <p className="flex items-center gap-2 text-sm font-medium"><MapPin size={15} className="text-primary" aria-hidden /> Colorado programs in the CACREP directory</p>
+      <label className="mt-3 flex flex-col gap-1 text-xs text-muted">Specialty
+        <select value={spec} onChange={(e) => setSpec(e.target.value)} className="h-9 rounded-full border border-border bg-surface px-3 text-sm text-foreground">{specialties.map((x) => <option key={x}>{x}</option>)}</select>
+      </label>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {rows.map((p) => (
+          <li key={p.institution + p.specialty + p.degree} className="lift rounded-xl border border-border bg-surface p-3 text-sm">
+            <p className="font-medium">{p.institution}</p>
+            <p className="text-xs text-muted">{p.city}, CO · {p.degree}</p>
+            <p className="mt-1 text-xs"><span className="text-primary">{p.status}</span> · cycle ends {p.cycleEnd}</p>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-xs text-muted">{spec === "Clinical Mental Health Counseling" ? "This is the specialty most closely tied to clinical counseling. " : ""}A listing is not an endorsement or an admission guarantee. Check each school&apos;s own admissions page, costs and deadlines, and confirm with DORA that the degree meets licensing rules. <a href="https://www.cacrep.org/directory/" target="_blank" rel="noreferrer" className="text-primary underline">Open the CACREP directory</a></p>
+    </div>
+  );
+}
 
 function Confidence({ sourceId }: { sourceId: string }) {
   const src = sourceById(sourceId);
@@ -23,6 +56,7 @@ export function DreamPaths() {
   const { profile, setProfile } = usePlanner();
   const today = useMemo(() => new Date(), []);
   const [pathId, setPathId] = useState(pathways[0].id);
+  const [stage, setStage] = useState<Stage>("community-college");
   const [term, setTerm] = useState<EntryTerm>("fall");
   const [year, setYear] = useState(nextFallEntry(today));
   const path = pathways.find((p) => p.id === pathId)!;
@@ -33,8 +67,32 @@ export function DreamPaths() {
   const pct = Math.round((done.length / path.steps.length) * 100);
   const sel = "h-9 rounded-full border border-border bg-surface px-3 text-sm";
 
+  const stageIdx = stageOrder.indexOf(stage);
+  const next = path.steps.find((st) => stageOrder.indexOf(st.stage) >= stageIdx && !done.includes(st.id)) ?? path.steps.find((st) => !done.includes(st.id));
   return (
-    <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
+    <div>
+      <section className="hero-glow rounded-[24px] border border-border bg-surface p-6 shadow-card sm:p-8">
+        <p className="eyebrow flex items-center gap-2"><Sparkles size={13} aria-hidden /> Colorado Dreams</p>
+        <h2 className="mt-2 font-serif text-3xl sm:text-4xl">Where are you now, and where do you want to go?</h2>
+        <p className="mt-2 max-w-2xl text-muted">Pick your stage and your dream. We&apos;ll show your next step, the dates that matter, and the Colorado schools and rules along the way.</p>
+        <div role="group" aria-label="Your stage" className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {stageOrder.map((st) => { const Icon = stageIcon[st]; return (
+            <button key={st} onClick={() => setStage(st)} aria-pressed={stage === st} className={cn("lift rounded-2xl border p-3 text-left", stage === st ? "border-primary bg-soft" : "border-border bg-background")}>
+              <Icon size={18} className="text-primary" aria-hidden />
+              <span className="mt-2 block text-sm font-medium">{stageLabels[st]}</span>
+              <span className="mt-0.5 block text-xs text-muted">{stageBlurb[st]}</span>
+            </button>); })}
+        </div>
+        {next && (
+          <div className="mt-6 rounded-2xl bg-primary p-5 text-primary-foreground" aria-live="polite">
+            <p className="text-xs font-semibold uppercase tracking-widest opacity-80">Your next step</p>
+            <p className="mt-1 font-serif text-2xl">{next.title}</p>
+            <p className="mt-1 max-w-2xl text-sm opacity-90">{next.detail.length > 180 ? `${next.detail.slice(0, 177)}…` : next.detail}</p>
+          </div>
+        )}
+      </section>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
       <aside>
         <ul className="space-y-2" aria-label="Dream paths">
           {pathways.map((p) => (
@@ -47,7 +105,7 @@ export function DreamPaths() {
             </li>
           ))}
         </ul>
-        <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">More careers and universities across Colorado are on the way. Each one is added only with an official source.</p>
+        <p className="mt-4 rounded-xl bg-warm p-3 text-xs text-muted">Coming next, each added only with an official source: engineer, physician, teacher, entrepreneur, software developer, plus more Colorado campuses (CU Denver, CSU, Colorado School of Mines, Colorado Mesa and others).</p>
       </aside>
 
       <section className="min-w-0">
@@ -68,8 +126,8 @@ export function DreamPaths() {
                   <span className={cn("tabular grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-semibold", isDone ? "bg-primary text-primary-foreground" : "bg-soft text-primary")}>{i + 1}</span>
                   {i < path.steps.length - 1 && <span className="w-px flex-1 bg-sage" aria-hidden />}
                 </div>
-                <article className="mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card">
-                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><Confidence sourceId={s.sourceId} /></div>
+                <article className={cn("mb-5 min-w-0 flex-1 rounded-2xl border border-border bg-surface p-5 shadow-card", stageOrder.indexOf(s.stage) < stageIdx && !isDone && "opacity-70")}>
+                  <div className="flex flex-wrap items-center gap-2"><span className="eyebrow">{kindLabel[s.kind]}</span><span className="rounded-full bg-background px-2.5 py-0.5 text-xs text-muted">{stageLabels[s.stage]}</span><Confidence sourceId={s.sourceId} /></div>
                   <h3 className={cn("mt-2 font-medium", isDone && "text-muted line-through")}>{s.title}</h3>
                   <p className="mt-1 text-sm text-muted">{s.detail}</p>
                   {s.facts && <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{s.facts.map((f) => <li key={f}>{f}</li>)}</ul>}
@@ -107,6 +165,8 @@ export function DreamPaths() {
                   ))}
                   {s.links && <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">{s.links.map((l) => <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary underline">{l.label}<ExternalLink size={12} aria-hidden /></a>)}</p>}
 
+                  {s.programFinder === "co-counseling" && <CounselingFinder />}
+
                   <label className="mt-4 flex items-center gap-2 text-xs"><input type="checkbox" checked={isDone} onChange={() => toggle(s.id)} className="accent-[var(--primary)]" /> I&apos;ve completed this (self-reported)</label>
                 </article>
               </li>
@@ -114,6 +174,7 @@ export function DreamPaths() {
           })}
         </ol>
       </section>
+      </div>
     </div>
   );
 }

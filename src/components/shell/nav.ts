@@ -5,7 +5,7 @@ export const navItems = [
   { href: "/roadmap", label: "My Roadmap", icon: Map },
   { href: "/explorer", label: "Course Explorer", icon: BookOpen },
   { href: "/compare", label: "Compare Paths", icon: GitCompare },
-  { href: "/paths", label: "Dream Paths", icon: Rocket },
+  { href: "/paths", label: "Colorado Dreams", icon: Rocket },
   { href: "/careers", label: "Career Explorer", icon: Compass },
   { href: "/costs", label: "Costs & Savings", icon: PiggyBank },
   { href: "/profile", label: "My Profile", icon: User },

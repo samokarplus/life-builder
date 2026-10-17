@@ -26,6 +26,6 @@ it("covers stored priorities, workloads and unknown transfer credit",async()=>{e
 
 it("answers deadlines, LPC and astronaut questions with sourced, hedged text",async()=>{
   expect(await deterministicProvider.answer("What is the transfer deadline?",ctx)).toMatch(/Fall early-notification deadline: \d{4}-03-15.*confirm/);
-  expect(await deterministicProvider.answer("How do I become an LPC therapist?",ctx)).toContain("confirm with the official source");
+  expect(await deterministicProvider.answer("How do I become an LPC therapist?",ctx)).toContain("2,000 supervised hours");
   expect(await deterministicProvider.answer("What does NASA require for astronaut?",ctx)).toContain("three years");
 });
