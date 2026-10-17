@@ -1,5 +1,6 @@
 import { progress, semesterLabel } from "../schedule";
 import { creditWarnings } from "../roadmap";
+import { cuTransferDeadlines, nextFallEntry } from "../deadlines";
 import type { AssistantProvider, AssistantContext } from "./provider";
 
 const OFFICIAL = "I don't have verified data for that. Please check with your institution's advising office or official catalog.";
@@ -19,6 +20,13 @@ export const deterministicProvider: AssistantProvider = {
   name: "Built-in (no AI key configured)",
   async answer(question, c) {
     const q = question.toLowerCase();
+    if (/deadline|when (do|should|can) i apply|application date|apply (by|to)/.test(q)) {
+      const year = nextFallEntry(new Date());
+      const list = cuTransferDeadlines("fall", year).map((d) => `${d.label}: ${d.date}`).join("; ");
+      return `CU Boulder's transfer timeline page gives these month and day deadlines (applied here to fall ${year} entry): ${list}. The page doesn't print the year, so confirm for your cycle. See Dream Paths for spring and summer entry.`;
+    }
+    if (/lpc|counselor|therapist|licensed professional/.test(q)) return "For a Licensed Professional Counselor in Colorado, the route is a bachelor's, a qualifying counseling master's, about 2,000 supervised practice hours (1,500 with clients), exams, then a DORA application. I could not read DORA's own page automatically, so every licensure figure is marked 'confirm with the official source'. See Dream Paths for the steps.";
+    if (/astronaut|nasa|bioastro/.test(q)) return "NASA's page states: U.S. citizenship, a STEM master's (or listed alternatives), three years of related professional experience (or 1,000 pilot-in-command hours), and the long-duration astronaut physical. Applications open only when NASA needs a class. CU Boulder's Aerospace Engineering Sciences lists Bioastronautics as a research area; its page doesn't give graduate deadlines, so check the Graduate School page. See Dream Paths.";
     if (/priority|priorities|prefer/.test(q)) return `Your selected priorities: ${c.profile.priorities.join(", ") || "none selected"}. Your maximum is ${c.profile.maxCreditsPerSemester} credits per semester. Update these in Profile; existing course choices will be preserved.`;
     if (/overload|too many|load|maximum|lighter/.test(q)) { const warnings=creditWarnings(c.semesters,c.courses,c.profile.maxCreditsPerSemester);return warnings.length ? warnings.map(w=>`${semesterLabel(c.semesters.find(s=>s.id===w.semesterId)!)} has ${w.credits} credits, ${w.excess} over your ${w.maximum}-credit limit.`).join(" ")+" Move courses on the roadmap or change your limit in Profile." : `Every planned semester is within your ${c.profile.maxCreditsPerSemester}-credit limit. Course availability is unknown, check official sources.`; }
     if (/transfer|equivalen|ap.?ib|ap credit|ib credit/.test(q)) return "Transfer equivalencies and AP/IB acceptance are unknown, check official sources. Unverified credit remains uncertain and never confirms eligibility. Your reported external credit is kept separately from specific approved coursework.";

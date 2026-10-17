@@ -23,3 +23,9 @@ describe("deterministic assistant", () => {
   });
 });
 it("covers stored priorities, workloads and unknown transfer credit",async()=>{expect(await deterministicProvider.answer("What are my priorities?",ctx)).toContain("15 credits");expect(await deterministicProvider.answer("Is my load too high?",{...ctx,profile:{...ctx.profile,maxCreditsPerSemester:12}})).toContain("4 over");expect(await deterministicProvider.answer("Will AP credit transfer?",ctx)).toContain("unknown, check official sources");});
+
+it("answers deadlines, LPC and astronaut questions with sourced, hedged text",async()=>{
+  expect(await deterministicProvider.answer("What is the transfer deadline?",ctx)).toMatch(/Fall early-notification deadline: \d{4}-03-15.*confirm/);
+  expect(await deterministicProvider.answer("How do I become an LPC therapist?",ctx)).toContain("confirm with the official source");
+  expect(await deterministicProvider.answer("What does NASA require for astronaut?",ctx)).toContain("three years");
+});

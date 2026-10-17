@@ -55,3 +55,11 @@ First verified data, each with its source URL, catalog year and verification dat
 - Course Explorer: gtPathways filter, per-course category and offering status, "Show more" paging.
 - PHI 1030, ENP 1005 and AIR 2001 are not on the gtPathways list and remain unverified sample courses.
 - 84 unit tests pass, including new tests for same-area arts rejection and the lab-science rule.
+
+## Dream Paths (claude/dream-paths)
+
+- New Dream Paths page: end-to-end routes with sourced steps, dates and funding. Two paths so far: Licensed Professional Counselor in Colorado, and NASA astronaut via a STEM master's at CU Boulder (Aerospace Engineering Sciences lists Bioastronautics as a research area).
+- CU Boulder transfer dates (spring Oct 1; summer/fall early notification Mar 15; fall final Jun 1; scholarship + FAFSA Jun 15) computed for your chosen entry term with live countdowns. The page prints month and day only, so cycles must be re-confirmed. The June 15 transfer scholarship is listed with no award amount because the page gives none.
+- Source labels: NASA requirements (incl. three years of experience, 1,000 pilot-in-command hours, citizenship, physical), CU Boulder transfer timeline and AES graduate degrees were read from official pages. Colorado LPC figures (2,000 supervised hours, 1,500 direct contact, 50 supervision hours per 1,000) come only from search excerpts of C.R.S. 12-245-604 because DORA and the statute mirror blocked automated reading, so they are marked "Confirm with the official source".
+- Not found: CU Boulder graduate application deadlines and GRE policy, a Colorado counseling program list, and scholarship amounts. None are guessed.
+- Assistant answers deadline, LPC and astronaut questions with the same hedging. 94 unit tests pass.
