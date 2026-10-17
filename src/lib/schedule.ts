@@ -71,6 +71,7 @@ export function generatePlan(
   catalog: Course[],
   start: { term: "fall" | "spring"; year: number }
 ): Semester[] {
+  if (!Number.isFinite(profile.maxCreditsPerSemester) || profile.maxCreditsPerSemester <= 0) throw new Error("Choose a positive credit limit before generating a plan.");
   const done = new Set(profile.completed.map((c) => c.courseId));
   const todo = catalog.filter((c) => c.institutionId === profile.currentInstitutionId && c.planDefault !== false && !done.has(c.id));
   const placedIn = new Map<string, number>();
@@ -90,10 +91,12 @@ export function generatePlan(
         remaining.splice(remaining.indexOf(c), 1);
       }
     }
+    if (!sem.courses.length) throw new Error(`Could not schedule ${remaining.map(c => c.code).join(", ")}. A course exceeds your credit limit or has a prerequisite outside the generated plan. Increase the limit or review completed prerequisites; your saved plan has not changed.`);
     semesters.push(sem);
     idx++;
     if (term === "fall") { term = "spring"; year++; } else term = "fall";
   }
+  if (remaining.length) throw new Error("Plan generation reached its term limit. Review prerequisites before trying again.");
   const last = semesters[semesters.length - 1];
   const nextTerm = last ? (last.term === "fall" ? { term: "spring" as const, year: last.year + 1 } : { term: "fall" as const, year: last.year }) : start;
   semesters.push({ id: `gen-dest-${nextTerm.year}-${nextTerm.term}`, term: nextTerm.term, year: nextTerm.year, institutionId: profile.destinationInstitutionId, courses: [] });

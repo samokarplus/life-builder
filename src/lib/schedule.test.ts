@@ -1,3 +1,4 @@
+import { defaultProfile } from "@/store/planner";
 import { describe, expect, it } from "vitest";
 import { generatePlan, prereqIssues, progress, sortSemesters } from "./schedule";
 import { courses, sampleSemesters } from "@/data/sample";
@@ -47,4 +48,11 @@ it("keeps reported completion distinct and avoids duplicate planned credit",()=>
  const ss=[{...sampleSemesters[0],courses:[{id:"one",courseId:"frcc:HIS-1120",status:"planned" as const},{id:"two",courseId:"frcc:HIS-1120",status:"completed" as const}]}];
  const p=progress(ss,courses,[],60);expect(p.completed).toBe(3);expect(p.unverifiedCompleted).toBe(3);expect(p.verifiedCompleted).toBe(0);expect(p.planned).toBe(0);
  const verified=progress(ss,courses,[{courseId:"frcc:HIS-1120",kind:"regular",verified:true},{courseId:"frcc:HIS-1120",kind:"regular",verified:true}],60);expect(verified.completed).toBe(3);expect(verified.verifiedCompleted).toBe(3);
+});
+it('never silently discards courses that cannot fit the credit limit',()=>{
+ expect(()=>generatePlan({...defaultProfile,maxCreditsPerSemester:3},courses,{term:'fall',year:2026})).toThrow(/Could not schedule/);
+});
+it('reports unresolved/cyclic prerequisites instead of returning forty empty terms',()=>{
+ const cyclic=[{...courses[0],id:'a',prerequisiteIds:['b']},{...courses[0],id:'b',prerequisiteIds:['a']}];
+ expect(()=>generatePlan(defaultProfile,cyclic,{term:'fall',year:2026})).toThrow(/prerequisite/);
 });
